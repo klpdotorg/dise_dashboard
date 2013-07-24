@@ -104,6 +104,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'dise_dashoboard.urls'
@@ -127,12 +128,17 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
 
+    # third party
     'south',
+    'debug_toolbar',
 
+    # in-project
     'account',
     'common',
     'schools',
 )
+
+INTERNAL_IPS = ('127.0.0.1',)
 
 AUTH_USER_MODEL = 'account.User'
 AUTHENTICATION_BACKENDS = ('apps.account.backends.ModelEmailBackend', )
