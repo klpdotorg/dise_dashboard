@@ -49,7 +49,7 @@ USE_I18N = True
 USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
-USE_TZ = True
+USE_TZ = False
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
@@ -138,10 +138,15 @@ INSTALLED_APPS = (
     'schools',
 )
 
+DATADUMP_ROOT = os.path.join(PROJECT_ROOT, 'data')
+
 INTERNAL_IPS = ('127.0.0.1',)
+DEBUG_TOOLBAR_CONFIG = {
+    'INTERCEPT_REDIRECTS': False
+}
 
 AUTH_USER_MODEL = 'account.User'
-AUTHENTICATION_BACKENDS = ('apps.account.backends.ModelEmailBackend', )
+AUTHENTICATION_BACKENDS = ('account.backends.ModelEmailBackend', )
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 
