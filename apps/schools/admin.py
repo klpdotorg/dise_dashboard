@@ -5,5 +5,6 @@ from .models import *
 admin.site.register([
     School,
     InstractionMedium,
-    SchoolManaagement
+    SchoolManaagement,
+    SchoolCategory
 ])

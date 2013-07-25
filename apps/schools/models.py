@@ -30,3 +30,11 @@ class SchoolManaagement(models.Model):
 
     def __unicode__(self):
         return u"%s" % self.name
+
+
+class SchoolCategory(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return u"%s" % self.name
