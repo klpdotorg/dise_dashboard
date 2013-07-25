@@ -6,5 +6,8 @@ admin.site.register([
     School,
     InstractionMedium,
     SchoolManaagement,
-    SchoolCategory
+    SchoolCategory,
+    ResidentialType,
+    AcademicYear,
+    YearlyData
 ])
