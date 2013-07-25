@@ -1,5 +1,7 @@
 import os
 import xlrd
+from optparse import make_option
+
 
 from django.core.management.base import BaseCommand, CommandError
 from common.models import Cluster, Block, EducationDistrict, Village, State
@@ -10,7 +12,13 @@ from schools.models import School
 
 class Command(BaseCommand):
     args = '<filename filename ...>'
-    help = 'Closes the specified poll for voting'
+    help = 'Imports Basic data files'
+    option_list = BaseCommand.option_list + (
+        make_option('--year',
+            dest="year",
+            help='import for specific academic year'),
+        )
+
     INDEXES = {
         'district': 0,
         'school_code': 1,
