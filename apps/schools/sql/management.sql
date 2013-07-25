@@ -1,0 +1,10 @@
+INSERT INTO schools_schoolmanaagement(id, name) VALUES(1, 'Department of Education');
+INSERT INTO schools_schoolmanaagement(id, name) VALUES(2, 'Tribal/Social Welfare Department');
+INSERT INTO schools_schoolmanaagement(id, name) VALUES(3, 'Local body');
+INSERT INTO schools_schoolmanaagement(id, name) VALUES(4, 'Pvt. Aided');
+INSERT INTO schools_schoolmanaagement(id, name) VALUES(5, 'Pvt. Unaided');
+INSERT INTO schools_schoolmanaagement(id, name) VALUES(6, 'others');
+INSERT INTO schools_schoolmanaagement(id, name) VALUES(7, 'Central Govt.');
+INSERT INTO schools_schoolmanaagement(id, name) VALUES(8, 'Unrecognised');
+INSERT INTO schools_schoolmanaagement(id, name) VALUES(97, 'Madarsa recognized (by Wakf board/Madarsa Board)');
+INSERT INTO schools_schoolmanaagement(id, name) VALUES(98, 'Madarsa unrecognized');

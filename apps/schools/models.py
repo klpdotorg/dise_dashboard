@@ -10,7 +10,23 @@ class School(BaseModel):
 
     cluster = models.ForeignKey('common.Cluster', blank=True, null=True)
     village = models.ForeignKey('common.Village', blank=True, null=True)
-    ward_no = models.IntegerField(blank=True, null=True)
+    ward_no = models.CharField(max_length=10, blank=True, null=True)
 
     def __unicode__(self):
         return u"%s: %s" % (self.code, self.name)
+
+
+class InstractionMedium(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        return u"%s" % self.name
+
+
+class SchoolManaagement(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        return u"%s" % self.name
