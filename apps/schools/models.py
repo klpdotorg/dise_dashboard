@@ -41,9 +41,6 @@ class YearlyData(BaseModel):
     academic_year = models.ForeignKey(AcademicYear)
     school = models.ForeignKey(School)
 
-    type = models.SmallIntegerField(choices=SCHOOL_TYPES, blank=True, null=True)
-    part_of_shift = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-
     cluster = models.ForeignKey('common.Cluster', blank=True, null=True)
     village = models.ForeignKey('common.Village', blank=True, null=True)
     ward_no = models.CharField(max_length=10, blank=True, null=True)
@@ -60,17 +57,33 @@ class YearlyData(BaseModel):
     pre_primary_student_count = models.IntegerField(blank=True, null=True)
     pre_primary_teacher_count = models.IntegerField(blank=True, null=True)
 
+    type = models.SmallIntegerField(choices=SCHOOL_TYPES, blank=True, null=True)
+    part_of_shift = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
+    working_day_count = models.IntegerField(blank=True, null=True)
+
     residential = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
     residential_type = models.ForeignKey('ResidentialType', blank=True, null=True)
 
     lowest_class = models.SmallIntegerField(blank=True, null=True)
     highest_class = models.SmallIntegerField(blank=True, null=True)
 
+    academic_inspection_count = models.IntegerField(blank=True, null=True)
+    crc_visit_count = models.IntegerField(blank=True, null=True)
+    brc_visit_count = models.IntegerField(blank=True, null=True)
+
+    development_grant_received = models.FloatField(blank=True, null=True)
+    development_grant_expenditure = models.FloatField(blank=True, null=True)
+    tlm_grant_received = models.FloatField(blank=True, null=True)
+    tlm_grant_expenditure = models.FloatField(blank=True, null=True)
+    fund_from_student_received = models.FloatField(blank=True, null=True)
+    fund_from_student_expenditure = models.FloatField(blank=True, null=True)
+
     def __unicode__(self):
         return u"%s (%s)" % (self.school, self.academic_year)
 
     class Meta:
         verbose_name_plural = 'Yearly Data'
+        ordering = ('id', )
 
 
 class InstractionMedium(models.Model):

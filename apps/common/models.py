@@ -8,6 +8,7 @@ class BaseModel(models.Model):
 
     class Meta:
         abstract = True
+        ordering = ('id', )
 
     def save(self, *args, **kwargs):
         if not self.date_created:
