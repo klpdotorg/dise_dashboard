@@ -33,7 +33,6 @@ class Command(BaseCommand):
         district, created = EducationDistrict.objects.get_or_create(
             name=row[self.INDEXES['district']]
         )
-        # TODO: Detect urban/rural from village name
         village, created = Village.objects.get_or_create(
             name=row[self.INDEXES['village']]
         )
