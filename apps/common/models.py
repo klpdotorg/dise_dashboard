@@ -2,9 +2,18 @@ from django.db import models
 from datetime import datetime
 
 
+class BaseManager(models.Manager):
+    use_for_related_fields = True
+
+    def get_query_set(self):
+        return super(BaseManager, self).get_query_set().select_related()
+
+
 class BaseModel(models.Model):
     date_created = models.DateTimeField()
     date_modified = models.DateTimeField()
+
+    objects = BaseManager()
 
     class Meta:
         abstract = True

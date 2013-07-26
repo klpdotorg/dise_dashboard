@@ -28,7 +28,7 @@ class AcademicYear(models.Model):
 
 
 class School(BaseModel):
-    code = models.CharField(max_length=64, unique=True)
+    code = models.CharField(max_length=64, unique=True, db_index=True)
     name = models.CharField(max_length=255)
     pincode = models.IntegerField(blank=True, null=True)
     year_established = models.SmallIntegerField(blank=True, null=True)
