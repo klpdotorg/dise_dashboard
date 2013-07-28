@@ -9,14 +9,33 @@ AREA = (
 )
 
 YESNO = (
+    (0, 'Not Applicable'),
     (1, 'Yes'),
-    (2, 'No')
+    (2, 'No'),
+    (3, 'Yes but not functional')
 )
 
 SCHOOL_TYPES = (
     (1, 'Boys'),
     (2, 'Girls'),
     (3, 'Co-educational')
+)
+
+ROOM_TYPES = (
+    ('class', 'Classroom'),
+    ('other', 'Other')
+)
+
+ROOM_CONDITIONS = (
+    ('good', 'Good'),
+    ('major', 'Require Major Repair'),
+    ('minor', 'Require Minor Repair')
+)
+
+TOILET_TYPES = (
+    ('common', 'Common'),
+    ('boy', 'Boys'),
+    ('girl', 'Girls')
 )
 
 class AcademicYear(models.Model):
@@ -78,12 +97,42 @@ class YearlyData(BaseModel):
     fund_from_student_received = models.FloatField(blank=True, null=True)
     fund_from_student_expenditure = models.FloatField(blank=True, null=True)
 
+    building_status = models.ForeignKey('SchoolBuildingStatus', blank=True, null=True)
+    room_count = models.IntegerField(blank=True, null=True)
+    room_for_headmaster = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
+    drinking_water_source = models.ForeignKey('DrinkingWaterSource', blank=True, null=True)
+    electricity_status = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
+    boundary_wall_type = models.ForeignKey('BoundaryWallType', blank=True, null=True)
+
+    library_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
+    library_book_count = models.IntegerField(default=0)
+
+    playground_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
+
+    computer_count = models.IntegerField(default=0)
+    cal_lab_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
+    medical_checkup = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
+    ramp_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
+
     def __unicode__(self):
         return u"%s (%s)" % (self.school, self.academic_year)
 
     class Meta:
         verbose_name_plural = 'Yearly Data'
         ordering = ('id', )
+
+
+class Room(BaseModel):
+    yearly_data = models.ForeignKey('YearlyData')
+    type = models.CharField(max_length=20, choices=ROOM_TYPES)
+    condition = models.CharField(max_length=20, choices=ROOM_CONDITIONS)
+    count = models.IntegerField(default=0)
+
+
+class Toilet(BaseModel):
+    yearly_data = models.ForeignKey('YearlyData')
+    type = models.CharField(max_length=20, choices=TOILET_TYPES)
+    count = models.IntegerField(default=0)
 
 
 class InstractionMedium(models.Model):
@@ -114,6 +163,30 @@ class SchoolCategory(models.Model):
 
 
 class ResidentialType(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        return u"%s" % self.name
+
+
+class SchoolBuildingStatus(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        return u"%s" % self.name
+
+
+class DrinkingWaterSource(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        return u"%s" % self.name
+
+
+class BoundaryWallType(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=50)
 
