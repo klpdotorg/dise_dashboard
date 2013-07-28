@@ -9,14 +9,16 @@ from django.conf import settings
 from common.models import Cluster, Block, Village, State, EducationDistrict
 from schools.models import School, AcademicYear, InstractionMedium, ResidentialType, YearlyData, SchoolManaagement, SchoolCategory
 
+
 class Command(BaseCommand):
     args = '<filename filename ...>'
     help = 'Imports General data files'
     option_list = BaseCommand.option_list + (
         make_option('--year',
             dest="year",
-            help='import for specific academic year'),
-        )
+            help='import for specific academic year'
+        ),
+    )
 
     INDEXES = {
         'School_Code': 0,
@@ -136,9 +138,8 @@ class Command(BaseCommand):
 
         yearly_data.save()
 
-
     def handle(self, *args, **options):
-        year=None
+        year = None
 
         if 'year' in options:
             from_year, to_year = options.get('year').split('-')
