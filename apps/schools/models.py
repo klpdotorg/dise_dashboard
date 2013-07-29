@@ -126,13 +126,13 @@ class Room(BaseModel):
     yearly_data = models.ForeignKey('YearlyData')
     type = models.CharField(max_length=20, choices=ROOM_TYPES)
     condition = models.CharField(max_length=20, choices=ROOM_CONDITIONS)
-    count = models.IntegerField(default=0)
+    count = models.IntegerField(default=0, db_index=True)
 
 
 class Toilet(BaseModel):
     yearly_data = models.ForeignKey('YearlyData')
     type = models.CharField(max_length=20, choices=TOILET_TYPES)
-    count = models.IntegerField(default=0)
+    count = models.IntegerField(default=0, db_index=True)
 
 
 class InstractionMedium(models.Model):

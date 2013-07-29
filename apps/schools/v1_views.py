@@ -17,12 +17,11 @@ class V1SearchView(View, JSONResponseMixin):
             query['yearlydata__building_status'] = params.get('building_status', '')
 
         limit = int(params.get('limit', 20))
-        yearly_data = School.objects.values('code', 'name', 'pincode')
+        yearly_data = School.objects.values('code', 'name', 'pincode', 'year_established')
 
         if params.get('no_toilet', 'off') == 'on':
             yearly_data = yearly_data.annotate(total_toilets=Sum('yearlydata__toilet__count'))
             query['total_toilets'] = 0
 
         yearly_data = yearly_data.filter(**query).order_by('id')[:limit]
-
         return self.render_to_response(list(yearly_data))
