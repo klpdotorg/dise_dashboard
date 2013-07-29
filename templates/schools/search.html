@@ -35,6 +35,11 @@
     <legend>Facilities</legend>
     <div class="checkbox">
       <label>
+        <input name="needs_repair" type="checkbox"> Classrooms needs repair
+      </label>
+    </div>
+    <div class="checkbox">
+      <label>
         <input name="no_toilet" type="checkbox"> Doesn't have Toilet
       </label>
     </div>
@@ -54,6 +59,7 @@
 <script>
 $('#id_form_search').on('submit', function(e) {
     e.preventDefault();
+    $('#time_taken').html("Searching ...");
     var start_time = new Date().getTime();
     $.get("{% url 'v1_search' %}", $(this).serialize(), function(data, textStatus) {
         var request_time = new Date().getTime() - start_time;

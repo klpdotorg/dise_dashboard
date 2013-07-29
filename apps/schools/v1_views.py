@@ -5,27 +5,36 @@ from django.utils import simplejson as json
 from django.core import serializers
 
 from common.views import JSONResponseMixin
-from schools.models import YearlyData, School
+from schools.models import YearlyData, School, SumCase
 
 
 class V1SearchView(View, JSONResponseMixin):
     def get(self, *args, **kwargs):
         params = self.request.GET
         query = {}
+        schools = School.objects.order_by('id').values('id', 'code', 'name')
+        limit = int(params.get('limit', 20))
 
         if params.get('area_type', ''):
-            query['yearlydata__area_type'] = params.get('area_type', '')
+            schools = schools.filter(yearlydata__area_type=params.get('area_type', ''))
 
         if params.get('building_status', ''):
-            query['yearlydata__building_status'] = params.get('building_status', '')
-
-        limit = int(params.get('limit', 20))
-        schools = School.objects.order_by('id')
+            schools = schools.filter(yearlydata__building_status=params.get('building_status', ''))
 
         if params.get('no_toilet', 'off') == 'on':
             schools = schools.annotate(total_toilets=Sum('yearlydata__toilet__count'))
-            query['total_toilets'] = 0
+            schools = schools.filter(total_toilets=0)
 
-        schools = schools.filter(**query)[:limit]
-        schools_json = serializers.serialize("json", schools)
-        return self.get_json_response(schools_json)
+        if params.get('needs_repair', 'off') == 'on':
+            schools = schools.annotate(
+                repair_count=SumCase(
+                    'yearlydata__room__count',
+                    when='"schools_room"."type" = \'class\' AND "schools_room"."condition" IN (\'minor\', \'major\')'
+                )
+            )
+            schools = schools.filter(repair_count__gt=0)
+
+        schools = schools[:limit]
+        print schools.query
+        # schools_json = serializers.serialize("json", schools)
+        return self.render_to_response(list(schools))
