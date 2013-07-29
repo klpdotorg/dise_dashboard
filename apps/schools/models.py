@@ -126,13 +126,19 @@ class Room(BaseModel):
     yearly_data = models.ForeignKey('YearlyData')
     type = models.CharField(max_length=20, choices=ROOM_TYPES)
     condition = models.CharField(max_length=20, choices=ROOM_CONDITIONS)
-    count = models.IntegerField(default=0, db_index=True)
+    count = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = ("yearly_data", "type", "condition")
 
 
 class Toilet(BaseModel):
     yearly_data = models.ForeignKey('YearlyData')
     type = models.CharField(max_length=20, choices=TOILET_TYPES)
-    count = models.IntegerField(default=0, db_index=True)
+    count = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = ("yearly_data", "type")
 
 
 class InstractionMedium(models.Model):
@@ -192,25 +198,3 @@ class BoundaryWallType(models.Model):
 
     def __unicode__(self):
         return u"%s" % self.name
-
-
-class SQLSumCase(models.sql.aggregates.Aggregate):
-    is_ordinal = True
-    sql_function = 'SUM'
-    sql_template = "%(function)s(CASE WHEN %(when)s THEN %(field)s ELSE 0 END)"
-
-    def __init__(self, col, **extra):
-        if isinstance(extra['when'], basestring):
-            extra['when'] = "%s" % extra['when']
-
-        if extra['when'] is None:
-            extra['when'] = True
-
-        super(SQLSumCase, self).__init__(col, **extra)
-
-class SumCase(models.Aggregate): # TODO
-    name = 'SUM'
-
-    def add_to_query(self, query, alias, col, source, is_summary):
-        aggregate = SQLSumCase(col, source=source, is_summary=is_summary, **self.extra)
-        query.aggregates[alias] = aggregate
