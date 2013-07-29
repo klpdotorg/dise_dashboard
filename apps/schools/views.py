@@ -1,7 +1,5 @@
-from django.views.generic import FormView, TemplateView
-from .forms import SearchForm
+from django.views.generic import View, FormView, TemplateView
 
 
-class SearchView(FormView):
-    form_class = SearchForm
+class SearchView(TemplateView):
     template_name = "schools/search.html"

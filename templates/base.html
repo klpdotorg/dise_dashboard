@@ -39,9 +39,21 @@
 
     <div class="container">
     {% block container %}
+        <div class="row">
+            <div class="col-lg-3">
+                {% block sidebar %}
+                {% endblock %}
+            </div>
+            <div class="col-lg-9">
+                {% block body %}
+                {% endblock %}
+            </div>
+        </div>
     {% endblock %}
     </div><!-- /.container -->
-
+    <script src="//code.jquery.com/jquery-1.9.1.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/js/bootstrap.min.js"></script>
+    {% block javascript %}
+    {% endblock %}
   </body>
 </html>

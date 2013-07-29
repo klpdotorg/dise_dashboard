@@ -1,8 +1,4 @@
 from django import forms
-from .models import YearlyData
+from django.forms.fields import ChoiceField
 
-
-class SearchForm(forms.ModelForm):
-    class Meta:
-        model = YearlyData
-        fields =("management", )
+from .models import YearlyData, AREA

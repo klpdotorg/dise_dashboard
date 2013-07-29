@@ -1,6 +1,62 @@
 {% extends "base.html" %}
 {% load bootstrap %}
 
-{% block container %}
-{{ form|bootstrap }}
+{% block sidebar %}
+<form id="id_form_search" method="GET" action="{% url 'v1_search' %}">
+    <div class="form-group">
+      <label for="exampleInputPassword">Results to show</label>
+      <select name="limit" id="">
+          <option value="20">20</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="1000">1000</option>
+      </select>
+    </div>
+  <fieldset>
+    <legend>General</legend>
+    <div class="form-group">
+      <label for="exampleInputEmail">Area Type</label>
+      <select name="area_type" id="">
+          <option value="">All</option>
+          <option value="1">Rural</option>
+          <option value="2">Urban</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="exampleInputPassword">Building Status</label>
+      <select name="building_status" id="">
+          <option value="">All</option>
+          <option value="1">Private</option>
+          <option value="3">Government</option>
+      </select>
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>Facilities</legend>
+    <div class="checkbox">
+      <label>
+        <input name="no_toilet" type="checkbox"> Doesn't have Toilet
+      </label>
+    </div>
+    <button type="submit" class="btn btn-default">Submit</button>
+  </fieldset>
+</form>
+{% endblock %}
+
+{% block body %}
+<pre>
+<code name="result" id="id_result" class="json">&nbsp;</code>
+</pre>
+{% endblock %}
+
+{% block javascript %}
+<script>
+$('#id_form_search').on('submit', function(e) {
+    e.preventDefault();
+    $.get("{% url 'v1_search' %}", $(this).serialize(), function(data, textStatus) {
+        $('#id_result').html(JSON.stringify(data, null, 4));
+    }, "json");
+    return false;
+})
+</script>
 {% endblock %}
