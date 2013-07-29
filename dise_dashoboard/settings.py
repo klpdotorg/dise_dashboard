@@ -132,6 +132,7 @@ INSTALLED_APPS = (
     # third party
     'south',
     'debug_toolbar',
+    'bootstrapform',
 
     # in-project
     'account',

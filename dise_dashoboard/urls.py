@@ -7,7 +7,8 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'dise_dashoboard.views.home', name='home'),
-    # url(r'^dise_dashoboard/', include('dise_dashoboard.foo.urls')),
+    url(r'^schools/', include('schools.urls')),
+    url(r'^api/v1/', include('schools.v1_urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
