@@ -10,7 +10,7 @@ class JSONResponseMixin(object):
     def get_json_response(self, content, **httpresponse_kwargs):
         "Construct an `HttpResponse` object."
         return http.HttpResponse(content,
-                                 content_type='application/json',
+                                 mimetype='application/json',
                                  **httpresponse_kwargs)
 
     def convert_context_to_json(self, context):

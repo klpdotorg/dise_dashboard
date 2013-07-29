@@ -1,5 +1,8 @@
 from django.views.generic import View, FormView, TemplateView
 from django.db.models import Count, Min, Sum, Avg
+from django.core.serializers.json import DjangoJSONEncoder
+from django.utils import simplejson as json
+from django.core import serializers
 
 from common.views import JSONResponseMixin
 from schools.models import YearlyData, School
@@ -17,11 +20,12 @@ class V1SearchView(View, JSONResponseMixin):
             query['yearlydata__building_status'] = params.get('building_status', '')
 
         limit = int(params.get('limit', 20))
-        yearly_data = School.objects.values('code', 'name', 'pincode', 'year_established')
+        schools = School.objects.order_by('id')
 
         if params.get('no_toilet', 'off') == 'on':
-            yearly_data = yearly_data.annotate(total_toilets=Sum('yearlydata__toilet__count'))
+            schools = schools.annotate(total_toilets=Sum('yearlydata__toilet__count'))
             query['total_toilets'] = 0
 
-        yearly_data = yearly_data.filter(**query).order_by('id')[:limit]
-        return self.render_to_response(list(yearly_data))
+        schools = schools.filter(**query)[:limit]
+        schools_json = serializers.serialize("json", schools)
+        return self.get_json_response(schools_json)
