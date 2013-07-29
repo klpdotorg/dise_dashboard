@@ -4,8 +4,9 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import simplejson as json
 from django.core import serializers
 
+from common import SumCase
 from common.views import JSONResponseMixin
-from schools.models import YearlyData, School, SumCase
+from schools.models import YearlyData, School
 
 
 class V1SearchView(View, JSONResponseMixin):
