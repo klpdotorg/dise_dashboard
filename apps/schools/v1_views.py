@@ -25,6 +25,15 @@ class V1SearchView(View, JSONResponseMixin):
         if params.get('no_electricity', ''):
             schools = schools.filter(yearlydata__electricity_status=search_choices(YESNO, 'No'))
 
+        if params.get('no_library', ''):
+            schools = schools.filter(yearlydata__library_available=search_choices(YESNO, 'No'))
+
+        if params.get('no_ramp', ''):
+            schools = schools.filter(yearlydata__ramp_available=search_choices(YESNO, 'No'))
+
+        if params.get('no_playground', ''):
+            schools = schools.filter(yearlydata__playground_available=search_choices(YESNO, 'No'))
+
         if params.get('no_toilet', 'off') == 'on':
             schools = schools.annotate(total_toilets=Sum('yearlydata__toilet__count'))
             schools = schools.filter(total_toilets=0)
