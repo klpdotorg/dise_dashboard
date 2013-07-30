@@ -12,8 +12,8 @@ from schools.models import YearlyData, School, search_choices, YESNO
 class V1SearchView(View, JSONResponseMixin):
     def get(self, *args, **kwargs):
         params = self.request.GET
-        result = {}
-        schools = School.objects.order_by('id').values('id', 'code', 'name')
+        results = {}
+        schools = School.objects.values('id', 'code', 'name')
         limit = int(params.get('limit', 20))
 
         if params.get('area_type', ''):
@@ -28,6 +28,15 @@ class V1SearchView(View, JSONResponseMixin):
         if params.get('no_toilet', 'off') == 'on':
             schools = schools.annotate(total_toilets=Sum('yearlydata__toilet__count'))
             schools = schools.filter(total_toilets=0)
+
+        if params.get('no_girls_toilet', 'off') == 'on':
+            schools = schools.annotate(
+                girl_toilet_count=SumCase(
+                    'yearlydata__toilet__count',
+                    when='"schools_toilet"."type" = \'girl\''
+                )
+            )
+            schools = schools.filter(girl_toilet_count=0)
 
         if params.get('needs_repair', 'off') == 'on':
             schools = schools.annotate(
