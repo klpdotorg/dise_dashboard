@@ -4,7 +4,14 @@
 {% block sidebar %}
 <form id="id_form_search" method="GET" action="{% url 'v1_search' %}">
     <div class="form-group">
-      <label for="exampleInputPassword">Results to show</label>
+      <label for="">Academic Years</label>
+      <select name="year" id="">
+          <option value="1">2010-2011</option>
+          <option value="2">2011-2012</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="">Results to show</label>
       <select name="limit" id="">
           <option value="20">20</option>
           <option value="50">50</option>
@@ -15,7 +22,7 @@
   <fieldset>
     <legend>General</legend>
     <div class="form-group">
-      <label for="exampleInputEmail">Area Type</label>
+      <label for="">Area Type</label>
       <select name="area_type" id="">
           <option value="">All</option>
           <option value="1">Rural</option>
@@ -23,7 +30,7 @@
       </select>
     </div>
     <div class="form-group">
-      <label for="exampleInputPassword">Building Status</label>
+      <label for="">Building Status</label>
       <select name="building_status" id="">
           <option value="">All</option>
           <option value="1">Private</option>
@@ -66,6 +73,16 @@
     <div class="checkbox">
       <label>
         <input name="no_playground" type="checkbox"> Doesn't Have Playground
+      </label>
+    </div>
+    <div class="checkbox">
+      <label>
+        <input name="no_medical" type="checkbox"> Doesn't Have Medical Checkup
+      </label>
+    </div>
+    <div class="checkbox">
+      <label>
+        <input name="no_water" type="checkbox"> Doesn't Have Drinking Water
       </label>
     </div>
     <button type="submit" class="btn btn-default">Search</button>

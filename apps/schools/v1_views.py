@@ -16,6 +16,9 @@ class V1SearchView(View, JSONResponseMixin):
         schools = School.objects.values('id', 'code', 'name')
         limit = int(params.get('limit', 20))
 
+        if params.get('year', ''):
+            schools = schools.filter(yearlydata__academic_year__id=params.get('year', ''))
+
         if params.get('area_type', ''):
             schools = schools.filter(yearlydata__area_type=params.get('area_type', ''))
 
@@ -33,6 +36,12 @@ class V1SearchView(View, JSONResponseMixin):
 
         if params.get('no_playground', ''):
             schools = schools.filter(yearlydata__playground_available=search_choices(YESNO, 'No'))
+
+        if params.get('no_medical', ''):
+            schools = schools.filter(yearlydata__medical_checkup=search_choices(YESNO, 'No'))
+
+        if params.get('no_water', ''):
+            schools = schools.filter(yearlydata__drinking_water_source__name__iexact="None")
 
         if params.get('no_toilet', 'off') == 'on':
             schools = schools.annotate(total_toilets=Sum('yearlydata__toilet__count'))
