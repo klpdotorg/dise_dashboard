@@ -2,6 +2,18 @@ from django.db import models
 
 from common.models import BaseModel
 
+def search_choices(t, value):
+    """
+    looks for index in a tuple of tuples
+
+    >>> search_choices(YESNO, 'Yes')
+    1
+
+    """
+    for k, v in t:
+        if v == value:
+            return k
+    return False
 
 AREA = (
     (1, 'Rural'),

@@ -6,13 +6,13 @@ from django.core import serializers
 
 from common import SumCase
 from common.views import JSONResponseMixin
-from schools.models import YearlyData, School
+from schools.models import YearlyData, School, search_choices, YESNO
 
 
 class V1SearchView(View, JSONResponseMixin):
     def get(self, *args, **kwargs):
         params = self.request.GET
-        query = {}
+        result = {}
         schools = School.objects.order_by('id').values('id', 'code', 'name')
         limit = int(params.get('limit', 20))
 
@@ -22,6 +22,9 @@ class V1SearchView(View, JSONResponseMixin):
         if params.get('building_status', ''):
             schools = schools.filter(yearlydata__building_status=params.get('building_status', ''))
 
+        if params.get('no_electricity', ''):
+            schools = schools.filter(yearlydata__electricity_status=search_choices(YESNO, 'No'))
+
         if params.get('no_toilet', 'off') == 'on':
             schools = schools.annotate(total_toilets=Sum('yearlydata__toilet__count'))
             schools = schools.filter(total_toilets=0)
@@ -30,7 +33,7 @@ class V1SearchView(View, JSONResponseMixin):
             schools = schools.annotate(
                 repair_count=SumCase(
                     'yearlydata__room__count',
-                    when='"schools_room"."type" = \'class\' AND "schools_room"."condition" IN (\'minor\', \'major\')'
+                    when='"schools_room"."type" = \'class\' AND "schools_room"."condition" <> \'good\''
                 )
             )
             schools = schools.filter(repair_count__gt=0)
@@ -38,4 +41,8 @@ class V1SearchView(View, JSONResponseMixin):
         schools = schools[:limit]
         print schools.query
         # schools_json = serializers.serialize("json", schools)
-        return self.render_to_response(list(schools))
+        results = {
+            'count': limit,
+            'results': list(schools)
+        }
+        return self.render_to_response(results)
