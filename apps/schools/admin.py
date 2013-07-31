@@ -3,13 +3,21 @@ from django.contrib import admin
 from .models import *
 
 
-class RoomAdmin(admin.TabularInline):
-    model = Room
+class BaseTabularAdmin(admin.TabularInline):
     readonly_fields = ("date_created", "date_modified",)
 
-class ToiletAdmin(admin.TabularInline):
+
+class RoomAdmin(BaseTabularAdmin):
+    model = Room
+
+
+class ToiletAdmin(BaseTabularAdmin):
     model = Toilet
-    readonly_fields = ("date_created", "date_modified",)
+
+
+class EnrolmentAdmin(BaseTabularAdmin):
+    model = Enrolment
+
 
 
 class YearlyDataAdmin(admin.ModelAdmin):
@@ -19,7 +27,7 @@ class YearlyDataAdmin(admin.ModelAdmin):
     list_display = (
         "school", "academic_year", "area_type", "type"
     )
-    inlines = (RoomAdmin, ToiletAdmin, )
+    inlines = (RoomAdmin, ToiletAdmin, EnrolmentAdmin)
 admin.site.register(YearlyData, YearlyDataAdmin)
 
 admin.site.register([

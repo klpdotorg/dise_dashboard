@@ -134,6 +134,28 @@ class YearlyData(BaseModel):
         ordering = ('id', )
 
 
+class Enrolment(BaseModel):
+    yearly_data = models.ForeignKey('YearlyData')
+    klass = models.IntegerField(db_index=True, default=0)
+    general_boys = models.IntegerField(default=0)
+    general_girls = models.IntegerField(default=0)
+    sc_boys = models.IntegerField(default=0)
+    sc_girls = models.IntegerField(default=0)
+    st_boys = models.IntegerField(default=0)
+    st_girls = models.IntegerField(default=0)
+    obc_boys = models.IntegerField(default=0)
+    obc_girls = models.IntegerField(default=0)
+    disabled_boys = models.IntegerField(default=0)
+    disabled_girls = models.IntegerField(default=0)
+    repeaters_boys = models.IntegerField(default=0)
+    repeaters_girls = models.IntegerField(default=0)
+    total_boys = models.IntegerField(db_index=True, default=0)
+    total_girls = models.IntegerField(db_index=True, default=0)
+
+    class Meta:
+        unique_together = ("yearly_data", "klass")
+
+
 class Room(BaseModel):
     yearly_data = models.ForeignKey('YearlyData')
     type = models.CharField(max_length=20, choices=ROOM_TYPES)
