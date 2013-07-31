@@ -17,7 +17,7 @@ class V1SearchView(View, JSONResponseMixin):
         limit = int(params.get('limit', 20))
 
         if params.get('year', ''):
-            schools = schools.filter(yearlydata__academic_year__id=params.get('year', ''))
+            schools = schools.filter(yearlydata__academic_year_id=params.get('year', ''))
 
         if params.get('area_type', ''):
             schools = schools.filter(yearlydata__area_type=params.get('area_type', ''))
@@ -69,7 +69,6 @@ class V1SearchView(View, JSONResponseMixin):
         print schools.query
         # schools_json = serializers.serialize("json", schools)
         results = {
-            'count': limit,
             'results': list(schools)
         }
         return self.render_to_response(results)
