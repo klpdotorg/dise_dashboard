@@ -15,33 +15,37 @@ class V1SearchView(View, JSONResponseMixin):
         results = {}
         schools = School.objects.values('id', 'code', 'name')
         limit = int(params.get('limit', 20))
+        query = {}
 
         if params.get('year', ''):
-            schools = schools.filter(yearlydata__academic_year_id=params.get('year', ''))
+            query['yearlydata__academic_year_id'] = params.get('year', '')
 
         if params.get('area_type', ''):
-            schools = schools.filter(yearlydata__area_type=params.get('area_type', ''))
+            query['yearlydata__area_type'] = params.get('area_type', '')
 
         if params.get('building_status', ''):
-            schools = schools.filter(yearlydata__building_status=params.get('building_status', ''))
+            query['yearlydata__building_status'] = params.get('building_status', '')
 
         if params.get('no_electricity', ''):
-            schools = schools.filter(yearlydata__electricity_status=search_choices(YESNO, 'No'))
+            query['yearlydata__electricity_status'] = search_choices(YESNO, 'No')
 
         if params.get('no_library', ''):
-            schools = schools.filter(yearlydata__library_available=search_choices(YESNO, 'No'))
+            query['yearlydata__library_available'] = search_choices(YESNO, 'No')
 
         if params.get('no_ramp', ''):
-            schools = schools.filter(yearlydata__ramp_available=search_choices(YESNO, 'No'))
+            query['yearlydata__ramp_available'] = search_choices(YESNO, 'No')
 
         if params.get('no_playground', ''):
-            schools = schools.filter(yearlydata__playground_available=search_choices(YESNO, 'No'))
+            query['yearlydata__playground_available'] = search_choices(YESNO, 'No')
 
         if params.get('no_medical', ''):
-            schools = schools.filter(yearlydata__medical_checkup=search_choices(YESNO, 'No'))
+            query['yearlydata__medical_checkup'] = search_choices(YESNO, 'No')
 
         if params.get('no_water', ''):
-            schools = schools.filter(yearlydata__drinking_water_source__name__iexact="None")
+            query['yearlydata__drinking_water_source__name__iexact'] = "None"
+
+        # All the non-aggregation non-annotation queries go above this
+        schools = schools.filter(**query)
 
         if params.get('no_toilet', 'off') == 'on':
             schools = schools.annotate(total_toilets=Sum('yearlydata__toilet__count'))
