@@ -1,5 +1,5 @@
 from django.views.generic import View, FormView, TemplateView
-from django.db.models import Count, Min, Sum, Avg
+from django.db.models import Count, Min, Sum, Avg, F
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import simplejson as json
 from django.core import serializers
@@ -51,6 +51,17 @@ class V1SearchView(View, JSONResponseMixin):
             schools = schools.annotate(total_toilets=Sum('yearlydata__toilet__count'))
             schools = schools.filter(total_toilets=0)
 
+        if params.get('girl_boy_ratio', 'off') == 'on':
+            schools = schools.annotate(
+                total_girls=Sum('yearlydata__enrolment__total_girls'),
+                total_boys=Sum('yearlydata__enrolment__total_boys'),
+            )
+            schools = schools.extra(
+                where=[
+                    '"total_girls" < "total_boys"'
+                ]
+            )
+
         if params.get('no_girls_toilet', 'off') == 'on':
             schools = schools.annotate(
                 girl_toilet_count=SumCase(
@@ -67,7 +78,7 @@ class V1SearchView(View, JSONResponseMixin):
                     when='"schools_room"."type" = \'class\' AND "schools_room"."condition" <> \'good\''
                 )
             )
-            schools = schools.filter(repair_count__gt=0)
+            schools = schools.filter(repair_count__gt=0).order_by('-repair_count')
 
         schools = schools[:limit]
         print schools.query
