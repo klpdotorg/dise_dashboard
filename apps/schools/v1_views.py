@@ -42,7 +42,9 @@ class V1SearchView(View, JSONResponseMixin):
             query['yearlydata__medical_checkup'] = search_choices(YESNO, 'No')
 
         if params.get('no_water', ''):
-            query['yearlydata__drinking_water_source__name__iexact'] = "None"
+            # 5 should be the id of "None" source
+            # using `id` because it's indexed
+            query['yearlydata__drinking_water_source_id'] = 5
 
         # All the non-aggregation non-annotation queries go above this
         schools = schools.filter(**query)
@@ -58,6 +60,7 @@ class V1SearchView(View, JSONResponseMixin):
             )
             schools = schools.extra(
                 where=[
+                    '"total_boys" > 0',
                     '"total_girls" < "total_boys"'
                 ]
             )
