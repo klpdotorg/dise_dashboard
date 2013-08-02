@@ -38,9 +38,9 @@
       </select>
     </div>
   </fieldset>
+  <a class="check-all" href="javascript:void(0)">Select All</a> | <a class="uncheck-all" href="javascript:void(0)">Deselect All</a>
   <fieldset>
     <legend>Facilities</legend>
-    <a href="javascript:void(0)">Select All</a> | <a href="javascript:void(0)">Deselect All</a>
     <div class="checkbox">
       <label>
         <input name="needs_repair" type="checkbox"> Classrooms needs repair
@@ -126,6 +126,12 @@ $('#id_form_search').on('submit', function(e) {
         $('#time_taken').html("It took " + request_time + "ms");
     }, "json");
     return false;
-})
+});
+$('.check-all').on('click', function(e){
+    $('input[type=checkbox]').prop('checked', true);
+});
+$('.uncheck-all').on('click', function(e){
+    $('input[type=checkbox]').prop('checked', false);
+});
 </script>
 {% endblock %}
