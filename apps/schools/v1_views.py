@@ -41,6 +41,9 @@ class V1SearchView(View, JSONResponseMixin):
         if params.get('no_medical', ''):
             query['yearlydata__medical_checkup'] = search_choices(YESNO, 'No')
 
+        if params.get('no_room_hm', ''):
+            query['yearlydata__room_for_headmaster'] = search_choices(YESNO, 'No')
+
         if params.get('no_water', ''):
             # 5 should be the id of "None" source
             # using `id` because it's indexed
