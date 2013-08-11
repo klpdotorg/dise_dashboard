@@ -7,17 +7,16 @@ class BaseTabularAdmin(admin.TabularInline):
     readonly_fields = ("date_created", "date_modified",)
 
 
-class RoomAdmin(BaseTabularAdmin):
+class RoomTabularAdmin(BaseTabularAdmin):
     model = Room
 
 
-class ToiletAdmin(BaseTabularAdmin):
+class ToiletTabularAdmin(BaseTabularAdmin):
     model = Toilet
 
 
-class EnrolmentAdmin(BaseTabularAdmin):
+class EnrolmentTabularAdmin(BaseTabularAdmin):
     model = Enrolment
-
 
 
 class YearlyDataAdmin(admin.ModelAdmin):
@@ -27,7 +26,7 @@ class YearlyDataAdmin(admin.ModelAdmin):
     list_display = (
         "school", "academic_year", "area_type", "type"
     )
-    inlines = (RoomAdmin, ToiletAdmin, EnrolmentAdmin)
+    inlines = (RoomTabularAdmin, ToiletTabularAdmin, EnrolmentTabularAdmin)
 admin.site.register(YearlyData, YearlyDataAdmin)
 
 admin.site.register([
