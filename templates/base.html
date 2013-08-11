@@ -21,6 +21,8 @@
         max-width: 900px;
     }
     </style>
+    {% block end-head %}
+    {% endblock %}
   </head>
 
   <body>
@@ -60,6 +62,8 @@
     <script src="//code.jquery.com/jquery-1.9.1.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/js/bootstrap.min.js"></script>
     {% block javascript %}
+    {% endblock %}
+    {% block end-body %}
     {% endblock %}
   </body>
 </html>

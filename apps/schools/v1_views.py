@@ -23,8 +23,11 @@ class V1SearchView(View, JSONResponseMixin):
         if params.get('area_type', ''):
             query['yearlydata__area_type'] = params.get('area_type', '')
 
-        if params.get('building_status', ''):
-            query['yearlydata__building_status'] = params.get('building_status', '')
+        if params.get('management', ''):
+            if params.get('management') == 'govt':
+                query['yearlydata__management_id__in'] = [1, 7]
+            elif params.get('management') == 'pvt':
+                query['yearlydata__management_id__in'] = [2, 3, 4, 5, 6, 8, 9, 97, 98]
 
         if params.get('no_electricity', ''):
             query['yearlydata__electricity_status'] = search_choices(YESNO, 'No')

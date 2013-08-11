@@ -190,6 +190,10 @@ class SchoolManaagement(models.Model):
     def __unicode__(self):
         return u"%s" % self.name
 
+    class Meta:
+        verbose_name = "School Management"
+        verbose_name_plural = "School Managements"
+
 
 class SchoolCategory(models.Model):
     id = models.IntegerField(primary_key=True)
