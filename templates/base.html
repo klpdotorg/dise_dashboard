@@ -9,7 +9,7 @@
     <title>DISE for KLP</title>
 
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css">
     <style type="text/css">
     body > .container {
         margin: 70px auto;
@@ -60,7 +60,7 @@
     {% endblock %}
     </div><!-- /.container -->
     <script src="{{ STATIC_URL }}js/jquery-1.9.1.min.js"></script>
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/js/bootstrap.min.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
     {% block javascript %}
     {% endblock %}
     {% block end-body %}
