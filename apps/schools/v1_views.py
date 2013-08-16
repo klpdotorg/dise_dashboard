@@ -1,12 +1,12 @@
 from django.views.generic import View, FormView, TemplateView
-from django.db.models import Count, Min, Sum, Avg, F
+from django.db.models import Count, Min, Sum, Avg, F, Q
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import simplejson as json
 from django.core import serializers
 
 from common import SumCase
 from common.views import JSONResponseMixin
-from schools.models import YearlyData, School, search_choices, YESNO
+from schools.models import YearlyData, School, SchoolManaagement, DrinkingWaterSource, search_choices, YESNO
 
 
 class V1SearchView(View, JSONResponseMixin):
@@ -25,9 +25,17 @@ class V1SearchView(View, JSONResponseMixin):
 
         if params.get('management', ''):
             if params.get('management') == 'govt':
-                query['yearlydata__management_id__in'] = [1, 7]
+                govt_mgmt = SchoolManaagement.objects.filter(
+                    Q(name__iexact='Department of Education') |
+                    Q(name__iexact='Central Govt.')
+                )
+                query['yearlydata__management_id__in'] = govt_mgmt
             elif params.get('management') == 'pvt':
-                query['yearlydata__management_id__in'] = [2, 3, 4, 5, 6, 8, 9, 97, 98]
+                pvt_mgmt = govt_mgmt = SchoolManaagement.objects.exclude(
+                    Q(name__iexact='Department of Education') |
+                    Q(name__iexact='Central Govt.')
+                )
+                query['yearlydata__management_id__in'] = pvt_mgmt
 
         if params.get('no_electricity', ''):
             query['yearlydata__electricity_status'] = search_choices(YESNO, 'No')
@@ -48,9 +56,11 @@ class V1SearchView(View, JSONResponseMixin):
             query['yearlydata__room_for_headmaster'] = search_choices(YESNO, 'No')
 
         if params.get('no_water', ''):
-            # 5 should be the id of "None" source
-            # using `id` because it's indexed
-            query['yearlydata__drinking_water_source_id'] = 5
+            try:
+                query['yearlydata__drinking_water_source'] = DrinkingWaterSource.objects.get(name__iexact="None")
+            except:
+                # 5 should be the id of "None" source
+                query['yearlydata__drinking_water_source_id'] = 5
 
         # All the non-aggregation non-annotation queries go above this
         schools = schools.filter(**query)
