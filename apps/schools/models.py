@@ -122,6 +122,7 @@ class YearlyData(BaseModel):
     playground_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
 
     computer_count = models.IntegerField(default=0)
+    blackboard_count = models.IntegerField(default=0)
     cal_lab_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
     medical_checkup = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
     ramp_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
