@@ -32,7 +32,7 @@ class V1SearchView(View, JSONResponseMixin):
                 )
                 query['yearlydata__management_id__in'] = govt_mgmt
             elif params.get('management') == 'pvt':
-                pvt_mgmt = govt_mgmt = SchoolManaagement.objects.exclude(
+                pvt_mgmt = SchoolManaagement.objects.exclude(
                     Q(name__iexact='Department of Education') |
                     Q(name__iexact='Central Govt.')
                 )
