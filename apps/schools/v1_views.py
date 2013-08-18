@@ -51,6 +51,9 @@ class V1SearchView(View, JSONResponseMixin):
         if params.get('no_ramp', ''):
             query['yearlydata__ramp_available'] = search_choices(YESNO, 'No')
 
+        if params.get('no_blackboard', ''):
+            query['yearlydata__blackboard_count'] = 0
+
         if params.get('no_playground', ''):
             query['yearlydata__playground_available'] = search_choices(YESNO, 'No')
 

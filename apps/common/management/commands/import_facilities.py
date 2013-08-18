@@ -111,64 +111,80 @@ class Command(BaseCommand):
         yearly_data.library_book_count = int(row[self.INDEXES['Books_in_library']])
         yearly_data.playground_available = int(row[self.INDEXES['PlayGround']])
         yearly_data.computer_count = int(row[self.INDEXES['No_of_Computers']])
+        yearly_data.blackboard_count = int(row[self.INDEXES['Blackboard']])
         yearly_data.cal_lab_available = int(row[self.INDEXES['Computer_Aided_Learnin_Lab']])
         yearly_data.medical_checkup = int(row[self.INDEXES['Medical_Checkup']])
         yearly_data.ramp_available = int(row[self.INDEXES['Ramps']])
+        yearly_data.save()
 
-        clroom_good = Room.objects.create(
+        clroom_good = Room.objects.get_or_create(
             yearly_data=yearly_data,
             type='class',
             condition='good',
-            count=int(row[self.INDEXES['Classrooms_in_Good_Condition']])
         )
-        clroom_major = Room.objects.create(
+        clroom_good.count = int(row[self.INDEXES['Classrooms_in_Good_Condition']])
+        clroom_good.save()
+
+        clroom_major = Room.objects.get_or_create(
             yearly_data=yearly_data,
             type='class',
             condition='major',
-            count=int(row[self.INDEXES['Classrooms_require_major_repair']])
         )
-        clroom_minor = Room.objects.create(
+        clroom_major.count = int(row[self.INDEXES['Classrooms_require_major_repair']])
+        clroom_major.save()
+
+        clroom_minor = Room.objects.get_or_create(
             yearly_data=yearly_data,
             type='class',
             condition='minor',
-            count=int(row[self.INDEXES['Classrooms_require_minor_repair']])
         )
-        other_room_good = Room.objects.create(
+        clroom_minor.count = int(row[self.INDEXES['Classrooms_require_minor_repair']])
+        clroom_minor.save()
+
+        other_room_good = Room.objects.get_or_create(
             yearly_data=yearly_data,
             type='other',
             condition='good',
-            count=int(row[self.INDEXES['Other_rooms_in_Good_Cond']])
         )
-        other_room_major = Room.objects.create(
+        other_room_good.count = int(row[self.INDEXES['Other_rooms_in_Good_Cond']])
+        other_room_good.save()
+
+        other_room_major = Room.objects.get_or_create(
             yearly_data=yearly_data,
             type='other',
             condition='major',
-            count=int(row[self.INDEXES['Other_rooms_need_major_rep']])
         )
-        other_room_minor = Room.objects.create(
+        other_room_major.count = int(row[self.INDEXES['Other_rooms_need_major_rep']])
+        other_room_major.save()
+
+        other_room_minor = Room.objects.get_or_create(
             yearly_data=yearly_data,
             type='other',
             condition='minor',
-            count=int(row[self.INDEXES['Other_rooms_need_minor_rep']])
         )
+        other_room_minor.count = int(row[self.INDEXES['Other_rooms_need_minor_rep']])
+        other_room_minor.save()
 
-        toilet_common = Toilet.objects.create(
+        toilet_common = Toilet.objects.get_or_create(
             yearly_data=yearly_data,
             type='common',
-            count=int(row[self.INDEXES['Toilet_Common']])
         )
-        toilet_boys = Toilet.objects.create(
+        toilet_common.count = int(row[self.INDEXES['Toilet_Common']])
+        toilet_common.save()
+
+        toilet_boys = Toilet.objects.get_or_create(
             yearly_data=yearly_data,
             type='boy',
-            count=int(row[self.INDEXES['Toilet_Boys']])
         )
-        toilet_girls = Toilet.objects.create(
+        toilet_boys.count = int(row[self.INDEXES['Toilet_Boys']])
+        toilet_boys.save()
+
+        toilet_girls = Toilet.objects.get_or_create(
             yearly_data=yearly_data,
             type='girl',
-            count=int(row[self.INDEXES['Toilet_Girls']])
         )
-
-        yearly_data.save()
+        toilet_girls.count = int(row[self.INDEXES['Toilet_Girls']])
+        toilet_girls.save()
 
     def handle(self, *args, **options):
         year = None
