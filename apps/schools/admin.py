@@ -4,7 +4,7 @@ from .models import *
 
 
 class BaseTabularAdmin(admin.TabularInline):
-    readonly_fields = ("date_created", "date_modified",)
+    exclude = ("date_created", "date_modified",)
 
 
 class RoomTabularAdmin(BaseTabularAdmin):
@@ -19,6 +19,10 @@ class EnrolmentTabularAdmin(BaseTabularAdmin):
     model = Enrolment
 
 
+class TeacherCountTabularAdmin(BaseTabularAdmin):
+    model = TeacherCount
+
+
 class YearlyDataAdmin(admin.ModelAdmin):
     raw_id_fields = ("academic_year", "school", "cluster", "village",)
     readonly_fields = ("date_created", "date_modified",)
@@ -26,7 +30,12 @@ class YearlyDataAdmin(admin.ModelAdmin):
     list_display = (
         "school", "academic_year", "area_type", "type"
     )
-    inlines = (RoomTabularAdmin, ToiletTabularAdmin, EnrolmentTabularAdmin)
+    inlines = (
+        RoomTabularAdmin,
+        ToiletTabularAdmin,
+        EnrolmentTabularAdmin,
+        TeacherCountTabularAdmin
+    )
 admin.site.register(YearlyData, YearlyDataAdmin)
 
 admin.site.register([

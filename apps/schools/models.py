@@ -157,6 +157,17 @@ class Enrolment(BaseModel):
         unique_together = ("yearly_data", "klass")
 
 
+class TeacherCount(BaseModel):
+    yearly_data = models.OneToOneField('YearlyData')
+    male = models.IntegerField(default=0)
+    female = models.IntegerField(default=0)
+    noresp = models.IntegerField("No Responsibility", default=0)
+    graduate = models.IntegerField(default=0)
+    with_prof_qual = models.IntegerField("With Professional Qualification", default=0)
+    days_in_non_tch = models.IntegerField(default=0)
+    involved_in_non_tch = models.IntegerField(default=0)
+
+
 class Room(BaseModel):
     yearly_data = models.ForeignKey('YearlyData')
     type = models.CharField(max_length=20, choices=ROOM_TYPES)
