@@ -50,6 +50,22 @@ TOILET_TYPES = (
     ('girl', 'Girls')
 )
 
+MDM_STATUS = (
+    (0, 'Not applicable'),
+    (1, 'Not provided'),
+    (2, 'Provided & prepared in school premises'),
+    (3, 'Provided but not prepared in school premises')
+)
+
+KITCHENSHED_STATUS = (
+    (0, 'not applicable'),
+    (1, 'available'),
+    (2, 'not available'),
+    (3, 'UNder construction'),
+    (4, 'classroom used as kitchen'),
+)
+
+
 class AcademicYear(models.Model):
     from_year = models.SmallIntegerField()
     to_year = models.SmallIntegerField()
@@ -126,6 +142,18 @@ class YearlyData(BaseModel):
     cal_lab_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
     medical_checkup = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
     ramp_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
+
+    sdmc_constituted = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
+    sdmc_meeting_count = models.IntegerField(default=0)
+
+    textbook_received = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
+    textbook_received_date = models.DateField(blank=True, null=True)
+
+    weakersec_children_applied = models.IntegerField(default=0)
+    weakersec_children_enrolled = models.IntegerField(default=0)
+
+    middaymeal_status = models.SmallIntegerField(choices=MDM_STATUS, blank=True, null=True)
+    kitchenshed_status = models.SmallIntegerField(choices=KITCHENSHED_STATUS, blank=True, null=True)
 
     def __unicode__(self):
         return u"%s (%s)" % (self.school, self.academic_year)
