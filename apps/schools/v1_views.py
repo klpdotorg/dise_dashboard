@@ -7,7 +7,7 @@ from django.core import serializers
 from common import SumCase
 from common.views import JSONResponseMixin
 from schools.models import YearlyData, School, SchoolManaagement,\
-DrinkingWaterSource, BoundaryWallType, search_choices, YESNO
+DrinkingWaterSource, BoundaryWallType, search_choices, YESNO, MDM_STATUS
 
 
 class V1SearchView(View, JSONResponseMixin):
@@ -44,6 +44,12 @@ class V1SearchView(View, JSONResponseMixin):
         if params.get('no_secure_wall', ''):
             insecure_wall_types = BoundaryWallType.objects.exclude(name__iexact="Pucca")
             query['yearlydata__boundary_wall_type_id__in'] = insecure_wall_types
+
+        if params.get('no_mdm', ''):
+            query['yearlydata__middaymeal_status__in'] = [
+                search_choices(MDM_STATUS, 'Not applicable'),
+                search_choices(MDM_STATUS, 'Not provided'),
+            ]
 
         if params.get('no_library', ''):
             query['yearlydata__library_available'] = search_choices(YESNO, 'No')
