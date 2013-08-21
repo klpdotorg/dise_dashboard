@@ -69,6 +69,18 @@ class V1SearchView(View, JSONResponseMixin):
         if params.get('no_room_hm', ''):
             query['yearlydata__room_for_headmaster'] = search_choices(YESNO, 'No')
 
+        if params.get('no_sdmc_constituted', ''):
+            query['yearlydata__sdmc_constituted'] = search_choices(YESNO, 'No')
+
+        if params.get('no_sdmc_meeting', ''):
+            query['yearlydata__sdmc_meeting_count'] = 0
+
+        if params.get('no_textbook', ''):
+            query['yearlydata__textbook_received'] = search_choices(YESNO, 'No')
+
+        if params.get('weakersec_children_enrolled', ''):
+            query['yearlydata__weakersec_children_enrolled__gt'] = 0
+
         if params.get('no_water', ''):
             try:
                 query['yearlydata__drinking_water_source'] = DrinkingWaterSource.objects.get(name__iexact="None")
