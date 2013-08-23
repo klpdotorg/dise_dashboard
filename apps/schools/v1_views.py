@@ -11,6 +11,9 @@ from schools.models import YearlyData, School, SchoolManaagement,\
 DrinkingWaterSource, BoundaryWallType, search_choices, YESNO, MDM_STATUS
 
 
+DEFAULT_LIMIT = 20
+
+
 def ptr_filtered_ids(ptr=35):
     """
     Returns list of school codes that have ptr more than given
@@ -30,7 +33,12 @@ class V1SearchView(View, JSONResponseMixin):
         params = self.request.GET
         results = {}
         schools = School.objects.values('id', 'code', 'name')
-        limit = int(params.get('limit', 20))
+
+        try:
+            limit = int(params.get('limit', DEFAULT_LIMIT))
+        except ValueError:
+            limit = DEFAULT_LIMIT
+
         filters = params.getlist('filters')
         query = {}
 
