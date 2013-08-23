@@ -68,6 +68,7 @@ class Command(BaseCommand):
                         klass=klass,
                         total_boys=int(row[self.INDEXES['Class%s_Total_Enr_Boys' % klass]]),
                         total_girls=int(row[self.INDEXES['Class%s_Total_Enr_Girls' % klass]]),
+                        total=int(row[self.INDEXES['Class%s_Total_Enr_Boys' % klass]]) + int(row[self.INDEXES['Class%s_Total_Enr_Girls' % klass]]),
                         date_created=datetime.now(),
                         date_modified=datetime.now()
                     )
