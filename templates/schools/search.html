@@ -2,161 +2,197 @@
 {% load bootstrap %}
 
 {% block sidebar %}
-<form id="id_form_search" method="GET" action="{% url 'v1_search' %}">
-    <div class="form-group">
-      <label for="">Academic Years</label>
-      <select name="year" id="">
-          <option value="1">2010-2011</option>
-          <option value="2">2011-2012</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="">Results to show</label>
-      <select name="limit" id="">
-          <option value="20">20</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-          <option value="1000">1000</option>
-      </select>
-    </div>
+<form action="{% url 'v1_search' %}" id="id_form_search" method="get" name="id_form_search">
+  <div class="form-group">
+    <label for="">Academic Years</label> <select id="" name="year">
+      <option value="1">
+        2010-2011
+      </option>
+
+      <option value="2">
+        2011-2012
+      </option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="">Results to show</label> <select id="" name="limit">
+      <option value="20">
+        20
+      </option>
+
+      <option value="50">
+        50
+      </option>
+
+      <option value="100">
+        100
+      </option>
+
+      <option value="1000">
+        1000
+      </option>
+    </select>
+  </div>
+
   <fieldset>
     <legend>General</legend>
+
     <div class="form-group">
-      <label for="">Area Type</label>
-      <select name="area_type" id="">
-          <option value="">All</option>
-          <option value="1">Rural</option>
-          <option value="2">Urban</option>
+      <label for="">Area Type</label> <select id="" name="area_type">
+        <option value="">
+          All
+        </option>
+
+        <option value="1">
+          Rural
+        </option>
+
+        <option value="2">
+          Urban
+        </option>
       </select>
     </div>
+
     <div class="form-group">
-      <label for="">Management</label>
-      <select name="management" id="">
-          <option value="">All</option>
-          <option value="pvt">Private</option>
-          <option value="govt">Government</option>
+      <label for="">Management</label> <select id="" name="management">
+        <option value="">
+          All
+        </option>
+
+        <option value="pvt">
+          Private
+        </option>
+
+        <option value="govt">
+          Government
+        </option>
       </select>
     </div>
-  </fieldset>
-  <a class="check-all" href="javascript:void(0)">Select All</a> | <a class="uncheck-all" href="javascript:void(0)">Deselect All</a>
+  </fieldset><a class="check-all" href="javascript:void(0)">Select All</a> |
+  <a class="uncheck-all" href="javascript:void(0)">Deselect All</a>
+
   <fieldset>
     <legend>Facilities</legend>
+
     <div class="checkbox">
-      <label>
-        <input name="filters" value="needs_repair" type="checkbox"> Classrooms needs repair
-      </label>
+      <label><input name="filters" type="checkbox" value="needs_repair">
+      Classrooms needs repair</label>
     </div>
+
     <div class="checkbox">
-      <label>
-        <input name="filters" value="no_toilet" type="checkbox"> Doesn't have Toilet
-      </label>
+      <label><input name="filters" type="checkbox" value="no_toilet"> Doesn't
+      have Toilet</label>
     </div>
+
     <div class="checkbox">
-      <label>
-        <input name="filters" value="no_girls_toilet" type="checkbox"> Doesn't have Girls' Toilet
-      </label>
+      <label><input name="filters" type="checkbox" value="no_girls_toilet">
+      Doesn't have Girls' Toilet</label>
     </div>
+
     <div class="checkbox">
-      <label>
-        <input name="filters" value="no_electricity" type="checkbox"> Doesn't Have Electricity
-      </label>
+      <label><input name="filters" type="checkbox" value="no_electricity">
+      Doesn't Have Electricity</label>
     </div>
+
     <div class="checkbox">
-      <label>
-        <input name="filters" value="no_secure_wall" type="checkbox"> Doesn't Have Secure Wall
-      </label>
+      <label><input name="filters" type="checkbox" value="no_secure_wall">
+      Doesn't Have Secure Wall</label>
     </div>
+
     <div class="checkbox">
-      <label>
-        <input name="filters" value="no_mdm" type="checkbox"> Doesn't Have Mid-day meal
-      </label>
+      <label><input name="filters" type="checkbox" value="no_mdm"> Doesn't
+      Have Mid-day meal</label>
     </div>
+
     <div class="checkbox">
-      <label>
-        <input name="filters" value="no_library" type="checkbox"> Doesn't Have Library
-      </label>
+      <label><input name="filters" type="checkbox" value="no_library">
+      Doesn't Have Library</label>
     </div>
+
     <div class="checkbox">
-      <label>
-        <input name="filters" value="no_ramp" type="checkbox"> Doesn't Have Ramp
-      </label>
+      <label><input name="filters" type="checkbox" value="no_ramp"> Doesn't
+      Have Ramp</label>
     </div>
+
     <div class="checkbox">
-      <label>
-        <input name="filters" value="no_blackboard" type="checkbox"> Doesn't Have Blackboard
-      </label>
+      <label><input name="filters" type="checkbox" value="no_blackboard">
+      Doesn't Have Blackboard</label>
     </div>
+
     <div class="checkbox">
-      <label>
-        <input name="filters" value="no_playground" type="checkbox"> Doesn't Have Playground
-      </label>
+      <label><input name="filters" type="checkbox" value="no_playground">
+      Doesn't Have Playground</label>
     </div>
+
     <div class="checkbox">
-      <label>
-        <input name="filters" value="no_medical" type="checkbox"> Doesn't Have Medical Checkup
-      </label>
+      <label><input name="filters" type="checkbox" value="no_medical">
+      Doesn't Have Medical Checkup</label>
     </div>
+
     <div class="checkbox">
-      <label>
-        <input name="filters" value="no_water" type="checkbox"> Doesn't Have Drinking Water
-      </label>
+      <label><input name="filters" type="checkbox" value="no_water"> Doesn't
+      Have Drinking Water</label>
     </div>
   </fieldset>
+
   <fieldset>
-      <legend>Teachers</legend>
-      <div class="checkbox">
-      <label>
-        <input name="filters" value="no_room_hm" type="checkbox"> Without separate room for HM
-      </label>
+    <legend>Teachers</legend>
+
+    <div class="checkbox">
+      <label><input name="filters" type="checkbox" value="no_room_hm">
+      Without separate room for HM</label>
     </div>
-      <div class="checkbox">
-      <label>
-        <input name="filters" value="no_hm" type="checkbox"> Without HM
-      </label>
+
+    <div class="checkbox">
+      <label><input name="filters" type="checkbox" value="no_hm"> Without
+      HM</label>
     </div>
   </fieldset>
+
   <fieldset>
     <legend>RTE</legend>
+
     <div class="checkbox">
-      <label>
-        <input name="filters" value="no_sdmc_constituted" type="checkbox"> Without SDMC Constituted
-      </label>
+      <label><input name="filters" type="checkbox" value=
+      "no_sdmc_constituted"> Without SDMC Constituted</label>
     </div>
+
     <div class="checkbox">
-      <label>
-        <input name="filters" value="no_sdmc_meeting" type="checkbox"> Without SDMC Meetings
-      </label>
+      <label><input name="filters" type="checkbox" value="no_sdmc_meeting">
+      Without SDMC Meetings</label>
     </div>
+
     <div class="checkbox">
-      <label>
-        <input name="filters" value="no_textbook" type="checkbox"> Without Text Books
-      </label>
+      <label><input name="filters" type="checkbox" value="no_textbook">
+      Without Text Books</label>
     </div>
+
     <div class="checkbox">
-      <label>
-        <input name="filters" value="weakersec_children_enrolled" type="checkbox"> With Children from Weaker Section Enrolled
-      </label>
+      <label><input name="filters" type="checkbox" value=
+      "weakersec_children_enrolled"> With Children from Weaker Section
+      Enrolled</label>
     </div>
   </fieldset>
+
   <fieldset>
     <legend>Compound Indicators</legend>
+
     <div class="checkbox">
-      <label>
-        <input name="filters" value="enrolment" type="checkbox"> With Enrolment &lt; 25
-      </label>
+      <label><input name="filters" type="checkbox" value="enrolment"> With
+      Enrolment &lt; 25</label>
     </div>
+
     <div class="checkbox">
-      <label>
-        <input name="filters" value="girl_boy_ratio" type="checkbox"> With Girls:Boys Gender ratio &lt; 1
-      </label>
+      <label><input name="filters" type="checkbox" value="girl_boy_ratio">
+      With Girls:Boys Gender ratio &lt; 1</label>
     </div>
+
     <div class="checkbox">
-      <label>
-        <input name="filters" value="ptr" type="checkbox"> With Pupil-Teacher Ratio &gt; 35
-      </label>
+      <label><input name="filters" type="checkbox" value="ptr"> With
+      Pupil-Teacher Ratio &gt; 35</label>
     </div>
-  </fieldset>
-  <button type="submit" class="btn btn-default">Search</button>
+  </fieldset><button class="btn btn-default" type="submit">Search</button>
 </form>
 {% endblock %}
 
