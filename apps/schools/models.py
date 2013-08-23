@@ -180,16 +180,27 @@ class Enrolment(BaseModel):
     repeaters_girls = models.IntegerField(default=0)
     total_boys = models.IntegerField(db_index=True, default=0)
     total_girls = models.IntegerField(db_index=True, default=0)
+    total = models.IntegerField(db_index=True, default=0)
 
     class Meta:
         unique_together = ("yearly_data", "klass")
+
+    def __unicode__(self):
+        return u"%s" % self.id
 
 
 class TeacherCount(BaseModel):
     yearly_data = models.OneToOneField('YearlyData')
     male = models.IntegerField(default=0)
     female = models.IntegerField(default=0)
+    # =====================
+    # total = male + female
+    # deserializing for performance,
+    # needs to be calculated when inserting/updating
+    total = models.IntegerField(db_index=True, default=0)
+    # =====================
     noresp = models.IntegerField("No Responsibility", default=0)
+    headteacher = models.IntegerField(choices=YESNO, db_index=True, blank=True, null=True)
     graduate = models.IntegerField(default=0)
     with_prof_qual = models.IntegerField("With Professional Qualification", default=0)
     days_in_non_tch = models.IntegerField(default=0)
