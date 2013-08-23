@@ -3,11 +3,26 @@ from django.db.models import Count, Min, Sum, Avg, F, Q
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import simplejson as json
 from django.core import serializers
+from django.db import connection
 
 from common import SumCase
 from common.views import JSONResponseMixin
 from schools.models import YearlyData, School, SchoolManaagement,\
 DrinkingWaterSource, BoundaryWallType, search_choices, YESNO, MDM_STATUS
+
+
+def ptr_filtered_ids(ptr=35):
+    """
+    Returns list of school codes that have ptr more than given
+    >>> ptr_filtered_ids(35)
+    [..., results, ...]
+    """
+    params = [ptr]
+    cursor = connection.cursor()
+    cursor.execute("SELECT code FROM view_ptr WHERE ptr > %s", params)
+    return [
+        row[0] for row in cursor.fetchall()
+    ]
 
 
 class V1SearchView(View, JSONResponseMixin):
@@ -100,11 +115,21 @@ class V1SearchView(View, JSONResponseMixin):
                 total_girls=Sum('yearlydata__enrolment__total_girls'),
                 total_boys=Sum('yearlydata__enrolment__total_boys'),
             )
-            schools = schools.extra(
-                where=[
-                    '"total_boys" > 0',
-                    '"total_girls" < "total_boys"'
-                ]
+            schools = schools.filter(total_girls__lt=F('total_boys'))
+
+        if params.get('enrolment', 'off') == 'on':
+            schools = schools.annotate(
+                total=Sum('yearlydata__enrolment__total'),
+                total_teachers=Sum('yearlydata__teachercount__total')
+            ).filter(
+                total__lt=25
+            )
+
+        if params.get('ptr', 'off') == 'on':
+            ptr_value = 35
+            ptr_filtered_id_list = ptr_filtered_ids(ptr_value)
+            schools = schools.filter(
+                code__in=ptr_filtered_id_list
             )
 
         if params.get('no_girls_toilet', 'off') == 'on':
