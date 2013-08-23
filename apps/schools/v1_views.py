@@ -84,6 +84,9 @@ class V1SearchView(View, JSONResponseMixin):
         if params.get('no_room_hm', ''):
             query['yearlydata__room_for_headmaster'] = search_choices(YESNO, 'No')
 
+        if params.get('no_hm', ''):
+            query['yearlydata__teachercount__headteacher'] = search_choices(YESNO, 'No')
+
         if params.get('no_sdmc_constituted', ''):
             query['yearlydata__sdmc_constituted'] = search_choices(YESNO, 'No')
 
