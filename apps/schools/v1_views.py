@@ -31,6 +31,7 @@ class V1SearchView(View, JSONResponseMixin):
         results = {}
         schools = School.objects.values('id', 'code', 'name')
         limit = int(params.get('limit', 20))
+        filters = params.getlist('filters')
         query = {}
 
         if params.get('year', ''):
@@ -53,53 +54,53 @@ class V1SearchView(View, JSONResponseMixin):
                 )
                 query['yearlydata__management_id__in'] = pvt_mgmt
 
-        if params.get('no_electricity', ''):
+        if 'no_electricity' in filters:
             query['yearlydata__electricity_status'] = search_choices(YESNO, 'No')
 
-        if params.get('no_secure_wall', ''):
+        if 'no_secure_wall' in filters:
             insecure_wall_types = BoundaryWallType.objects.exclude(name__iexact="Pucca")
             query['yearlydata__boundary_wall_type_id__in'] = insecure_wall_types
 
-        if params.get('no_mdm', ''):
+        if 'no_mdm' in filters:
             query['yearlydata__middaymeal_status__in'] = [
                 search_choices(MDM_STATUS, 'Not applicable'),
                 search_choices(MDM_STATUS, 'Not provided'),
             ]
 
-        if params.get('no_library', ''):
+        if 'no_library' in filters:
             query['yearlydata__library_available'] = search_choices(YESNO, 'No')
 
-        if params.get('no_ramp', ''):
+        if 'no_ramp' in filters:
             query['yearlydata__ramp_available'] = search_choices(YESNO, 'No')
 
-        if params.get('no_blackboard', ''):
+        if 'no_blackboard' in filters:
             query['yearlydata__blackboard_count'] = 0
 
-        if params.get('no_playground', ''):
+        if 'no_playground' in filters:
             query['yearlydata__playground_available'] = search_choices(YESNO, 'No')
 
-        if params.get('no_medical', ''):
+        if 'no_medical' in filters:
             query['yearlydata__medical_checkup'] = search_choices(YESNO, 'No')
 
-        if params.get('no_room_hm', ''):
+        if 'no_room_hm' in filters:
             query['yearlydata__room_for_headmaster'] = search_choices(YESNO, 'No')
 
-        if params.get('no_hm', ''):
+        if 'no_hm' in filters:
             query['yearlydata__teachercount__headteacher'] = search_choices(YESNO, 'No')
 
-        if params.get('no_sdmc_constituted', ''):
+        if 'no_sdmc_constituted' in filters:
             query['yearlydata__sdmc_constituted'] = search_choices(YESNO, 'No')
 
-        if params.get('no_sdmc_meeting', ''):
+        if 'no_sdmc_meeting' in filters:
             query['yearlydata__sdmc_meeting_count'] = 0
 
-        if params.get('no_textbook', ''):
+        if 'no_textbook' in filters:
             query['yearlydata__textbook_received'] = search_choices(YESNO, 'No')
 
-        if params.get('weakersec_children_enrolled', ''):
+        if 'weakersec_children_enrolled' in filters:
             query['yearlydata__weakersec_children_enrolled__gt'] = 0
 
-        if params.get('no_water', ''):
+        if 'no_water' in filters:
             try:
                 query['yearlydata__drinking_water_source'] = DrinkingWaterSource.objects.get(name__iexact="None")
             except:
@@ -109,18 +110,18 @@ class V1SearchView(View, JSONResponseMixin):
         # All the non-aggregation non-annotation queries go above this
         schools = schools.filter(**query)
 
-        if params.get('no_toilet', 'off') == 'on':
+        if 'no_toilet' in filters:
             schools = schools.annotate(total_toilets=Sum('yearlydata__toilet__count'))
             schools = schools.filter(total_toilets=0)
 
-        if params.get('girl_boy_ratio', 'off') == 'on':
+        if 'girl_boy_ratio' in filters:
             schools = schools.annotate(
                 total_girls=Sum('yearlydata__enrolment__total_girls'),
                 total_boys=Sum('yearlydata__enrolment__total_boys'),
             )
             schools = schools.filter(total_girls__lt=F('total_boys'))
 
-        if params.get('enrolment', 'off') == 'on':
+        if 'enrolment' in filters:
             schools = schools.annotate(
                 total=Sum('yearlydata__enrolment__total'),
                 total_teachers=Sum('yearlydata__teachercount__total')
@@ -128,14 +129,14 @@ class V1SearchView(View, JSONResponseMixin):
                 total__lt=25
             )
 
-        if params.get('ptr', 'off') == 'on':
+        if 'ptr' in filters:
             ptr_value = 35
             ptr_filtered_id_list = ptr_filtered_ids(ptr_value)
             schools = schools.filter(
                 code__in=ptr_filtered_id_list
             )
 
-        if params.get('no_girls_toilet', 'off') == 'on':
+        if 'no_girls_toilet' in filters:
             schools = schools.annotate(
                 girl_toilet_count=SumCase(
                     'yearlydata__toilet__count',
@@ -144,7 +145,7 @@ class V1SearchView(View, JSONResponseMixin):
             )
             schools = schools.filter(girl_toilet_count=0)
 
-        if params.get('needs_repair', 'off') == 'on':
+        if 'needs_repair' in filters:
             schools = schools.annotate(
                 repair_count=SumCase(
                     'yearlydata__room__count',
