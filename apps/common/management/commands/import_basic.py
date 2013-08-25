@@ -23,34 +23,51 @@ class Command(BaseCommand):
 
     INDEXES = {
         'district': 0,
+        'District_Name': 0,
+
         'school_code': 1,
+        'School_Code': 1,
+
         'school_name': 2,
+        'School_Name': 2,
+
         'block': 3,
+        'Block_Name': 3,
+
         'cluster': 4,
+        'Cluster_Name': 4,
+
         'village': 5,
-        'pincode': 6
+        'Village_Name': 5,
+
+        'pincode': 6,
+        'Pincode': 6
     }
 
     def process_row(self, row, year=None):
         district, created = EducationDistrict.objects.get_or_create(
-            name=row[self.INDEXES['district']]
+            name=row[self.INDEXES['District_Name']]
         )
         village, created = Village.objects.get_or_create(
-            name=row[self.INDEXES['village']]
+            name=row[self.INDEXES['Village_Name']]
         )
         block, created = Block.objects.get_or_create(
-            name=row[self.INDEXES['block']],
-            education_district=district
+            name=row[self.INDEXES['Block_Name']],
         )
+        block.education_district = district
+        block.save()
+
         cluster, created = Cluster.objects.get_or_create(
-            name=row[self.INDEXES['cluster']],
+            name=row[self.INDEXES['Cluster_Name']],
             block=block
         )
         school, created = School.objects.get_or_create(
-            name=row[self.INDEXES['school_name']],
-            code=str(int(row[self.INDEXES['school_code']])),
-            pincode=int(row[self.INDEXES['pincode']]),
+            code=unicode(int(row[self.INDEXES['School_Code']])),
         )
+        school.name = unicode(row[self.INDEXES['School_Name']])
+        school.pincode= int(row[self.INDEXES['Pincode']])
+        school.save()
+
         yearly_data, created = YearlyData.objects.get_or_create(
             school=school,
             academic_year=year
@@ -71,9 +88,11 @@ class Command(BaseCommand):
             try:
                 fp = xlrd.open_workbook(full_path)
                 for sheet in fp.sheets():
+                    print "Sheet: ", sheet
+                    print "#"*20
                     for idx in range(1, sheet.nrows):
                         row = sheet.row_values(idx)
-                        if not row[self.INDEXES['school_code']]:
+                        if not row[self.INDEXES['School_Code']]:
                             continue
                         self.process_row(row, year)
 

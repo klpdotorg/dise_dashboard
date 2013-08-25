@@ -93,7 +93,7 @@ class Command(BaseCommand):
                         # import pdb; pdb.set_trace();
 
                         if idx % 100 == 0:
-                            print "%s/%s: %s%% done." % (idx, sheet.nrows, (idx/float(sheet.nrows))*100)
+                            print "%s/%s: %.2f%% done." % (idx, sheet.nrows, (idx/float(sheet.nrows))*100)
 
             except Exception as e:
                 print str(e)

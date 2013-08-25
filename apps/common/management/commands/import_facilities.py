@@ -76,7 +76,7 @@ class Command(BaseCommand):
         try:
             building_status = SchoolBuildingStatus.objects.get(id=int(row[self.INDEXES['Building_Status']]))
         except:
-            print 'Unknown SchoolBuildingStatus found', school.id, row[self.INDEXES['Building_Status']]
+            print 'Unknown SchoolBuildingStatus found', school.code, row[self.INDEXES['Building_Status']]
             building_status = SchoolBuildingStatus(
                 id=int(row[self.INDEXES['Building_Status']]),
                 name="Unknown"
@@ -87,7 +87,7 @@ class Command(BaseCommand):
         try:
             drinking_water_source = DrinkingWaterSource.objects.get(id=int(row[self.INDEXES['Drinking_Water']]))
         except:
-            print 'Unknown DrinkingWaterSource found', school.id, row[self.INDEXES['Drinking_Water']]
+            print 'Unknown DrinkingWaterSource found', school.code, row[self.INDEXES['Drinking_Water']]
             drinking_water_source = DrinkingWaterSource.objects.create(
                 id=int(row[self.INDEXES['Drinking_Water']]),
                 name="Unknown"
@@ -97,7 +97,7 @@ class Command(BaseCommand):
         try:
             boundary_wall_type = BoundaryWallType.objects.get(id=int(row[self.INDEXES['Boundary_Wall']]))
         except:
-            print 'Unknown BoundaryWallType found', school.id, row[self.INDEXES['Boundary_Wall']]
+            print 'Unknown BoundaryWallType found', school.code, row[self.INDEXES['Boundary_Wall']]
             boundary_wall_type = BoundaryWallType.objects.create(
                 id=int(row[self.INDEXES['Boundary_Wall']]),
                 name="Unknown"
@@ -117,74 +117,74 @@ class Command(BaseCommand):
         yearly_data.ramp_available = int(row[self.INDEXES['Ramps']])
         yearly_data.save()
 
-        clroom_good = Room.objects.get_or_create(
+        clroom_good = Room.objects.filter(
             yearly_data=yearly_data,
             type='class',
             condition='good',
+        ).update(
+            count=int(row[self.INDEXES['Classrooms_in_Good_Condition']])
         )
-        clroom_good.count = int(row[self.INDEXES['Classrooms_in_Good_Condition']])
-        clroom_good.save()
 
-        clroom_major = Room.objects.get_or_create(
+        clroom_major = Room.objects.filter(
             yearly_data=yearly_data,
             type='class',
             condition='major',
+        ).update(
+            count=int(row[self.INDEXES['Classrooms_require_major_repair']])
         )
-        clroom_major.count = int(row[self.INDEXES['Classrooms_require_major_repair']])
-        clroom_major.save()
 
-        clroom_minor = Room.objects.get_or_create(
+        clroom_minor = Room.objects.filter(
             yearly_data=yearly_data,
             type='class',
             condition='minor',
+        ).update(
+            count=int(row[self.INDEXES['Classrooms_require_minor_repair']])
         )
-        clroom_minor.count = int(row[self.INDEXES['Classrooms_require_minor_repair']])
-        clroom_minor.save()
 
-        other_room_good = Room.objects.get_or_create(
+        other_room_good = Room.objects.filter(
             yearly_data=yearly_data,
             type='other',
             condition='good',
+        ).update(
+            count = int(row[self.INDEXES['Other_rooms_in_Good_Cond']])
         )
-        other_room_good.count = int(row[self.INDEXES['Other_rooms_in_Good_Cond']])
-        other_room_good.save()
 
-        other_room_major = Room.objects.get_or_create(
+        other_room_major = Room.objects.filter(
             yearly_data=yearly_data,
             type='other',
             condition='major',
+        ).update(
+            count = int(row[self.INDEXES['Other_rooms_need_major_rep']])
         )
-        other_room_major.count = int(row[self.INDEXES['Other_rooms_need_major_rep']])
-        other_room_major.save()
 
-        other_room_minor = Room.objects.get_or_create(
+        other_room_minor = Room.objects.filter(
             yearly_data=yearly_data,
             type='other',
             condition='minor',
+        ).update(
+            count = int(row[self.INDEXES['Other_rooms_need_minor_rep']])
         )
-        other_room_minor.count = int(row[self.INDEXES['Other_rooms_need_minor_rep']])
-        other_room_minor.save()
 
-        toilet_common = Toilet.objects.get_or_create(
+        toilet_common = Toilet.objects.filter(
             yearly_data=yearly_data,
             type='common',
+        ).update(
+            count = int(row[self.INDEXES['Toilet_Common']])
         )
-        toilet_common.count = int(row[self.INDEXES['Toilet_Common']])
-        toilet_common.save()
 
-        toilet_boys = Toilet.objects.get_or_create(
+        toilet_boys = Toilet.objects.filter(
             yearly_data=yearly_data,
             type='boy',
+        ).update(
+            count = int(row[self.INDEXES['Toilet_Boys']])
         )
-        toilet_boys.count = int(row[self.INDEXES['Toilet_Boys']])
-        toilet_boys.save()
 
-        toilet_girls = Toilet.objects.get_or_create(
+        toilet_girls = Toilet.objects.filter(
             yearly_data=yearly_data,
             type='girl',
+        ).update(
+            count = int(row[self.INDEXES['Toilet_Girls']])
         )
-        toilet_girls.count = int(row[self.INDEXES['Toilet_Girls']])
-        toilet_girls.save()
 
     def handle(self, *args, **options):
         year = None
