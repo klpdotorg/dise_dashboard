@@ -131,10 +131,9 @@ class V1SearchView(View, JSONResponseMixin):
 
         if 'enrolment' in filters:
             schools = schools.annotate(
-                total=Sum('yearlydata__enrolment__total'),
-                total_teachers=Sum('yearlydata__teachercount__total')
+                total_students=Sum('yearlydata__enrolment__total'),
             ).filter(
-                total__lt=25
+                total_students__lt=25
             )
 
         if 'ptr' in filters:

@@ -207,7 +207,7 @@
 <script>
 $('#id_form_search').on('submit', function(e) {
     e.preventDefault();
-    $('#time_taken').html("Searching ...");
+    $('#id_result').html("Searching ...");
     var start_time = new Date().getTime();
     $.get("{% url 'v1_search' %}", $(this).serialize(), function(data, textStatus) {
         var request_time = new Date().getTime() - start_time;
