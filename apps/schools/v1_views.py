@@ -130,14 +130,15 @@ class V1SearchView(View, JSONResponseMixin):
             schools = schools.filter(total_girls__lt=F('total_boys'))
 
         if 'enrolment' in filters:
+            enrolment_n = params.get('enrolment_n') if params.get('enrolment_n') else 25
             schools = schools.annotate(
                 total_students=Sum('yearlydata__enrolment__total'),
             ).filter(
-                total_students__lt=25
+                total_students__lt=enrolment_n
             )
 
         if 'ptr' in filters:
-            ptr_value = 35
+            ptr_value = params.get('ptr_n') if params.get('ptr_n') else 35
             ptr_filtered_id_list = ptr_filtered_ids(ptr_value)
             schools = schools.filter(
                 code__in=ptr_filtered_id_list
