@@ -14,15 +14,15 @@ DrinkingWaterSource, BoundaryWallType, search_choices, YESNO, MDM_STATUS
 DEFAULT_LIMIT = 20
 
 
-def ptr_filtered_ids(ptr=35):
+def ptr_filtered_ids(ptr_min, ptr_max, academic_year_id):
     """
     Returns list of school codes that have ptr more than given
-    >>> ptr_filtered_ids(35)
+    >>> ptr_filtered_ids(0, 35, 0)
     [..., results, ...]
     """
-    params = [ptr]
+    params = [ptr_min, ptr_max, academic_year_id]
     cursor = connection.cursor()
-    cursor.execute("SELECT code FROM view_ptr WHERE ptr > %s", params)
+    cursor.execute("SELECT code FROM view_ptr WHERE ptr >= %s AND ptr <= %s AND academic_year_id = %s", params)
     return [
         row[0] for row in cursor.fetchall()
     ]
@@ -130,16 +130,19 @@ class V1SearchView(View, JSONResponseMixin):
             schools = schools.filter(total_girls__lt=F('total_boys'))
 
         if 'enrolment' in filters:
-            enrolment_n = params.get('enrolment_n') if params.get('enrolment_n') else 25
+            enrolment_min = params.get('enrolment_min') if params.get('enrolment_min') else 0
+            enrolment_max = params.get('enrolment_max') if params.get('enrolment_max') else 25
             schools = schools.annotate(
                 total_students=Sum('yearlydata__enrolment__total'),
             ).filter(
-                total_students__lt=enrolment_n
+                total_students__gt=enrolment_min,
+                total_students__lt=enrolment_max
             )
 
         if 'ptr' in filters:
-            ptr_value = params.get('ptr_n') if params.get('ptr_n') else 35
-            ptr_filtered_id_list = ptr_filtered_ids(ptr_value)
+            ptr_min = params.get('ptr_min') if params.get('ptr_min') else 0
+            ptr_max = params.get('ptr_max') if params.get('ptr_max') else 35
+            ptr_filtered_id_list = ptr_filtered_ids(ptr_min, ptr_max, params.get('year'))
             schools = schools.filter(
                 code__in=ptr_filtered_id_list
             )

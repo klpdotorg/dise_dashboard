@@ -159,17 +159,23 @@
     <legend>Compound Indicators</legend>
 
     <div class="checkbox">
-      <label><input name="filters" type="checkbox" value="enrolment"> With Enrolment less than <input class="form-control" type="text" name="enrolment_n" placeholder="25"></label>
+      <label><input name="filters" type="checkbox" value="enrolment"> With Enrolment</label>
+        from
+        <input class="form-control" type="text" name="enrolment_min" value="0">
+        to
+        <input class="form-control" type="text" name="enrolment_max" value="25">
     </div>
 
     <div class="checkbox">
-      <label><input name="filters" type="checkbox" value="girl_boy_ratio"> With Girls:Boys Gender ratio &lt; 1</label>
+      <label><input name="filters" type="checkbox" value="girl_boy_ratio"> With Girls &lt; Boys</label>
     </div>
 
     <div class="checkbox">
-      <label><input name="filters" type="checkbox" value="ptr"> With Pupil-Teacher Ratio less than
-        <input class="form-control" type="text" name="ptr_n" placeholder="35">
-      </label>
+      <label><input name="filters" type="checkbox" value="ptr"> With Pupil-Teacher Ratio </label>
+        from
+        <input class="form-control" type="text" name="ptr_min" value="0">
+        to
+        <input class="form-control" type="text" name="ptr_max" value="35">
     </div>
   </fieldset><button class="btn btn-default" type="submit">Search</button>
 </form>
