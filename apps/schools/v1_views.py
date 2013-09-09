@@ -174,12 +174,46 @@ class V1SearchView(View, JSONResponseMixin):
                     when='"schools_room"."type" = \'class\''
                 )
             )
-            schools = schools.filter(classroom_count__gte=classroom_min, classroom_count__lte=classroom_max)
+            schools = schools.filter(
+                classroom_count__gte=classroom_min,
+                classroom_count__lte=classroom_max
+            )
 
         if 'teacher_count' in filters:
             teacher_min = params.get('teacher_min') if params.get('teacher_min') else 0
             teacher_max = params.get('teacher_max') if params.get('teacher_max') else 50
-            schools = schools.filter(yearlydata__teachercount__total__gte=teacher_min, yearlydata__teachercount__total__lte=teacher_max)
+            schools = schools.filter(
+                yearlydata__teachercount__total__gte=teacher_min,
+                yearlydata__teachercount__total__lte=teacher_max
+            )
+
+        if 'ngirls' in filters:
+            ngirls_class = int(params.get('ngirls_class')) if params.get('ngirls_class') else 1
+            ngirls_min = params.get('ngirls_min') if params.get('ngirls_min') else 50
+            ngirls_max = params.get('ngirls_max') if params.get('ngirls_max') else 50
+            schools = schools.annotate(
+                girls=SumCase(
+                    'yearlydata__enrolment__total_girls',
+                    # sql injection prone, change
+                    when='"schools_enrolment"."klass" = %s' % ngirls_class
+                )
+            ).filter(
+                girls__range=(ngirls_min, ngirls_max)
+            )
+
+        if 'nboys' in filters:
+            nboys_class = int(params.get('nboys_class')) if params.get('nboys_class') else 1
+            nboys_min = params.get('nboys_min') if params.get('nboys_min') else 50
+            nboys_max = params.get('nboys_max') if params.get('nboys_max') else 50
+            schools = schools.annotate(
+                boys=SumCase(
+                    'yearlydata__enrolment__total_boys',
+                    # sql injection prone, change
+                    when='"schools_enrolment"."klass" = %s' % nboys_class
+                )
+            ).filter(
+                boys__range=(nboys_min, nboys_max)
+            )
 
         schools = schools[:limit]
         print schools.query
