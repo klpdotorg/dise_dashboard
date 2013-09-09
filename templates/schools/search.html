@@ -177,7 +177,21 @@
         to
         <input class="form-control" type="text" name="ptr_max" value="35">
     </div>
-  </fieldset><button class="btn btn-default" type="submit">Search</button>
+  </fieldset>
+
+  <fieldset>
+    <legend>Range Indicators</legend>
+    <div class="checkbox">
+      <label for="">
+        <input name="filters" type="checkbox" value="classroom_count"> With number of classroom between
+      </label>
+      <input type="text" class="form-control" name="classroom_min" value="0">
+      and
+      <input type="text" class="form-control" name="classroom_max" value="50">
+    </div>
+  </fieldset>
+
+  <button class="btn btn-default" type="submit">Search</button>
 </form>
 {% endblock %}
 

@@ -165,6 +165,17 @@ class V1SearchView(View, JSONResponseMixin):
             )
             schools = schools.filter(repair_count__gt=0).order_by('-repair_count')
 
+        if 'classroom_count' in filters:
+            classroom_min = params.get('classroom_min') if params.get('classroom_min') else 0
+            classroom_max = params.get('classroom_max') if params.get('classroom_max') else 50
+            schools = schools.annotate(
+                classroom_count=SumCase(
+                    'yearlydata__room__count',
+                    when='"schools_room"."type" = \'class\''
+                )
+            )
+            schools = schools.filter(classroom_count__gte=classroom_min, classroom_count__lte=classroom_max)
+
         schools = schools[:limit]
         print schools.query
         # schools_json = serializers.serialize("json", schools)
