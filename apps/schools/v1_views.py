@@ -176,6 +176,11 @@ class V1SearchView(View, JSONResponseMixin):
             )
             schools = schools.filter(classroom_count__gte=classroom_min, classroom_count__lte=classroom_max)
 
+        if 'teacher_count' in filters:
+            teacher_min = params.get('teacher_min') if params.get('teacher_min') else 0
+            teacher_max = params.get('teacher_max') if params.get('teacher_max') else 50
+            schools = schools.filter(yearlydata__teachercount__total__gte=teacher_min, yearlydata__teachercount__total__lte=teacher_max)
+
         schools = schools[:limit]
         print schools.query
         # schools_json = serializers.serialize("json", schools)
