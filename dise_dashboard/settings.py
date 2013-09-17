@@ -107,10 +107,10 @@ MIDDLEWARE_CLASSES = (
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
-ROOT_URLCONF = 'dise_dashoboard.urls'
+ROOT_URLCONF = 'dise_dashboard.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'dise_dashoboard.wsgi.application'
+WSGI_APPLICATION = 'dise_dashboard.wsgi.application'
 
 TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, 'templates'),

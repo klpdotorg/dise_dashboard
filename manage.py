@@ -3,7 +3,7 @@ import os
 import sys
 
 if __name__ == "__main__":
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dise_dashoboard.settings")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dise_dashboard.settings")
     sys.path.append(os.path.join(os.getcwd(), 'apps'))
 
     from django.core.management import execute_from_command_line
