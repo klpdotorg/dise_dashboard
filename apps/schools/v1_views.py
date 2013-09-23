@@ -32,7 +32,11 @@ class V1SearchView(View, JSONResponseMixin):
     def get(self, *args, **kwargs):
         params = self.request.GET
         results = {}
-        schools = School.objects.order_by('name')
+        schools = School.objects.extra(
+            select={
+                'centroid': 'ST_AsGeoJSON("schools_school"."centroid")'
+            }
+        ).values('code', 'name', 'centroid').order_by('name')
 
         try:
             limit = int(params.get('limit', DEFAULT_LIMIT))
@@ -221,16 +225,16 @@ class V1SearchView(View, JSONResponseMixin):
         # schools_json = serializers.serialize("json", schools)
         results = {
             'count': schools.count(),
-            'results': []
+            'results': list(schools)
         }
 
-        for school in schools:
-            tmpd = {
-                'id': school.id,
-                'name': school.name,
-                'code': school.code,
-                'centroid': school.centroid_latlang
-            }
+        # for school in schools:
+        #     tmpd = {
+        #         'id': school.id,
+        #         'name': school.name,
+        #         'code': school.code,
+        #         'centroid': school.center
+        #     }
 
-            results['results'].append(tmpd)
+        #     results['results'].append(tmpd)
         return self.render_to_response(results)
