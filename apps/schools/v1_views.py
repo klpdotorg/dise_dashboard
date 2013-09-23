@@ -229,10 +229,8 @@ class V1SearchView(View, JSONResponseMixin):
                 'id': school.id,
                 'name': school.name,
                 'code': school.code,
+                'centroid': school.centroid_latlang
             }
-            if school.centroid:
-                tmpd['latitude'] = school.centroid.x,
-                tmpd['longitude'] = school.centroid.y
 
             results['results'].append(tmpd)
         return self.render_to_response(results)
