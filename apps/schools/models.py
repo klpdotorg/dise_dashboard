@@ -88,7 +88,7 @@ class School(BaseModel):
 
     @property
     def centroid_latlang(self):
-        return u"%s,%s" % (self.centroid.x, self.centroid.y)
+        return [self.centroid.x, self.centroid.y] if self.centroid else []
 
 
 class YearlyData(BaseModel):
