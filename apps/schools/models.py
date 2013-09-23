@@ -86,6 +86,10 @@ class School(BaseModel):
     def __unicode__(self):
         return u"%s: %s" % (self.code, self.name)
 
+    @property
+    def centroid_latlang(self):
+        return u"%s,%s" % (self.centroid.x, self.centroid.y)
+
 
 class YearlyData(BaseModel):
     academic_year = models.ForeignKey(AcademicYear)
