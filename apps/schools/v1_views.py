@@ -225,15 +225,14 @@ class V1SearchView(View, JSONResponseMixin):
         }
 
         for school in schools:
-            if school.centroid:
-                latitude = school.centroid.x
-                longitude = school.centroid.y
-
-            results['results'].append({
+            tmpd = {
                 'id': school.id,
                 'name': school.name,
                 'code': school.code,
-                'latitude': latitude,
-                'longitude': longitude
-            })
+            }
+            if school.centroid:
+                tmpd['latitude'] = school.centroid.x,
+                tmpd['longitude'] = school.centroid.y
+
+            results['results'].append(tmpd)
         return self.render_to_response(results)
