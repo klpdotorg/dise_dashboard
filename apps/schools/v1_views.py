@@ -13,7 +13,7 @@ from common.views import JSONResponseMixin
 from schools.models import YearlyData, School, SchoolManaagement,\
 DrinkingWaterSource, BoundaryWallType, search_choices, YESNO, MDM_STATUS
 
-
+# This shall become 0 when we have the map
 DEFAULT_LIMIT = 20
 
 
@@ -44,14 +44,19 @@ class V1SearchView(View, JSONResponseMixin):
         try:
             limit = int(params.get('limit', DEFAULT_LIMIT))
         except ValueError:
+            # This is the case when someone mingles with the limit parameter
             limit = DEFAULT_LIMIT
 
         filters = params.getlist('filters')
         query = {
+            # not returning the schools that don't have coordinates yet
             'centroid__isnull': False
         }
 
         if params.get('within', ''):
+            # This is the bounds query
+            # &within="22.1234,88.1234|17.1234,54.1234"
+            #          ^-bottom-left-^|^--top-right--^
             coords_match = re.match(r"(.*),(.*)\|(.*),(.*)", params.get('within'))
             if len(coords_match.groups()) == 4:
                 schools = schools.extra(
@@ -248,7 +253,7 @@ class V1SearchView(View, JSONResponseMixin):
             if school['centroid']:
                 # wait, we found some coordinates, YAY!
                 coord_match = re.match(r'POINT\((.*)\s(.*)\)', school['centroid'])
-                coord = [float(coord_match.group(1)), float(coord_match.group(2))]
+                coord = list(coord_match.groups())
 
             feature = geojson.Feature(
                 id=school['code'],
