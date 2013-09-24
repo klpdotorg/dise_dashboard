@@ -47,7 +47,19 @@ class V1SearchView(View, JSONResponseMixin):
             limit = DEFAULT_LIMIT
 
         filters = params.getlist('filters')
-        query = {}
+        query = {
+            'centroid__isnull': False
+        }
+
+        if params.get('within', ''):
+            coords_match = re.match(r"(.*),(.*)\|(.*),(.*)", params.get('within'))
+            if len(coords_match.groups()) == 4:
+                schools = schools.extra(
+                    where=[
+                        "ST_Contains(ST_SetSRID(ST_MakeBox2D(ST_Point(%s, %s), ST_Point(%s, %s)), 4326), centroid)"
+                    ],
+                    params=list(coords_match.groups())
+                )
 
         if params.get('year', ''):
             query['yearlydata__academic_year_id'] = params.get('year', '')
@@ -222,7 +234,9 @@ class V1SearchView(View, JSONResponseMixin):
                 boys__range=(nboys_min, nboys_max)
             )
 
-        schools = schools[:limit]
+        if limit > 0:
+            schools = schools[:limit]
+
         print schools.query
         features = []
 
@@ -250,4 +264,4 @@ class V1SearchView(View, JSONResponseMixin):
         feature_collection = geojson.FeatureCollection(features)
         results = geojson.dumps(feature_collection)
 
-        return self.render_to_response(results)
+        return self.get_json_response(results)

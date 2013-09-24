@@ -241,7 +241,7 @@ $('#id_form_search').on('submit', function(e) {
     var start_time = new Date().getTime();
     $.get("{% url 'v1_search' %}", $(this).serialize(), function(data, textStatus) {
         var request_time = new Date().getTime() - start_time;
-        $('#id_result').html(JSON.stringify(JSON.parse(data), null, 4));
+        $('#id_result').html(JSON.stringify(data, null, 4));
         $('#time_taken').html("It took " + request_time + "ms");
     }, "json");
     return false;
