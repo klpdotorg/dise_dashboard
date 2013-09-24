@@ -5,6 +5,9 @@ from django.utils import simplejson as json
 from django.core import serializers
 from django.db import connection
 
+import geojson
+import re
+
 from common import SumCase
 from common.views import JSONResponseMixin
 from schools.models import YearlyData, School, SchoolManaagement,\
@@ -34,7 +37,7 @@ class V1SearchView(View, JSONResponseMixin):
         results = {}
         schools = School.objects.extra(
             select={
-                'centroid': 'ST_AsGeoJSON("schools_school"."centroid")'
+                'centroid': 'ST_AsText("schools_school"."centroid")'
             }
         ).values('code', 'name', 'centroid').order_by('name')
 
@@ -221,20 +224,30 @@ class V1SearchView(View, JSONResponseMixin):
 
         schools = schools[:limit]
         print schools.query
+        features = []
 
-        # schools_json = serializers.serialize("json", schools)
-        results = {
-            'count': schools.count(),
-            'results': list(schools)
-        }
+        # This part turns the data to GeoJSON
+        for school in schools:
+            # By default there is no coordinate
+            coord = None
 
-        # for school in schools:
-        #     tmpd = {
-        #         'id': school.id,
-        #         'name': school.name,
-        #         'code': school.code,
-        #         'centroid': school.center
-        #     }
+            if school['centroid']:
+                # wait, we found some coordinates, YAY!
+                coord_match = re.match(r'POINT\((.*)\s(.*)\)', school['centroid'])
+                coord = [float(coord_match.group(1)), float(coord_match.group(2))]
 
-        #     results['results'].append(tmpd)
+            feature = geojson.Feature(
+                id=school['code'],
+                geometry=geojson.Point(coord),
+
+                # All the extra data goes inside this
+                properties={
+                    "name": school['name']
+                }
+            )
+            features.append(feature)
+
+        feature_collection = geojson.FeatureCollection(features)
+        results = geojson.dumps(feature_collection)
+
         return self.render_to_response(results)
