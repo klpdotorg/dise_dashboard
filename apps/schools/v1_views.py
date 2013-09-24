@@ -228,7 +228,7 @@ class V1SearchView(View, JSONResponseMixin):
 
         # This part turns the data to GeoJSON
         for school in schools:
-            # By default there is no coordinate
+            # By default assuming that there is no coordinate
             coord = None
 
             if school['centroid']:
