@@ -55,14 +55,14 @@ class V1SearchView(View, JSONResponseMixin):
 
         if params.get('within', ''):
             # This is the bounds query
-            #          --lng-- --lat--|--lng-- --lat--
-            # &within="88.1234,22.1234|54.1234,17.1234"
-            #          ^-bottom-left-^|^--top-right--^
-            coords_match = re.match(r"(.*),(.*)\|(.*),(.*)", params.get('within'))
+            #          --lng-- --lat--,--lng-- --lat--
+            # &within="88.1234,22.1234,54.1234,17.1234"
+            #          ^-bottom-left-^,^--top-right--^
+            coords_match = re.match(r"(.*),(.*),(.*),(.*)", params.get('within'))
             if len(coords_match.groups()) == 4:
                 schools = schools.extra(
                     where=[
-                        "ST_Contains(ST_SetSRID(ST_MakeBox2D(ST_Point(%s, %s), ST_Point(%s, %s)), 4326), centroid)"
+                        "ST_Contains(ST_MakeEnvelope(%s, %s, %s, %s, 4326), centroid)"
                     ],
                     params=list(coords_match.groups())
                 )
