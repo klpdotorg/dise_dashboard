@@ -134,6 +134,7 @@ INSTALLED_APPS = (
     'south',
     'debug_toolbar',
     'bootstrapform',
+    'raven.contrib.django.raven_compat',
 
     # in-project
     'account',
