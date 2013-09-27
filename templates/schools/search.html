@@ -231,6 +231,7 @@
       <input type="text" class="form-control" name="nboys_max" value="50">
     </div>
   </fieldset>
+  <input type="hidden" name="within" id="id_within" value="">
 
   <button class="btn btn-default" type="submit">Search</button>
 </form>
@@ -248,17 +249,27 @@
 <script>
 $(function(){
   window.map = L.map('map').setView([14.581, 75.970], 6);
+
   L.tileLayer('http://{s}.tile.cloudmade.com/3c4ab920016a46d8ba10c88227539774/997/256/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
       maxZoom: 18
   }).addTo(window.map);
+
+  window.map.on('zoomend', function(e) {
+    var bottomLeft = window.map.getBounds().getSouthWest();
+    var topRight = window.map.getBounds().getNorthEast();
+    $('#id_within').val(bottomLeft.lng+","+bottomLeft.lat+"|"+topRight.lng+","+topRight.lat);
+  });
 });
 
 $('#id_form_search').on('submit', function(e) {
     e.preventDefault();
+
     $('#id_result').html("Searching ...");
     $('#time_taken').html("Searching ...");
+
     var start_time = new Date().getTime();
+
     $.get("{% url 'v1_search' %}", $(this).serialize(), function(data, textStatus) {
         var request_time = new Date().getTime() - start_time;
         $('#id_result').html(JSON.stringify(data, null, 4));
