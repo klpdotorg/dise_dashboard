@@ -1,6 +1,17 @@
 {% extends "base.html" %}
 {% load bootstrap %}
 
+{% block end-head %}
+<style>
+  #map { height: 580px; }
+  #id_form_search {
+    height: 580px;
+    padding-right: 20px;
+    overflow-y: scroll;
+  }
+</style>
+{% endblock %}
+
 {% block sidebar %}
 <form action="{% url 'v1_search' %}" id="id_form_search" method="get" name="id_form_search">
   <div class="form-group">
@@ -227,13 +238,22 @@
 
 {% block body %}
 <div id="time_taken"></div>
-<pre class="pre-scrollable">
+<pre class="pre-scrollable" style="display:none">
 <code name="result" id="id_result" class="json">&nbsp;</code>
 </pre>
+<div id="map"></div>
 {% endblock %}
 
 {% block javascript %}
 <script>
+$(function(){
+  window.map = L.map('map').setView([14.581, 75.970], 6);
+  L.tileLayer('http://{s}.tile.cloudmade.com/3c4ab920016a46d8ba10c88227539774/997/256/{z}/{x}/{y}.png', {
+      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
+      maxZoom: 18
+  }).addTo(window.map);
+});
+
 $('#id_form_search').on('submit', function(e) {
     e.preventDefault();
     $('#id_result').html("Searching ...");
@@ -242,6 +262,18 @@ $('#id_form_search').on('submit', function(e) {
     $.get("{% url 'v1_search' %}", $(this).serialize(), function(data, textStatus) {
         var request_time = new Date().getTime() - start_time;
         $('#id_result').html(JSON.stringify(data, null, 4));
+
+        if(window.geojsonlayer !== undefined){
+          window.map.removeLayer(window.geojsonlayer);
+        }
+        window.geojsonlayer = L.geoJson(data, {
+          onEachFeature: function(feature, layer){
+            if (feature.properties && feature.properties.name) {
+              layer.bindPopup(feature.properties.name);
+            }
+          }
+        }).addTo(window.map);
+
         $('#time_taken').html("It took " + request_time + "ms");
     }, "json");
     return false;
