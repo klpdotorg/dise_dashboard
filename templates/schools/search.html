@@ -256,9 +256,7 @@ $(function(){
   }).addTo(window.map);
 
   window.map.on('zoomend', function(e) {
-    var bottomLeft = window.map.getBounds().getSouthWest();
-    var topRight = window.map.getBounds().getNorthEast();
-    $('#id_within').val(bottomLeft.lng+","+bottomLeft.lat+"|"+topRight.lng+","+topRight.lat);
+    $('#id_within').val(window.map.getBounds().toBBoxString());
   });
 });
 
