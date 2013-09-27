@@ -55,7 +55,8 @@ class V1SearchView(View, JSONResponseMixin):
 
         if params.get('within', ''):
             # This is the bounds query
-            # &within="22.1234,88.1234|17.1234,54.1234"
+            #          --lng-- --lat--|--lng-- --lat--
+            # &within="88.1234,22.1234|54.1234,17.1234"
             #          ^-bottom-left-^|^--top-right--^
             coords_match = re.match(r"(.*),(.*)\|(.*),(.*)", params.get('within'))
             if len(coords_match.groups()) == 4:
