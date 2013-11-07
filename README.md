@@ -3,6 +3,42 @@ DISE Dashboard
 
 Dashboard for Dise data to allow interactive dise data gathering
 
+New OLAP API Alpha Endpoint
+---
+Base URL: `http://host:port/api/v1/olap/`
+
+Obtain and restore the database and point to it from local settings file to test.
+
+Accepted parameters:
+
+| name   | required |  description                    |
+| ------ | ---------| ------------                    |
+| method | yes | Name of one of the available mathods  |
+| session | yes | Educational year (Available: `10-11` & `11-12`, Default `10-11`)  |
+
+And you may also pass the parameters of respective method in the url.
+
+Methods
+---
+ - School
+    - School.getInfo
+    - School.search
+ - Cluster
+    - Cluster.getInfo
+    - Cluster.search
+
+Methods: `School`
+---
+ - `School.getInfo`
+
+Accepted parameters:
+
+| name   | required |  description                    |
+| ------ | ---------| ------------                    |
+| code   | yes | DISE Code |
+
+E.g. `http://local.dise.klp.org.in:8000/api/v1/olap/?method=School.getInfo&code=29010200101&session=10-11`
+
 Indicators
 ---
 
