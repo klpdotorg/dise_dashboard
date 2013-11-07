@@ -39,6 +39,17 @@ Accepted parameters:
 
 E.g. `http://local.dise.klp.org.in:8000/api/v1/olap/?method=School.getInfo&code=29010200101&session=10-11`
 
+
+Backing up and restoring database
+---
+This is what I do as of now. For backing up -
+
+    pg_dump -Ox -h localhost -U klp klpdise_olap > klp/dise/backups/klpdise_olap-2013-11-08-0241-full.pgsql
+
+For restoring the same -
+
+    sudo psql -U klp -h localhost klpdise_olap < klpdise_olap-2013-11-08-0241-full.pgsql
+
 Indicators
 ---
 
