@@ -21,11 +21,11 @@ And you may also pass the parameters of respective method in the url.
 Methods
 ---
  - School
-    - School.getInfo
-    - School.search
+    - [School.getInfo](#schoolgetinfo)
+    - [School.search](#schoolsearch)
  - Cluster
-    - Cluster.getInfo
-    - Cluster.search
+    - [Cluster.getInfo](#clustergetinfo)
+    - [Cluster.search](#clustersearch)
 
 Methods: `School`
 ---
