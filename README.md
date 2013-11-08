@@ -29,7 +29,7 @@ Methods
 
 Methods: `School`
 ---
- - `School.getInfo`
+### `School.getInfo`
 
 Accepted parameters:
 
@@ -41,7 +41,7 @@ E.g. -
 
     http://local.dise.klp.org.in:8000/api/v1/olap/?method=School.getInfo&code=29010200101&session=10-11
 
-- `School.search`
+### `School.search`
 
 Accepted parameters:
 
@@ -58,7 +58,7 @@ E.g. To find maximum 50 schools in Mahagaon cluster that has no geolocation -
 
 Methods: `Cluster`
 ---
- - `Cluster.getInfo`
+### `Cluster.getInfo`
 
 Accepted parameters:
 
@@ -66,7 +66,7 @@ Accepted parameters:
 | ------ | ---------| ------------                    |
 | name   | yes | cluster name |
 
-- `Cluster.search`
+### `Cluster.search`
 
 Accepted parameters:
 
