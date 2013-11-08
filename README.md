@@ -37,7 +37,9 @@ Accepted parameters:
 | ------ | ---------| ------------                    |
 | code   | yes | DISE Code |
 
-E.g. `http://local.dise.klp.org.in:8000/api/v1/olap/?method=School.getInfo&code=29010200101&session=10-11`
+E.g. -
+
+    http://local.dise.klp.org.in:8000/api/v1/olap/?method=School.getInfo&code=29010200101&session=10-11
 
 - `School.search`
 
@@ -49,7 +51,9 @@ Accepted parameters:
 | geo   | no | if the school has geo location, `true` or `false` |
 | cluster   | no | name of cluster to search within |
 
-E.g. To find maximum 50 schools in Mahagaon cluster that has no geolocation - `http://local.dise.klp.org.in:8000/api/v1/olap/?method=School.search&session=10-11&limit=50&cluster=MAHAGAON&geo=false`
+E.g. To find maximum 50 schools in Mahagaon cluster that has no geolocation -
+
+    http://local.dise.klp.org.in:8000/api/v1/olap/?method=School.search&session=10-11&limit=50&cluster=MAHAGAON&geo=false
 
 
 Methods: `Cluster`
@@ -71,7 +75,9 @@ Accepted parameters:
 | name   | no | name of cluster to search for |
 | block   | no | name of block to search for the cluster |
 
-E.g. `local.dise.klp.org.in:8000/api/v1/olap/?method=Cluster.search&session=10-11&name=DONGAON`
+E.g. -
+
+    local.dise.klp.org.in:8000/api/v1/olap/?method=Cluster.search&session=10-11&name=DONGAON
 
 
 Backing up and restoring database
