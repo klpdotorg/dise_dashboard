@@ -159,7 +159,9 @@ class Cluster(BaseEntity):
         yearly_data_model = yearly_data.get(params.get('session', '10-11'))
 
         if len(params.keys()) > 1:
-            clusters = yearly_data_model.objects.values('cluster_name', 'block_name').distinct('cluster_name')
+            clusters = yearly_data_model.objects.values(
+                'cluster_name', 'block_name', 'village_name', 'district'
+            ).distinct('cluster_name')
 
         if 'name' in params and params.get('name', ''):
             clusters = clusters.filter(cluster_name__icontains=params.get('name'))
