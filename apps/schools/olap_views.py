@@ -25,10 +25,19 @@ class OLAPEndPoint(View, JSONResponseMixin):
         json_results = ''
 
         try:
+            # method would be like `School.getInfo`
             method = params['method']
+
+            # School, getInfo
             entity_name, endpoint_name = method.split('.')
+
+            # Make sure School, Cluster and other entities are imported
+            # for this to work
             entity = globals().get(entity_name)
+
+            # get the actual classmethod that returns JSON string
             endpoint = getattr(entity, endpoint_name)
+
             json_results = endpoint(params)
         except (KeyError, ValueError, ImportError, AttributeError) as e:
             results['error'] = str(e)
