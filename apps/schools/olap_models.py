@@ -123,7 +123,7 @@ class School(BaseEntity):
                 'school_code', 'school_name', 'cluster_name', 'block_name', 'centroid'
             ).get(school_code=code)
 
-            result['data'] = school
+            result['school'] = school
         except (yearly_data_model.DoesNotExist, Exception) as e:
             result['error'] = str(e)
 
@@ -131,7 +131,25 @@ class School(BaseEntity):
 
     @classmethod
     def search(self, params):
-        print params
+        result = dict()
+        result['query'] = params
+        yearly_data_model = yearly_data.get(params.get('session', '10-11'))
+
+        if len(params.keys()) > 1:
+            schools = yearly_data_model.objects.extra(
+                select={
+                    'centroid': 'ST_AsText("dise_1011_basic_data"."centroid")'
+                }
+            ).values(
+                'school_code', 'school_name', 'cluster_name', 'block_name', 'centroid'
+            )
+
+        if 'cluster' in params and params.get('cluster', ''):
+            schools = schools.filter(cluster_name__icontains=params.get('cluster'))
+
+        result['schools'] = list(schools)
+
+        return json.dumps(result)
 
 
 class Cluster(BaseEntity):
