@@ -147,6 +147,14 @@ class School(BaseEntity):
         if 'cluster' in params and params.get('cluster', ''):
             schools = schools.filter(cluster_name__icontains=params.get('cluster'))
 
+        if params.get('geo') == 'true':
+            schools = schools.filter(centroid__isnull=False)
+        elif params.get('geo') == 'false':
+            schools = schools.filter(centroid__isnull=True)
+
+        if 'limit' in params and params.get('limit', 0):
+            schools = schools[:params.get('limit')]
+
         result['schools'] = list(schools)
         return json.dumps(result)
 
