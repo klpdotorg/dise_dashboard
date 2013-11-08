@@ -166,5 +166,8 @@ class Cluster(BaseEntity):
         if 'name' in params and params.get('name', ''):
             clusters = clusters.filter(cluster_name__icontains=params.get('name'))
 
+        if 'block' in params and params.get('block', ''):
+            clusters = clusters.filter(block_name__icontains=params.get('block'))
+
         result['clusters'] = list(clusters)
         return json.dumps(result)
