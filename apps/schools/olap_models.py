@@ -108,7 +108,7 @@ class BaseEntity:
 
 class School(BaseEntity):
     @classmethod
-    def getInfo(self, params):
+    def getInfo(cls, params):
         code = params.get('code', -1)
         result = dict()
         result['query'] = params
@@ -130,7 +130,7 @@ class School(BaseEntity):
         return json.dumps(result)
 
     @classmethod
-    def search(self, params):
+    def search(cls, params):
         result = dict()
         result['query'] = params
         yearly_data_model = yearly_data.get(params.get('session', '10-11'))
@@ -148,9 +148,21 @@ class School(BaseEntity):
             schools = schools.filter(cluster_name__icontains=params.get('cluster'))
 
         result['schools'] = list(schools)
-
         return json.dumps(result)
 
 
 class Cluster(BaseEntity):
-    pass
+    @classmethod
+    def search(cls, params):
+        result = dict()
+        result['query'] = params
+        yearly_data_model = yearly_data.get(params.get('session', '10-11'))
+
+        if len(params.keys()) > 1:
+            clusters = yearly_data_model.objects.values('cluster_name', 'block_name').distinct('cluster_name')
+
+        if 'name' in params and params.get('name', ''):
+            clusters = clusters.filter(cluster_name__icontains=params.get('name'))
+
+        result['clusters'] = list(clusters)
+        return json.dumps(result)
