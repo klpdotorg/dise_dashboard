@@ -103,7 +103,9 @@ yearly_data = {
 
 
 class BaseEntity:
-    pass
+    @classmethod
+    def to_json_str(cls, d=dict()):
+        return json.dumps(d)
 
 
 class School(BaseEntity):
@@ -127,7 +129,7 @@ class School(BaseEntity):
         except (yearly_data_model.DoesNotExist, Exception) as e:
             result['error'] = str(e)
 
-        return json.dumps(result)
+        return cls.to_json_str(result)
 
     @classmethod
     def search(cls, params):
@@ -144,6 +146,9 @@ class School(BaseEntity):
                 'school_code', 'school_name', 'cluster_name', 'block_name', 'centroid'
             )
 
+        if 'name' in params and params.get('name', ''):
+            schools = schools.filter(school_name__icontains=params.get('name'))
+
         if 'cluster' in params and params.get('cluster', ''):
             schools = schools.filter(cluster_name__icontains=params.get('cluster'))
 
@@ -156,7 +161,7 @@ class School(BaseEntity):
             schools = schools[:params.get('limit')]
 
         result['schools'] = list(schools)
-        return json.dumps(result)
+        return cls.to_json_str(result)
 
 
 class Cluster(BaseEntity):
@@ -178,4 +183,4 @@ class Cluster(BaseEntity):
             clusters = clusters.filter(block_name__icontains=params.get('block'))
 
         result['clusters'] = list(clusters)
-        return json.dumps(result)
+        return jsoncls.to_json_str(result)

@@ -47,13 +47,14 @@ Accepted parameters:
 
 | name   | required |  description                    |
 | ------ | ---------| ------------                    |
+| name   | no | full or part of the name |
 | limit   | no | maximum number of results to return |
 | geo   | no | if the school has geo location, `true` or `false` |
 | cluster   | no | name of cluster to search within |
 
-E.g. To find maximum 50 schools in Mahagaon cluster that has no geolocation -
+E.g. To find maximum 50 schools in Mahagaon cluster that has no geolocation and have `govt` as part of their name -
 
-    http://local.dise.klp.org.in:8000/api/v1/olap/?method=School.search&session=10-11&limit=50&cluster=MAHAGAON&geo=false
+    http://local.dise.klp.org.in:8000/api/v1/olap/?method=School.search&session=10-11&limit=50&cluster=MAHAGAON&geo=false&name=govt
 
 
 Methods: `Cluster`
