@@ -11,10 +11,10 @@ Obtain and restore the database and point to it from local settings file to test
 
 Accepted parameters:
 
-| name   | required |  description                    |
-| ------ | ---------| ------------                    |
-| method | yes | Name of one of the available mathods  |
-| session | yes | Educational year (Available: `10-11` & `11-12`, Default `10-11`)  |
+| name     | required |  description                    |
+| -------- | ---------| ------------                    |
+| method   |    yes   | Name of one of the available mathods  |
+| session  |    yes   | Educational year (Available: `10-11` & `11-12`, Default `10-11`)  |
 
 And you may also pass the parameters of respective method in the url.
 
@@ -35,7 +35,7 @@ Accepted parameters:
 
 | name   | required |  description                    |
 | ------ | ---------| ------------                    |
-| code   | yes | DISE Code |
+| code   |    yes   | DISE Code                       |
 
 E.g. -
 
@@ -45,11 +45,11 @@ E.g. -
 
 Accepted parameters:
 
-| name   | required |  description                    |
-| ------ | ---------| ------------                    |
-| name   | no | full or part of the name |
+| name    | required |  description                    |
+| ------  | ---------| ------------                    |
+| name    | no | full or part of the name |
 | limit   | no | maximum number of results to return |
-| geo   | no | if the school has geo location, `true` or `false` |
+| geo     | no | if the school has geo location, `true` or `false` |
 | cluster   | no | name of cluster to search within |
 
 E.g. To find maximum 50 schools in Mahagaon cluster that has no geolocation and have `govt` as part of their name -
@@ -65,7 +65,7 @@ Accepted parameters:
 
 | name   | required |  description                    |
 | ------ | ---------| ------------                    |
-| name   | yes | cluster name |
+| name   | yes | full or part of the cluster name |
 
 ### `Cluster.search`
 
@@ -78,7 +78,7 @@ Accepted parameters:
 
 E.g. -
 
-    local.dise.klp.org.in:8000/api/v1/olap/?method=Cluster.search&session=10-11&name=DONGAON
+    http://local.dise.klp.org.in:8000/api/v1/olap/?method=Cluster.search&session=10-11&name=DONGAON
 
 
 Backing up and restoring database

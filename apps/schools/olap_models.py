@@ -183,4 +183,4 @@ class Cluster(BaseEntity):
             clusters = clusters.filter(block_name__icontains=params.get('block'))
 
         result['clusters'] = list(clusters)
-        return jsoncls.to_json_str(result)
+        return cls.to_json_str(result)
