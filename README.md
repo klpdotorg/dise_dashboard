@@ -24,7 +24,7 @@ Methods
     - [School.getInfo](#schoolgetinfo)
     - [School.search](#schoolsearch)
  - Cluster
-    - [Cluster.getInfo](#clustergetinfo)
+    - [Cluster.getSchools](#clustergetschools)
     - [Cluster.search](#clustersearch)
 
 Methods: `School`
