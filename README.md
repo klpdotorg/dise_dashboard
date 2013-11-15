@@ -59,13 +59,18 @@ E.g. To find maximum 50 schools in Mahagaon cluster that has no geolocation and 
 
 Methods: `Cluster`
 ---
-### `Cluster.getInfo`
+### `Cluster.getSchools`
 
 Accepted parameters:
 
 | name   | required |  description                    |
 | ------ | ---------| ------------                    |
-| name   | yes | full or part of the cluster name |
+| name   | yes | cluster name |
+
+E.g. -
+
+    http://local.dise.klp.org.in:8000/api/v1/olap/?method=Cluster.getSchools&session=10-11&name=BARAGAON
+
 
 ### `Cluster.search`
 

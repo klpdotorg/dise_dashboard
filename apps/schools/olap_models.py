@@ -166,6 +166,24 @@ class School(BaseEntity):
 
 class Cluster(BaseEntity):
     @classmethod
+    def getSchools(cls, params):
+        name = params.get('name')
+        result = dict()
+        result['query'] = params
+
+        try:
+            yearly_data_model = yearly_data.get(params.get('session', '10-11'))
+            schools = yearly_data_model.objects.values(
+                'school_code', 'school_name'
+            ).filter(cluster_name=name)
+
+            result['schools'] = list(schools)
+        except (yearly_data_model.DoesNotExist, Exception) as e:
+            result['error'] = str(e)
+
+        return cls.to_json_str(result)
+
+    @classmethod
     def search(cls, params):
         result = dict()
         result['query'] = params
