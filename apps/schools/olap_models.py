@@ -123,7 +123,7 @@ class School(BaseEntity):
                 }
             ).values(
                 'school_code', 'school_name', 'cluster_name', 'block_name', 'centroid'
-            ).get(school_code=code)
+            ).get(school_code__iexact=code)
 
             result['school'] = school
         except (yearly_data_model.DoesNotExist, Exception) as e:
@@ -175,7 +175,7 @@ class Cluster(BaseEntity):
             yearly_data_model = yearly_data.get(params.get('session', '10-11'))
             schools = yearly_data_model.objects.values(
                 'school_code', 'school_name'
-            ).filter(cluster_name=name)
+            ).filter(cluster_name__iexact=name)
 
             result['schools'] = list(schools)
         except (yearly_data_model.DoesNotExist, Exception) as e:
