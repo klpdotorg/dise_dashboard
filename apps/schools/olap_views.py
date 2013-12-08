@@ -31,35 +31,30 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
                         "cluster_name": "CH DAPKA",
                         "block_name": "AURAD",
                         "school_code": 29050115601,
-                        "centroid": null,
                         "school_name": "GOVT MPS CH.DABKA"
                     },
                     {
                         "cluster_name": "BHANTANUR",
                         "block_name": "MUDHOL",
                         "school_code": 29021110601,
-                        "centroid": null,
                         "school_name": "GOVT LPS PALKIMA NYA ARALIKATTI"
                     },
                     {
                         "cluster_name": "BHANTANUR",
                         "block_name": "MUDHOL",
                         "school_code": 29021101802,
-                        "centroid": null,
                         "school_name": "GOVT LPS CHIKKUR LT"
                     },
                     {
                         "cluster_name": "BHANTANUR",
                         "block_name": "MUDHOL",
                         "school_code": 29021100702,
-                        "centroid": null,
                         "school_name": "GOVT LPS BANTANUR JANATA PLOT"
                     },
                     {
                         "cluster_name": "SURGAON",
                         "block_name": "MUDHOL",
                         "school_code": 29021104108,
-                        "centroid": null,
                         "school_name": "GOVT LPS HUNSIGADDI TOTA KULALI"
                     }
                 ],
