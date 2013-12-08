@@ -28,16 +28,39 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
             results = {
                 "schools": [
                     {
-                        "school_code": 29010820001,
-                        "school_name": "MHPS TOPINAKATTI"
+                        "cluster_name": "CH DAPKA",
+                        "block_name": "AURAD",
+                        "school_code": 29050115601,
+                        "centroid": null,
+                        "school_name": "GOVT MPS CH.DABKA"
                     },
                     {
-                        "school_code": 29010812901,
-                        "school_name": "MHPS KUPPATAGIRI"
+                        "cluster_name": "BHANTANUR",
+                        "block_name": "MUDHOL",
+                        "school_code": 29021110601,
+                        "centroid": null,
+                        "school_name": "GOVT LPS PALKIMA NYA ARALIKATTI"
                     },
                     {
-                        "school_code": 29010816301,
-                        "school_name": "MHPS NIDAGAL"
+                        "cluster_name": "BHANTANUR",
+                        "block_name": "MUDHOL",
+                        "school_code": 29021101802,
+                        "centroid": null,
+                        "school_name": "GOVT LPS CHIKKUR LT"
+                    },
+                    {
+                        "cluster_name": "BHANTANUR",
+                        "block_name": "MUDHOL",
+                        "school_code": 29021100702,
+                        "centroid": null,
+                        "school_name": "GOVT LPS BANTANUR JANATA PLOT"
+                    },
+                    {
+                        "cluster_name": "SURGAON",
+                        "block_name": "MUDHOL",
+                        "school_code": 29021104108,
+                        "centroid": null,
+                        "school_name": "GOVT LPS HUNSIGADDI TOTA KULALI"
                     }
                 ],
                 "clusters": [
@@ -72,7 +95,6 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
                         "village_name": "KOTAGYAL"
                     },
                 ]
-            }
             json_results = json.dumps(results)
         except (KeyError, ValueError, ImportError, AttributeError) as e:
             results['error'] = str(e)
