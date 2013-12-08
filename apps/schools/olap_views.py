@@ -95,6 +95,7 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
                         "village_name": "KOTAGYAL"
                     },
                 ]
+            }
             json_results = json.dumps(results)
         except (KeyError, ValueError, ImportError, AttributeError) as e:
             results['error'] = str(e)
