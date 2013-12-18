@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION aggregate_assembly() RETURNS void AS
+CREATE OR REPLACE FUNCTION aggregate_district() RETURNS void AS
 $BODY$
 DECLARE
     years integer[] := array[1011, 1112, 1213];
@@ -9,12 +9,12 @@ BEGIN
     FOREACH year IN ARRAY years
     LOOP
         -- can do some processing here
-        table_name := 'dise_' || year || '_assembly_aggregations';
+        table_name := 'dise_' || year || '_district_aggregations';
         basic_table_name := 'dise_' || year || '_basic_data';
         EXECUTE 'DROP TABLE IF EXISTS ' || table_name;
 
         EXECUTE 'CREATE TABLE ' || table_name || ' AS
-        SELECT assembly_name,
+        SELECT district,
             Count(school_code) AS sum_schools,
             Sum(CASE WHEN rural_urban = 1 THEN 1 ELSE 0 END) AS sum_rural_schools,
 
@@ -145,8 +145,8 @@ BEGIN
             Avg(teachers_involved_in_non_tch_assgn) as avg_teachers_involved_in_non_tch_assgn
 
         FROM ' || basic_table_name || '
-        GROUP BY assembly_name
-        ORDER BY assembly_name';
+        GROUP BY district
+        ORDER BY district';
 
     END LOOP;
     RETURN;
@@ -154,4 +154,4 @@ END
 $BODY$
 LANGUAGE plpgsql;
 
-SELECT * FROM aggregate_assembly();
+SELECT * FROM aggregate_district();
