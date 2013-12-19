@@ -1,5 +1,5 @@
 from django.views.generic import View, FormView, TemplateView
 
 
-class SearchView(TemplateView):
-    template_name = "schools/search.html"
+class HomeView(TemplateView):
+    template_name = "index.html"

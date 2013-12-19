@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div id="map-holder"></div>
+
+<!-- Preset Editor -->
+<div id="preset-editor">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h2>Preset Editor</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <h3><span class="glyphicon glyphicon-briefcase"></span> Facilities</h3>
+        <div class="check-list">
+          <label><input type="checkbox"> Classrooms need repair</label><br>
+          <label><input type="checkbox"> Doesn't have Toilet</label><br>
+          <label><input type="checkbox"> Doesn't have Toilet for Girls</label><br>
+          <label><input type="checkbox"> Doesn't have Electricity</label><br>
+          <label><input type="checkbox"> Doesn't have Secure Wall</label><br>
+          <label><input type="checkbox"> Doesn't have Mid-day meal</label><br>
+          <label><input type="checkbox"> Doesn't have Library</label><br>
+          <label><input type="checkbox"> Doesn't have Ramp</label><br>
+          <label><input type="checkbox"> Doesn't have Blackboard</label><br>
+          <label><input type="checkbox"> Doesn't have Playground</label><br>
+          <label><input type="checkbox"> Doesn't have Medical Checkup</label><br>
+          <label><input type="checkbox"> Doesn't have Drinking Water</label>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <h3><span class="glyphicon glyphicon-transfer"></span> RTE</h3>
+        <div class="check-list">
+          <label><input type="checkbox"> Without SDMC Constituted</label><br>
+          <label><input type="checkbox"> Without SDMC Meetings</label><br>
+          <label><input type="checkbox"> Without Textbooks</label><br>
+          <label><input type="checkbox"> With Chilren from Weaker Section Enrolled</label><br>
+        </div>
+
+        <h3><span class="glyphicon glyphicon-certificate"></span> Compound Indicators</h3>
+        <div class="check-list">
+          <label><input type="checkbox"> With Girls <strong>&lt;</strong> Boys</label><br><br>
+          <label class="range">With number of classroom between:&nbsp;&nbsp; <strong>6 - 10</strong></label>
+          <div id="no-of-girls-range" class="range-slider"></div>
+          <br>
+          <label class="range">With number of classroom between:&nbsp;&nbsp; <strong>6 - 10</strong></label>
+          <div id="no-of-girls-range" class="range-slider"></div>
+          <br>
+
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <h3><span class="glyphicon glyphicon-user"></span> Teachers</h3>
+        <div class="check-list">
+          <label><input type="checkbox"> Without seperate room for HM</label><br>
+          <label><input type="checkbox"> Without HM</label>
+        </div>
+
+
+        <h3><span class="glyphicon glyphicon-sound-stereo"></span> Range Indicators</h3>
+        <label class="range">With number of classroom between:&nbsp;&nbsp; <strong>6 - 10</strong></label>
+        <div id="no-of-girls-range" class="range-slider"></div>
+        <br>
+        <label class="range">With number of teachers between:&nbsp;&nbsp;<strong>10 - 20</strong></label>
+        <div id="no-of-girls-range" class="range-slider"></div>
+        <br>
+        <label class="range">Number of Teachers&nbsp;&nbsp;<strong>13 - 17</strong></label>
+        <div id="no-of-girls-range" class="range-slider"></div>
+        <br>
+        <label class="range">Number of Classrooms&nbsp;&nbsp;<strong>2 - 10</strong></label>
+        <div id="no-of-girls-range" class="range-slider"></div>
+
+      </div>
+    </div>
+
+    <div class="row action-row">
+      <div class="col-md-push-9 col-md-3">
+        <button type="button" class="btn">Save</button>
+        or
+        <a href="#">Cancel</a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Preset Editor -->
+
+<!-- Filter Editor -->
+<div id="filter-editor">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h3>Filter</h3>
+      </div>
+    </div>
+    <div class="row lined-cols">
+      <div class="col-md-3">
+        <h4>District</h4>
+        <ul>
+          <li><a href="#">Belgaum</a></li>
+          <li><a href="#">Bellary</a></li>
+          <li><a href="#">Gadag</a></li>
+          <li><a href="#">Dharwad</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h4>Taluk</h4>
+        <ul>
+          <li><a href="#">Belgaum</a></li>
+          <li><a href="#">Bellary</a></li>
+          <li><a href="#">Gadag</a></li>
+          <li><a href="#">Dharwad</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h4>MP</h4>
+        <ul>
+          <li><a href="#">Belgaum</a></li>
+          <li><a href="#">Bellary</a></li>
+          <li><a href="#">Gadag</a></li>
+          <li><a href="#">Dharwad</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h4>MLA</h4>
+        <ul>
+          <li><a href="#">Belgaum</a></li>
+          <li><a href="#">Bellary</a></li>
+          <li><a href="#">Gadag</a></li>
+          <li><a href="#">Dharwad</a></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- Filter Editor -->
+{% endblock %}
+
+{% block endbody %}
+<script>
+var map = L.map('map-holder').setView([12.9711, 78.0798], 9);
+L.tileLayer('http://{s}.tile.cloudmade.com/3c4ab920016a46d8ba10c88227539774/997/256/{z}/{x}/{y}.png', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
+    maxZoom: 18
+}).addTo(map);
+</script>
+{% endblock %}

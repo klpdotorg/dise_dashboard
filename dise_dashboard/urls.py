@@ -2,10 +2,10 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 
-from schools.views import SearchView
+from schools.views import HomeView
 
 urlpatterns = patterns('',
-    url(r'^$', SearchView.as_view(), name='search'),
+    url(r'^$', HomeView.as_view(), name='home'),
 
     # url(r'^schools/', include('schools.urls')),
 

@@ -1,71 +1,166 @@
+{% load static from staticfiles %}
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <title>DISE UI Experiments</title>
 
-    <title>DISE for KLP</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'lib/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'lib/jquery-ui.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'lib/select2.css' %}">
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/master.css' %}">
 
-    <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css">
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
-    <style type="text/css">
-    body > .container {
-        margin: 20px auto;
-    }
-    .pre-scrollable {
-        max-height: 500px;
-        position: fixed;
-        width: 100%;
-        max-width: 900px;
-    }
-    </style>
-    {% block end-head %}
-    {% endblock %}
+    <link href="http://fonts.googleapis.com/css?family=Roboto:400,100italic,100,300,300italic,400italic,500,500italic,700,700italic,900,900italic|Roboto+Condensed:300italic,400italic,700italic,400,300,700|Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css">
+
+    <script type="text/javascript" src="{% static 'lib/jquery.js' %}"></script>
+    <script type="text/javascript" src="{% static 'lib/jquery-ui.js' %}"></script>
+    <script type="text/javascript" src="{% static 'lib/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'lib/select2.js' %}"></script>
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
+    <script type="text/javascript" src="{% static 'js/brain.js' %}"></script>
   </head>
 
   <body>
+  {% block body %}
+  {% endblock %}
 
-    <!-- <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+    <!-- Top Fixed Nav -->
+    <nav class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+          <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">KLP-DISE</a>
-        <div class="nav-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
-        </div>
       </div>
-    </div> -->
 
-    <div class="container">
-    {% block container %}
-        <div class="row">
-            <div class="col-lg-3">
-                {% block sidebar %}
-                {% endblock %}
-            </div>
-            <div class="col-lg-9">
-                {% block body %}
-                {% endblock %}
-            </div>
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse navbar-ex1-collapse">
+        <ol class="top-breadcrumbs">
+          <li><a class="navbar-brand" href="#">DISE</a></li>
+          <li><a href="#">Karnataka</a></li>
+          <li><a href="#">Bangalore</a></li>
+          <li class="active"><a href="#">HSR Layout</a></li>
+        </ol>
+        <span class="no-of-matches">
+          42
+          matches found
+        </span>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+          <li>
+            <a href="#">
+              <span class="text">Hide</span>
+              <span class="glyphicon glyphicon-chevron-right" id="control_toggle"></span>
+            </a>
+          </li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </nav>
+    <!-- End Nav -->
+
+
+    <div id="controls">
+      <div id="super-search-container">
+        <input type="text"  placeholder="Filter..." id="filter-select">
+        <!--
+        <button class="btn">
+          <span class="glyphicon glyphicon-filter"></span>
+        </button>
+        -->
+      </div>
+
+      <div class="form-holder">
+        <label>Academic Year</label><br>
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-primary">
+            <input type="checkbox"> 2010-2011
+          </label>
+          <label class="btn btn-primary">
+            <input type="checkbox"> 2011-2012
+          </label>
         </div>
-    {% endblock %}
-    </div><!-- /.container -->
-    <script src="{{ STATIC_URL }}js/jquery-1.9.1.min.js"></script>
-    <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
-     <script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
-    {% block javascript %}
-    {% endblock %}
-    {% block end-body %}
+
+        <br><br>
+
+        <label>Area</label><br>
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-primary">
+            <input type="checkbox"> Rural
+          </label>
+          <label class="btn btn-primary">
+            <input type="checkbox"> Urban
+          </label>
+        </div>
+
+        <br><br>
+
+        <label>Management</label><br>
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-primary">
+            <input type="checkbox"> Private
+          </label>
+          <label class="btn btn-primary">
+            <input type="checkbox"> Goverment
+          </label>
+        </div>
+        <br><br>
+      </div>
+
+      <div id="presets">
+        <ul>
+          <li>
+            <a href="#">Preset A</a>
+            <a href="#" class="preset-edit">
+              <span class="glyphicon glyphicon-refresh reset_preset" data-toggle="tooltip" title="Reset the changes in the preset"></span>
+              <span class="glyphicon glyphicon-cog"></span>
+            </a>
+            <p>lorem impus dolor sit amet</p>
+          </li>
+          <li>
+            <a href="#">Preset A</a>
+            <a href="#" class="preset-edit">
+              <span class="glyphicon glyphicon-refresh reset_preset" data-toggle="tooltip" title="Reset the changes in the preset"></span>
+              <span class="glyphicon glyphicon-cog"></span>
+            </a>
+
+            <p>lorem impus dolor sit amet</p>
+          </li>
+          <li class="active">
+            <a href="#">Preset A</a>
+            <a href="#" class="preset-edit">
+              <span class="glyphicon glyphicon-refresh reset_preset" data-toggle="tooltip" title="Reset the changes in the preset"></span>
+              <span class="glyphicon glyphicon-cog"></span>
+            </a>
+
+            <p>lorem impus dolor sit amet</p>
+          </li>
+          <li>
+            <a href="#">Preset A</a>
+            <a href="#" class="preset-edit">
+              <span class="glyphicon glyphicon-refresh reset_preset" data-toggle="tooltip" title="Reset the changes in the preset"></span>
+              <span class="glyphicon glyphicon-cog"></span>
+            </a>
+
+            <p>lorem impus dolor sit amet</p>
+          </li>
+          <li>
+            <a href="#">Preset A</a>
+            <a href="#" class="preset-edit">
+              <span class="glyphicon glyphicon-refresh reset_preset" data-toggle="tooltip" title="Reset the changes in the preset"></span>
+              <span class="glyphicon glyphicon-cog"></span>
+            </a>
+
+            <p>lorem impus dolor sit amet</p>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+    {% block endbody %}
     {% endblock %}
   </body>
 </html>
