@@ -42,13 +42,31 @@
         <h3><span class="glyphicon glyphicon-certificate"></span> Compound Indicators</h3>
         <div class="check-list">
           <label><input type="checkbox"> With Girls <strong>&lt;</strong> Boys</label><br><br>
-          <label class="range">With number of classroom between:&nbsp;&nbsp; <strong>6 - 10</strong></label>
-          <div id="no-of-girls-range" class="range-slider"></div>
-          <br>
-          <label class="range">With number of classroom between:&nbsp;&nbsp; <strong>6 - 10</strong></label>
-          <div id="no-of-girls-range" class="range-slider"></div>
+
+
+          <label class="range">
+            With enrollment from:&nbsp;&nbsp;
+            <strong>
+              <input type="text" id="wef-low" value="0" disabled>
+              -
+              <input type="text" id="wef-high" value="25" disabled>
+            </strong>
+          </label>
+          <div id="wef-slider" class="range-slider" data-high="wef-high" data-low="wef-low"></div>
+
           <br>
 
+          <label class="range">
+            With Pupil-Teacher Ratio from:&nbsp;&nbsp;
+            <strong>
+              <input type="text" id="wptrf-low" value="0" disabled>
+              -
+              <input type="text" id="wptrf-high" value="35" disabled>
+            </strong>
+          </label>
+          <div id="wptrf-slider" class="range-slider" data-high="wptrf-high" data-low="wptrf-low"></div>
+
+          <br>
         </div>
       </div>
 
@@ -61,18 +79,57 @@
 
 
         <h3><span class="glyphicon glyphicon-sound-stereo"></span> Range Indicators</h3>
-        <label class="range">With number of classroom between:&nbsp;&nbsp; <strong>6 - 10</strong></label>
-        <div id="no-of-girls-range" class="range-slider"></div>
-        <br>
-        <label class="range">With number of teachers between:&nbsp;&nbsp;<strong>10 - 20</strong></label>
-        <div id="no-of-girls-range" class="range-slider"></div>
-        <br>
-        <label class="range">Number of Teachers&nbsp;&nbsp;<strong>13 - 17</strong></label>
-        <div id="no-of-girls-range" class="range-slider"></div>
-        <br>
-        <label class="range">Number of Classrooms&nbsp;&nbsp;<strong>2 - 10</strong></label>
-        <div id="no-of-girls-range" class="range-slider"></div>
+        <div class="check-list">
 
+          <label class="range">
+            With number of classrooms between:&nbsp;&nbsp;
+            <strong>
+              <input type="text" id="wncb-low" value="0" disabled>
+              -
+              <input type="text" id="wncb-high" value="50" disabled>
+            </strong>
+          </label>
+          <div id="wncb-slider" class="range-slider" data-high="wncb-high" data-low="wncb-low"></div>
+
+          <br>
+
+          <label class="range">
+            With number of teachers between:&nbsp;&nbsp;
+            <strong>
+              <input type="text" id="wntb-low" value="0" disabled>
+              -
+              <input type="text" id="wntb-high" value="50" disabled>
+            </strong>
+          </label>
+          <div id="wntb-slider" class="range-slider" data-high="wntb-high" data-low="wntb-low"></div>
+
+          <br>
+
+          <label class="range">
+            With number of girls in class:&nbsp;&nbsp;
+            <strong>
+              <input type="text" id="wngic-low" value="0" disabled>
+              -
+              <input type="text" id="wngic-high" value="50" disabled>
+            </strong>
+          </label>
+          <div id="wngic-slider" class="range-slider" data-high="wngic-high" data-low="wngic-low"></div>
+
+          <br>
+
+          <label class="range">
+            With number of boys in class:&nbsp;&nbsp;
+            <strong>
+              <input type="text" id="wnbic-low" value="0" disabled>
+              -
+              <input type="text" id="wnbic-high" value="50" disabled>
+            </strong>
+          </label>
+          <div id="wnbic-slider" class="range-slider" data-high="wnbic-high" data-low="wnbic-low"></div>
+
+
+
+        </div>
       </div>
     </div>
 
@@ -160,6 +217,7 @@
       <label class="btn btn-primary">
         <input type="checkbox"> 2012-2013
       </label>
+
     </div>
 
     <br><br>
