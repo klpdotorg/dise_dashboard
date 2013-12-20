@@ -104,7 +104,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'dise_dashboard.urls'
@@ -132,7 +132,7 @@ INSTALLED_APPS = (
 
     # third party
     'south',
-    'debug_toolbar',
+    # 'debug_toolbar',
     'bootstrapform',
     'raven.contrib.django.raven_compat',
 
