@@ -48,7 +48,7 @@ button[type="submit"].btn-default{
 
 #controls{
     transition: all 1s ease;
-    z-index: 10000;
+    z-index: 9999;
     position: absolute;
     background: #343539;
     margin-top: 53px;
@@ -73,7 +73,7 @@ button[type="submit"].btn-default{
     text-shadow: 0 1px #000;
 }
 
-#control_toggle{
+#control_toggle_icon{
     transition: all 1s ease;
     -webkit-transform: rotate(0deg);
     -moz-transform: rotate(0deg);
@@ -81,7 +81,7 @@ button[type="submit"].btn-default{
     -ms-transform: rotate(0deg);
 }
 
-#control_toggle.flip{
+#control_toggle_icon.flip{
     transition: all 1s ease;
 
     -webkit-transform: translateY(3px) rotate(180deg);
@@ -159,6 +159,8 @@ button[type="submit"].btn-default{
 .btn-group label{
     background: #F18352;
     border-color: #cd5e00;
+    padding: 8px;
+    font-size: 13px;
 }
 
 .btn-group label:hover{
@@ -333,6 +335,7 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
 
 .ui-slider-range{
     background: #cd5e00;
+    margin-left: 10px;
 }
 
 .ui-slider-handle{
@@ -346,11 +349,24 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
 
 #preset-editor label.range{
     font-weight: 100;
+    margin: 0;
+    width: 300px;
     margin-bottom: 10px;
 }
 
 #preset-editor label.range > strong{
     color: #cd5e00;
+    font-weight: 100;
+    font-size: 22px;
+}
+
+#preset-editor label.range > strong > input{
+    color: #cd5e00;
+    border: none;
+    background: transparent;
+    display: inline;
+    width: 26px;
+    text-align: center;
     font-weight: 100;
     font-size: 22px;
 }
