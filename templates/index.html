@@ -197,7 +197,7 @@
 
 <div id="controls">
   <div id="super-search-container">
-    <input type="text"  placeholder="Filter..." id="filter-select">
+    <input type="text"  placeholder="Filter..." id="filter-select" autofocus>
     <!--
     <button class="btn">
       <span class="glyphicon glyphicon-filter"></span>
@@ -206,43 +206,44 @@
   </div>
 
   <div class="form-holder">
-    <label>Academic Year</label><br>
-    <div class="btn-group" data-toggle="buttons">
-      <label class="btn btn-primary">
-        <input type="checkbox"> 2010-2011
-      </label>
-      <label class="btn btn-primary">
-        <input type="checkbox"> 2011-2012
-      </label>
-      <label class="btn btn-primary">
-        <input type="checkbox"> 2012-2013
-      </label>
+    <form action="" name="basic_filters">
+      <label>Academic Year</label><br>
+      <div class="btn-group" data-toggle="buttons">
+        <label class="btn btn-primary">
+          <input type="radio" name="session" value="10-11" checked="checked"> 2010-2011
+        </label>
+        <label class="btn btn-primary">
+          <input type="radio" name="session" value="11-12"> 2011-2012
+        </label>
+        <label class="btn btn-primary">
+          <input type="radio" name="session" value="12-13"> 2012-2013
+        </label>
+      </div>
 
-    </div>
+      <br><br>
 
-    <br><br>
+      <label>Area</label><br>
+      <div class="btn-group" data-toggle="buttons">
+        <label class="btn btn-primary">
+          <input type="checkbox" name="" value="rural"> Rural
+        </label>
+        <label class="btn btn-primary">
+          <input type="checkbox" name="" value="urban"> Urban
+        </label>
+      </div>
 
-    <label>Area</label><br>
-    <div class="btn-group" data-toggle="buttons">
-      <label class="btn btn-primary">
-        <input type="checkbox"> Rural
-      </label>
-      <label class="btn btn-primary">
-        <input type="checkbox"> Urban
-      </label>
-    </div>
+      <br><br>
 
-    <br><br>
-
-    <label>Management</label><br>
-    <div class="btn-group" data-toggle="buttons">
-      <label class="btn btn-primary">
-        <input type="checkbox"> Private
-      </label>
-      <label class="btn btn-primary">
-        <input type="checkbox"> Goverment
-      </label>
-    </div>
+      <label>Management</label><br>
+      <div class="btn-group" data-toggle="buttons">
+        <label class="btn btn-primary">
+          <input type="checkbox" name="" value="private"> Private
+        </label>
+        <label class="btn btn-primary">
+          <input type="checkbox" name="" value="govt"> Goverment
+        </label>
+      </div>
+    </form>
     <br><br>
   </div>
 
@@ -300,10 +301,10 @@
 
 {% block endbody %}
 <script>
-var map = L.map('map-holder').setView([12.9711, 78.0798], 9);
+window.map = L.map('map-holder').setView([12.9711, 78.0798], 9);
 L.tileLayer('http://{s}.tile.cloudmade.com/3c4ab920016a46d8ba10c88227539774/997/256/{z}/{x}/{y}.png', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
     maxZoom: 18
-}).addTo(map);
+}).addTo(window.map);
 </script>
 {% endblock %}

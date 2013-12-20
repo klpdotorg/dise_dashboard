@@ -441,6 +441,94 @@ class ParliamentAggregations(models.Model):
     class Meta:
         abstract = True
 
+class DistrictAggregations(models.Model):
+    district = models.CharField(max_length=35, blank=True)
+    sum_schools = models.BigIntegerField(null=True, blank=True)
+    sum_rural_schools = models.BigIntegerField(null=True, blank=True)
+    avg_distance_brc = models.FloatField(null=True, blank=True)
+    avg_distance_crc = models.FloatField(null=True, blank=True)
+    sum_pre_primary_schools = models.BigIntegerField(null=True, blank=True)
+    sum_residential_schools = models.BigIntegerField(null=True, blank=True)
+    sum_pre_primary_students = models.BigIntegerField(null=True, blank=True)
+    avg_pre_primary_students = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_shift_schools = models.BigIntegerField(null=True, blank=True)
+    sum_no_of_working_days = models.BigIntegerField(null=True, blank=True)
+    avg_no_of_working_days = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_no_of_acad_inspection = models.BigIntegerField(null=True, blank=True)
+    avg_no_of_acad_inspection = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_visits_by_brc = models.BigIntegerField(null=True, blank=True)
+    avg_visits_by_brc = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_visits_by_crc = models.BigIntegerField(null=True, blank=True)
+    avg_visits_by_crc = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_school_dev_grant_recd = models.FloatField(null=True, blank=True)
+    avg_school_dev_grant_recd = models.FloatField(null=True, blank=True)
+    sum_school_dev_grant_expnd = models.FloatField(null=True, blank=True)
+    avg_school_dev_grant_expnd = models.FloatField(null=True, blank=True)
+    sum_tlm_grant_recd = models.FloatField(null=True, blank=True)
+    avg_tlm_grant_recd = models.FloatField(null=True, blank=True)
+    sum_tlm_grant_expnd = models.FloatField(null=True, blank=True)
+    avg_tlm_grant_expnd = models.FloatField(null=True, blank=True)
+    sum_funds_from_students_recd = models.FloatField(null=True, blank=True)
+    avg_funds_from_students_recd = models.FloatField(null=True, blank=True)
+    sum_funds_from_students_expnd = models.FloatField(null=True, blank=True)
+    avg_funds_from_students_expnd = models.FloatField(null=True, blank=True)
+    sum_tot_clrooms = models.BigIntegerField(null=True, blank=True)
+    avg_tot_clrooms = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_classrooms_in_good_condition = models.BigIntegerField(null=True, blank=True)
+    avg_classrooms_in_good_condition = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_classrooms_require_major_repair = models.BigIntegerField(null=True, blank=True)
+    avg_classrooms_require_major_repair = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_classrooms_require_minor_repair = models.BigIntegerField(null=True, blank=True)
+    avg_classrooms_require_minor_repair = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_other_rooms_in_good_cond = models.BigIntegerField(null=True, blank=True)
+    avg_other_rooms_in_good_cond = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_other_rooms_need_major_rep = models.BigIntegerField(null=True, blank=True)
+    avg_other_rooms_need_major_rep = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_other_rooms_need_minor_rep = models.BigIntegerField(null=True, blank=True)
+    avg_other_rooms_need_minor_rep = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_toilet_common = models.BigIntegerField(null=True, blank=True)
+    avg_toilet_common = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_toilet_boys = models.BigIntegerField(null=True, blank=True)
+    avg_toilet_boys = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_toilet_girls = models.BigIntegerField(null=True, blank=True)
+    avg_toilet_girls = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_kitchen_devices_grant = models.BigIntegerField(null=True, blank=True)
+    avg_kitchen_devices_grant = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_has_mdm = models.BigIntegerField(null=True, blank=True)
+    sum_has_cal_lab = models.BigIntegerField(null=True, blank=True)
+    sum_has_separate_room_for_headmaster = models.BigIntegerField(null=True, blank=True)
+    sum_has_electricity = models.BigIntegerField(null=True, blank=True)
+    sum_has_boundary_wall = models.BigIntegerField(null=True, blank=True)
+    sum_has_library = models.BigIntegerField(null=True, blank=True)
+    sum_books_in_library = models.BigIntegerField(null=True, blank=True)
+    avg_books_in_library = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_has_playground = models.BigIntegerField(null=True, blank=True)
+    sum_has_blackboard = models.BigIntegerField(null=True, blank=True)
+    sum_has_drinking_water = models.BigIntegerField(null=True, blank=True)
+    sum_has_medical_checkup = models.BigIntegerField(null=True, blank=True)
+    sum_has_ramps = models.BigIntegerField(null=True, blank=True)
+    sum_no_of_computers = models.BigIntegerField(null=True, blank=True)
+    avg_no_of_computers = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_male_tch = models.BigIntegerField(null=True, blank=True)
+    avg_male_tch = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_female_tch = models.BigIntegerField(null=True, blank=True)
+    avg_female_tch = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_noresp_tch = models.BigIntegerField(null=True, blank=True)
+    avg_noresp_tch = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_head_teacher = models.BigIntegerField(null=True, blank=True)
+    avg_head_teacher = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_graduate_teachers = models.BigIntegerField(null=True, blank=True)
+    avg_graduate_teachers = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_tch_with_professional_qualification = models.BigIntegerField(null=True, blank=True)
+    avg_tch_with_professional_qualification = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_days_involved_in_non_tch_assgn = models.BigIntegerField(null=True, blank=True)
+    avg_days_involved_in_non_tch_assgn = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_teachers_involved_in_non_tch_assgn = models.BigIntegerField(null=True, blank=True)
+    avg_teachers_involved_in_non_tch_assgn = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+
+    class Meta:
+        abstract = True
+
 
 class Dise1011AssemblyAggregations(AssemblyAggregations):
     class Meta:
@@ -450,6 +538,11 @@ class Dise1011AssemblyAggregations(AssemblyAggregations):
 class Dise1112AssemblyAggregations(AssemblyAggregations):
     class Meta:
         db_table = 'dise_1112_assembly_aggregations'
+
+
+class Dise1213AssemblyAggregations(AssemblyAggregations):
+    class Meta:
+        db_table = 'dise_1213_assembly_aggregations'
 
 
 class Dise1011BlockAggregations(BlockAggregations):
@@ -462,6 +555,11 @@ class Dise1112BlockAggregations(BlockAggregations):
         db_table = 'dise_1112_block_aggregations'
 
 
+class Dise1213BlockAggregations(BlockAggregations):
+    class Meta:
+        db_table = 'dise_1213_block_aggregations'
+
+
 class Dise1011ClusterAggregations(ClusterAggregations):
     class Meta:
         db_table = 'dise_1011_cluster_aggregations'
@@ -470,6 +568,11 @@ class Dise1011ClusterAggregations(ClusterAggregations):
 class Dise1112ClusterAggregations(ClusterAggregations):
     class Meta:
         db_table = 'dise_1112_cluster_aggregations'
+
+
+class Dise1213ClusterAggregations(ClusterAggregations):
+    class Meta:
+        db_table = 'dise_1213_cluster_aggregations'
 
 
 class Dise1011ParliamentAggregations(ParliamentAggregations):
@@ -482,6 +585,26 @@ class Dise1112ParliamentAggregations(ParliamentAggregations):
         db_table = 'dise_1112_parliament_aggregations'
 
 
+class Dise1213ParliamentAggregations(ParliamentAggregations):
+    class Meta:
+        db_table = 'dise_1213_parliament_aggregations'
+
+
+class Dise1011DistrictAggregations(DistrictAggregations):
+    class Meta:
+        db_table = 'dise_1011_district_aggregations'
+
+
+class Dise1112DistrictAggregations(DistrictAggregations):
+    class Meta:
+        db_table = 'dise_1112_district_aggregations'
+
+
+class Dise1213DistrictAggregations(DistrictAggregations):
+    class Meta:
+        db_table = 'dise_1213_district_aggregations'
+
+
 class Dise1011BasicData(BasicData):
     class Meta:
         db_table = 'dise_1011_basic_data'
@@ -490,6 +613,11 @@ class Dise1011BasicData(BasicData):
 class Dise1112BasicData(BasicData):
     class Meta:
         db_table = 'dise_1112_basic_data'
+
+
+class Dise1213BasicData(BasicData):
+    class Meta:
+        db_table = 'dise_1213_basic_data'
 
 
 basic_data = {

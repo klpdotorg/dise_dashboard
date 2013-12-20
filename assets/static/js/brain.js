@@ -59,31 +59,58 @@ $(function(){
 
     $("#filter-select").select2({
         dropdownCssClass: "bigdrop",
-        data:
-        [
-            {
-                text: "District",
-                children: [
-                    {
-                        id: "d1",
-                        text: "Bellary"
-                    },
-                    {
-                        id: "d2",
-                        text: "Koppal"
-                    }
-                ]
+        minimumInputLength:2,
+        ajax: {
+            url: "/api/v1/olap/search/",
+            data: function (term, page) {
+                var values = {};
+                $.each($('form[name=basic_filters]').serializeArray(), function(i, field) {
+                    values[field.name] = field.value;
+                });
+                return {
+                    q: term, // search term
+                    filters: values
+                };
             },
-            {
-                text: "Taluk",
-                children: [
-                    {
-                        id: "t1",
-                        text: "Hospet"
-                    }
-                ]
+            results: function (data, page) {
+                return {results: data};
             }
-        ]
+        }
+        // data:
+        // [
+        //     {
+        //         text: "District",
+        //         children: [
+        //             {
+        //                 id: "d1",
+        //                 text: "Bellary"
+        //             },
+        //             {
+        //                 id: "d2",
+        //                 text: "Koppal"
+        //             }
+        //         ]
+        //     },
+        //     {
+        //         text: "Taluk",
+        //         children: [
+        //             {
+        //                 id: "t1",
+        //                 text: "Hospet"
+        //             }
+        //         ]
+        //     }
+        // ]
+    });
+    $("#filter-select").on("change", function(e) {
+        console.log(e);
+        if (e.added.centroid !== undefined) {
+            var marker = L.marker(e.added.centroid).addTo(window.map);
+            marker.bindPopup(e.added.text).openPopup();
+            window.map.setView(e.added.centroid, 12);
+        }else{
+            alert("Sorry, this school doesn't have a location.");
+        }
     });
 });
 

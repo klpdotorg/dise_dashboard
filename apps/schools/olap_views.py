@@ -12,88 +12,83 @@ from common import SumCase
 from common.views import JSONResponseMixin
 from schools.models import YearlyData, School, SchoolManaagement,\
     DrinkingWaterSource, BoundaryWallType, search_choices, YESNO, MDM_STATUS
-from schools.olap_models import Dise1011BasicData, Dise1112BasicData, School, Cluster
+from schools.olap_models import Dise1011AssemblyAggregations, \
+    Dise1112AssemblyAggregations, Dise1213AssemblyAggregations, \
+    Dise1011BlockAggregations, Dise1112BlockAggregations, \
+    Dise1213BlockAggregations, Dise1011ClusterAggregations, \
+    Dise1112ClusterAggregations, Dise1213ClusterAggregations, \
+    Dise1011ParliamentAggregations, Dise1112ParliamentAggregations, \
+    Dise1213ParliamentAggregations, Dise1011DistrictAggregations, \
+    Dise1112DistrictAggregations, Dise1213DistrictAggregations, \
+    Dise1011BasicData, Dise1112BasicData, Dise1213BasicData, School, Cluster
 
 # This shall become 0 when we have the map
 DEFAULT_LIMIT = 20
+
+def get_models(session='10-11'):
+    school_model = globals().get('Dise{}BasicData'.format(session.replace('-', '')))
+    cluster_model = globals().get('Dise{}ClusterAggregations'.format(session.replace('-', '')))
+    block_model = globals().get('Dise{}BlockAggregations'.format(session.replace('-', '')))
+    district_model = globals().get('Dise{}DistrictAggregations'.format(session.replace('-', '')))
+    return school_model, cluster_model, block_model, district_model
 
 
 class OLAPUnifiedSearch(View, JSONResponseMixin):
     def get(self, *args, **kwargs):
         params = self.request.GET
-        results = {}
+        results = []
         json_results = ''
 
         try:
-            results = {
-                "schools": [
-                    {
-                        "cluster_name": "CH DAPKA",
-                        "block_name": "AURAD",
-                        "school_code": 29050115601,
-                        "school_name": "GOVT MPS CH.DABKA"
-                    },
-                    {
-                        "cluster_name": "BHANTANUR",
-                        "block_name": "MUDHOL",
-                        "school_code": 29021110601,
-                        "school_name": "GOVT LPS PALKIMA NYA ARALIKATTI"
-                    },
-                    {
-                        "cluster_name": "BHANTANUR",
-                        "block_name": "MUDHOL",
-                        "school_code": 29021101802,
-                        "school_name": "GOVT LPS CHIKKUR LT"
-                    },
-                    {
-                        "cluster_name": "BHANTANUR",
-                        "block_name": "MUDHOL",
-                        "school_code": 29021100702,
-                        "school_name": "GOVT LPS BANTANUR JANATA PLOT"
-                    },
-                    {
-                        "cluster_name": "SURGAON",
-                        "block_name": "MUDHOL",
-                        "school_code": 29021104108,
-                        "school_name": "GOVT LPS HUNSIGADDI TOTA KULALI"
-                    }
-                ],
-                "clusters": [
-                    {
-                        "cluster_name": "BARAGAON",
-                        "block_name": "KHANAPUR",
-                        "district": "BELGAUM",
-                        "village_name": "NIDGAL"
-                    },
-                    {
-                        "cluster_name": "BORGAON",
-                        "block_name": "NIPPANI",
-                        "district": "CHIKKODI",
-                        "village_name": "BORGAON"
-                    },
-                    {
-                        "cluster_name": "CHAPGAON",
-                        "block_name": "KHANAPUR",
-                        "district": "BELGAUM",
-                        "village_name": "KODACHAWAD"
-                    },
-                    {
-                        "cluster_name": "DEVANAGAON",
-                        "block_name": "SINDAGI",
-                        "district": "BIJAPUR",
-                        "village_name": "KADLEWAD (PA)"
-                    },
-                    {
-                        "cluster_name": "DONGAON (M)",
-                        "block_name": "AURAD",
-                        "district": "BIDAR",
-                        "village_name": "KOTAGYAL"
-                    },
-                ]
-            }
+            query = params.get('q')
+            session = params.get('filters[session]')
+            if session not in ['10-11', '11-12', '12-13']:
+                raise ValueError('Session not valid')
+
+            School, Cluster, Block, District = get_models(session)
+
+            schools = School.objects.filter(school_name__icontains=query).order_by('school_name')[:3]
+            if schools.count() > 0:
+                temp_d = {
+                    'text': 'School',
+                    'children': []
+                }
+                for school in schools:
+                    temp_d['children'].append({
+                        'id': school.school_code,
+                        'text': school.school_name,
+                        'centroid': [school.centroid.y, school.centroid.x] if school.centroid is not None else []
+                    })
+                results.append(temp_d)
+            # results = [
+            #     {
+            #         'text': "District",
+            #         'children': [
+            #             {
+            #                 'id': "d1",
+            #                 'text': "Bellary"
+            #             },
+            #             {
+            #                 'id': "d2",
+            #                 'text': "Koppal"
+            #             }
+            #         ]
+            #     },
+            #     {
+            #         'text': "Taluk",
+            #         'children': [
+            #             {
+            #                 'id': "t1",
+            #                 'text': "Hospet"
+            #             }
+            #         ]
+            #     }
+            # ]
             json_results = json.dumps(results)
         except (KeyError, ValueError, ImportError, AttributeError) as e:
-            results['error'] = str(e)
+            # results['error'] = str(e)
+            print str(e)
+            results = []
             json_results = json.dumps(results)
             return self.get_json_response(json_results)
 
