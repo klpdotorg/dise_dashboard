@@ -19,7 +19,7 @@ Here are the steps you need to follow(on Debian/Ubuntu/Mint) to get this up and 
 
         cp dise_dashboard/local_settings.sample.py dise_dashboard/local_settings.py
 
-8. edit the file `local_settings.py` and put in the database details
+8. edit the file `local_settings.py` and put in the database details (Postgres 9.3 + PostGIS 2.1)
 9. run the server
 
         python manage.py runserver <port>
