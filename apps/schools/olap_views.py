@@ -71,12 +71,12 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
             clusters = ClusterModel.objects.filter(cluster_name__icontains=query).order_by('cluster_name')[:3]
             if clusters.count() > 0:
                 temp_d = {
-                    'type': 'cluster',
                     'text': 'Clusters',
                     'children': []
                 }
                 for cluster in clusters:
                     temp_d['children'].append({
+                        'type': 'cluster',
                         'id': cluster.cluster_name,
                         'text': cluster.cluster_name,
                     })

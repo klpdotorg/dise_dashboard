@@ -111,25 +111,44 @@ $(function(){
         }
     }
 
+    function plotOnMap(feature_or_features, zoom) {
+        console.log(feature_or_features);
+        L.geoJson(
+            feature_or_features,
+            {
+                pointToLayer: function (feature, latlng) {
+                    window.map.setView(latlng, 12);
+                    return L.marker(latlng);
+                },
+                onEachFeature: onEachFeature
+            }
+        ).addTo(window.map);
+    }
+
+    var DISE = $.DiseAPI({
+        'base_url': 'http://local.dev.klp.org.in:8000/api/v1/olap/'
+    })
+
     $("#filter-select").on("change", function(e) {
         console.log(e);
-        if (e.added.type == 'school' && e.added.feature !== null && e.added.feature !== "{}") {
-            // var marker = L.marker(e.added.centroid).addTo(window.map);
-            // marker.bindPopup(e.added.text).openPopup();
-            console.log(JSON.parse(e.added.feature));
-            L.geoJson(
-                JSON.parse(e.added.feature),
-                {
-                    pointToLayer: function (feature, latlng) {
-                        window.map.setView(latlng, 12);
-                        return L.marker(latlng);
-                    },
-                    onEachFeature: onEachFeature
-                }
-            ).addTo(window.map);
+        if (e.added.type == 'school') {
+            if(e.added.feature !== null && e.added.feature !== "{}"){
+                // var marker = L.marker(e.added.centroid).addTo(window.map);
+                // marker.bindPopup(e.added.text).openPopup();
+                console.log(JSON.parse(e.added.feature));
+                plotOnMap(JSON.parse(e.added.feature), 12);
+            } else {
+                alert("Sorry, this school doesn't have a location.");
+            }
         } else if (e.added.type == 'cluster'){
+            DISE.call('Cluster.getSchools', '10-11', {
+                name: e.added.id,
+                format: 'geo'
+            }, function(data) {
+                plotOnMap(data.schools, 8);
+            });
         } else {
-            alert("Sorry, this school doesn't have a location.");
+            // do nothing
         }
     });
 });

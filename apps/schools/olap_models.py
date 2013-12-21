@@ -12,7 +12,7 @@ from django.contrib.gis.db import models
 from django.utils import simplejson as json
 from django.core import serializers
 
-from geojson import Feature, Point
+from geojson import Feature, FeatureCollection, Point, dumps as geojson_dumps
 
 
 class BasicData(models.Model):
@@ -633,6 +633,10 @@ class BaseEntity:
     def to_json_str(cls, d=dict()):
         return json.dumps(d)
 
+    @classmethod
+    def to_geojson_str(cls, d=dict()):
+        return geojson_dumps(d)
+
 
 class School(BaseEntity):
     def _getinfo(self, params):
@@ -666,7 +670,8 @@ class School(BaseEntity):
                 'block_name': school.block_name,
                 'district': school.district,
                 'popupContent': ', '.join([school.school_name, school.cluster_name])
-            }
+            },
+            id=school.school_code
         )
 
     @classmethod
@@ -719,11 +724,25 @@ class Cluster(BaseEntity):
 
         try:
             basic_data_model = basic_data.get(params.get('session', '10-11'))
-            schools = basic_data_model.objects.values(
-                'school_code', 'school_name'
-            ).filter(cluster_name__iexact=name)
+            phormat = params.get('format')
+            if phormat == 'geo':
+                temp_l = []
+                school_api = School()
+                schools = basic_data_model.objects.filter(
+                    cluster_name__iexact=name,
+                    # NOTE: Not sending schools without centroid
+                    # because there is no way to show them
+                    centroid__isnull=False
+                )
+                for sch in schools:
+                    temp_l.append(school_api._get_geojson(sch))
+                result['schools'] = FeatureCollection(temp_l)
+            else:
+                schools = basic_data_model.objects.values(
+                    'school_code', 'school_name'
+                ).filter(cluster_name__iexact=name)
+                result['schools'] = list(schools)
 
-            result['schools'] = list(schools)
         except (basic_data_model.DoesNotExist, Exception) as e:
             result['error'] = str(e)
         return result
@@ -731,7 +750,10 @@ class Cluster(BaseEntity):
     @classmethod
     def getSchools(cls, params):
         result = cls()._getschools(params)
-        return cls.to_json_str(result)
+        if params.get('format', 'plain') == 'plain':
+            return cls.to_json_str(result)
+        elif params.get('format', 'plain') == 'geo':
+            return cls.to_geojson_str(result)
 
     def _search(self, params):
         result = dict()
