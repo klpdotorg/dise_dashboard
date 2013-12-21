@@ -12,6 +12,8 @@ from django.contrib.gis.db import models
 from django.utils import simplejson as json
 from django.core import serializers
 
+from geojson import Feature, Point
+
 
 class BasicData(models.Model):
     school_code = models.BigIntegerField(primary_key=True)
@@ -652,6 +654,20 @@ class School(BaseEntity):
         except (basic_data_model.DoesNotExist, Exception) as e:
             result['error'] = str(e)
         return result
+
+    def _get_geojson(self, school):
+        return Feature(
+            geometry=Point(
+                [school.centroid.x, school.centroid.y] if school.centroid is not None else []
+            ),
+            properties={
+                'name': school.school_name,
+                'cluster_name': school.cluster_name,
+                'block_name': school.block_name,
+                'district': school.district,
+                'popupContent': ', '.join([school.school_name, school.cluster_name])
+            }
+        )
 
     @classmethod
     def getInfo(cls, params):
