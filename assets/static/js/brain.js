@@ -112,7 +112,9 @@ $(function(){
     }
 
     function plotOnMap(feature_or_features, zoom) {
-        console.log(feature_or_features);
+        // @param {String} feature_or_features  Either Feature or FeatureCollection
+        // @param {String} zoom                 Zoom level of the map
+        // console.log(feature_or_features);
         L.geoJson(
             feature_or_features,
             {
@@ -125,17 +127,15 @@ $(function(){
         ).addTo(window.map);
     }
 
+    // Initialize the API wrapper
     var DISE = $.DiseAPI({
         'base_url': window.location.toString() + 'api/v1/olap/'
     })
 
     $("#filter-select").on("change", function(e) {
-        console.log(e);
+        // console.log(e);
         if (e.added.type == 'school') {
             if(e.added.feature !== null && e.added.feature !== "{}"){
-                // var marker = L.marker(e.added.centroid).addTo(window.map);
-                // marker.bindPopup(e.added.text).openPopup();
-                console.log(JSON.parse(e.added.feature));
                 plotOnMap(JSON.parse(e.added.feature), 12);
             } else {
                 alert("Sorry, this school doesn't have a location.");
