@@ -102,13 +102,32 @@ $(function(){
         //     }
         // ]
     });
+
+    function onEachFeature(feature, layer) {
+        // does this feature have a property named popupContent?
+        if (feature.properties && feature.properties.popupContent) {
+            layer.bindPopup(feature.properties.popupContent);
+        }
+    }
+
     $("#filter-select").on("change", function(e) {
         console.log(e);
-        if (e.added.centroid !== undefined) {
-            var marker = L.marker(e.added.centroid).addTo(window.map);
-            marker.bindPopup(e.added.text).openPopup();
-            window.map.setView(e.added.centroid, 12);
-        }else{
+        if (e.added.type == 'school' && e.added.feature !== null && e.added.feature !== "{}") {
+            // var marker = L.marker(e.added.centroid).addTo(window.map);
+            // marker.bindPopup(e.added.text).openPopup();
+            console.log(JSON.parse(e.added.feature));
+            L.geoJson(
+                JSON.parse(e.added.feature),
+                {
+                    pointToLayer: function (feature, latlng) {
+                        window.map.setView(latlng, 12);
+                        return L.marker(latlng);
+                    },
+                    onEachFeature: onEachFeature
+                }
+            ).addTo(window.map);
+        } else if (e.added.type == 'cluster'){
+        } else {
             alert("Sorry, this school doesn't have a location.");
         }
     });

@@ -5,7 +5,7 @@ from django.utils import simplejson as json
 from django.core import serializers
 from django.db import connection
 
-import geojson
+from geojson import Feature, Point, dumps as geojson_dumps
 import re
 
 from common import SumCase
@@ -35,6 +35,7 @@ def get_models(session='10-11'):
 
 class OLAPUnifiedSearch(View, JSONResponseMixin):
     def get(self, *args, **kwargs):
+        school_api = School()
         params = self.request.GET
         results = []
         json_results = ''
@@ -45,25 +46,32 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
             if session not in ['10-11', '11-12', '12-13']:
                 raise ValueError('Session not valid')
 
-            School, Cluster, Block, District = get_models(session)
+            SchoolModel, ClusterModel, BlockModel, DistrictModel = get_models(session)
 
-            schools = School.objects.filter(school_name__icontains=query).order_by('school_name')[:3]
+            schools = SchoolModel.objects.filter(school_name__icontains=query).order_by('school_name')[:3]
             if schools.count() > 0:
                 temp_d = {
                     'text': 'Schools',
                     'children': []
                 }
                 for school in schools:
+                    feature = {}
+                    if school.centroid is not None:
+                        feature = school_api._get_geojson(school)
+
                     temp_d['children'].append({
+                        'type': 'school',
                         'id': school.school_code,
                         'text': school.school_name,
-                        'centroid': [school.centroid.y, school.centroid.x] if school.centroid is not None else []
+                        # 'centroid': [school.centroid.y, school.centroid.x] if school.centroid is not None else []
+                        'feature': geojson_dumps(feature)
                     })
                 results.append(temp_d)
 
-            clusters = Cluster.objects.filter(cluster_name__icontains=query).order_by('cluster_name')[:3]
+            clusters = ClusterModel.objects.filter(cluster_name__icontains=query).order_by('cluster_name')[:3]
             if clusters.count() > 0:
                 temp_d = {
+                    'type': 'cluster',
                     'text': 'Clusters',
                     'children': []
                 }
@@ -74,9 +82,10 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
                     })
                 results.append(temp_d)
 
-            blocks = Block.objects.filter(block_name__icontains=query).order_by('block_name')[:3]
+            blocks = BlockModel.objects.filter(block_name__icontains=query).order_by('block_name')[:3]
             if blocks.count() > 0:
                 temp_d = {
+                    'type': 'block',
                     'text': 'Blocks',
                     'children': []
                 }
@@ -87,9 +96,10 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
                     })
                 results.append(temp_d)
 
-            districts = District.objects.filter(district__icontains=query).order_by('district')[:3]
+            districts = DistrictModel.objects.filter(district__icontains=query).order_by('district')[:3]
             if districts.count() > 0:
                 temp_d = {
+                    'type': 'district',
                     'text': 'Districts',
                     'children': []
                 }
