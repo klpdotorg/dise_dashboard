@@ -50,7 +50,7 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
             schools = School.objects.filter(school_name__icontains=query).order_by('school_name')[:3]
             if schools.count() > 0:
                 temp_d = {
-                    'text': 'School',
+                    'text': 'Schools',
                     'children': []
                 }
                 for school in schools:
@@ -60,30 +60,46 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
                         'centroid': [school.centroid.y, school.centroid.x] if school.centroid is not None else []
                     })
                 results.append(temp_d)
-            # results = [
-            #     {
-            #         'text': "District",
-            #         'children': [
-            #             {
-            #                 'id': "d1",
-            #                 'text': "Bellary"
-            #             },
-            #             {
-            #                 'id': "d2",
-            #                 'text': "Koppal"
-            #             }
-            #         ]
-            #     },
-            #     {
-            #         'text': "Taluk",
-            #         'children': [
-            #             {
-            #                 'id': "t1",
-            #                 'text': "Hospet"
-            #             }
-            #         ]
-            #     }
-            # ]
+
+            clusters = Cluster.objects.filter(cluster_name__icontains=query).order_by('cluster_name')[:3]
+            if clusters.count() > 0:
+                temp_d = {
+                    'text': 'Clusters',
+                    'children': []
+                }
+                for cluster in clusters:
+                    temp_d['children'].append({
+                        'id': cluster.cluster_name,
+                        'text': cluster.cluster_name,
+                    })
+                results.append(temp_d)
+
+            blocks = Block.objects.filter(block_name__icontains=query).order_by('block_name')[:3]
+            if blocks.count() > 0:
+                temp_d = {
+                    'text': 'Blocks',
+                    'children': []
+                }
+                for block in blocks:
+                    temp_d['children'].append({
+                        'id': block.block_name,
+                        'text': block.block_name,
+                    })
+                results.append(temp_d)
+
+            districts = District.objects.filter(district__icontains=query).order_by('district')[:3]
+            if districts.count() > 0:
+                temp_d = {
+                    'text': 'Districts',
+                    'children': []
+                }
+                for district in districts:
+                    temp_d['children'].append({
+                        'id': district.district,
+                        'text': district.district,
+                    })
+                results.append(temp_d)
+
             json_results = json.dumps(results)
         except (KeyError, ValueError, ImportError, AttributeError) as e:
             # results['error'] = str(e)

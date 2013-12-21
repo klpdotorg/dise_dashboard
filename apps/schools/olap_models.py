@@ -86,7 +86,7 @@ class BasicData(models.Model):
         abstract = True
 
 class AssemblyAggregations(models.Model):
-    assembly_name = models.CharField(max_length=35, blank=True)
+    assembly_name = models.CharField(max_length=35, primary_key=True)
     sum_schools = models.BigIntegerField(null=True, blank=True)
     sum_rural_schools = models.BigIntegerField(null=True, blank=True)
     avg_distance_brc = models.FloatField(null=True, blank=True)
@@ -175,7 +175,7 @@ class AssemblyAggregations(models.Model):
 
 
 class BlockAggregations(models.Model):
-    block_name = models.CharField(max_length=50, blank=True)
+    block_name = models.CharField(max_length=50, primary_key=True)
     sum_schools = models.BigIntegerField(null=True, blank=True)
     sum_rural_schools = models.BigIntegerField(null=True, blank=True)
     avg_distance_brc = models.FloatField(null=True, blank=True)
@@ -264,7 +264,7 @@ class BlockAggregations(models.Model):
 
 
 class ClusterAggregations(models.Model):
-    cluster_name = models.CharField(max_length=50, blank=True)
+    cluster_name = models.CharField(max_length=50, primary_key=True)
     block_name = models.CharField(max_length=50, blank=True)
     sum_schools = models.BigIntegerField(null=True, blank=True)
     sum_rural_schools = models.BigIntegerField(null=True, blank=True)
@@ -354,7 +354,7 @@ class ClusterAggregations(models.Model):
 
 
 class ParliamentAggregations(models.Model):
-    parliament_name = models.CharField(max_length=35, blank=True)
+    parliament_name = models.CharField(max_length=35, primary_key=True)
     sum_schools = models.BigIntegerField(null=True, blank=True)
     sum_rural_schools = models.BigIntegerField(null=True, blank=True)
     avg_distance_brc = models.FloatField(null=True, blank=True)
@@ -442,7 +442,7 @@ class ParliamentAggregations(models.Model):
         abstract = True
 
 class DistrictAggregations(models.Model):
-    district = models.CharField(max_length=35, blank=True)
+    district = models.CharField(max_length=35, primary_key=True)
     sum_schools = models.BigIntegerField(null=True, blank=True)
     sum_rural_schools = models.BigIntegerField(null=True, blank=True)
     avg_distance_brc = models.FloatField(null=True, blank=True)
