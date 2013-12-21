@@ -59,7 +59,7 @@ $(function(){
 
     $("#filter-select").select2({
         dropdownCssClass: "bigdrop",
-        minimumInputLength:2,
+        minimumInputLength: 3,
         ajax: {
             url: "/api/v1/olap/search/",
             data: function (term, page) {
