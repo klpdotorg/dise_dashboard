@@ -126,7 +126,7 @@ $(function(){
     }
 
     var DISE = $.DiseAPI({
-        'base_url': 'http://local.dev.klp.org.in:8000/api/v1/olap/'
+        'base_url': window.location.toString() + 'api/v1/olap/'
     })
 
     $("#filter-select").on("change", function(e) {
