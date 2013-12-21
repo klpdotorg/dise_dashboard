@@ -62,6 +62,7 @@ $(function(){
         minimumInputLength: 3,
         ajax: {
             url: "/api/v1/olap/search/",
+            quietMillis: 300,
             data: function (term, page) {
                 var values = {};
                 $.each($('form[name=basic_filters]').serializeArray(), function(i, field) {
