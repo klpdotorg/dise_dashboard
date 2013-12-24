@@ -119,7 +119,7 @@ $(function(){
             feature_or_features,
             {
                 pointToLayer: function (feature, latlng) {
-                    window.map.setView(latlng, 12);
+                    window.map.setView(latlng, zoom);
                     return L.marker(latlng);
                 },
                 onEachFeature: onEachFeature

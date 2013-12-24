@@ -85,12 +85,12 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
             blocks = BlockModel.objects.filter(block_name__icontains=query).order_by('block_name')[:3]
             if blocks.count() > 0:
                 temp_d = {
-                    'type': 'block',
                     'text': 'Blocks',
                     'children': []
                 }
                 for block in blocks:
                     temp_d['children'].append({
+                        'type': 'block',
                         'id': block.block_name,
                         'text': block.block_name,
                     })
@@ -99,12 +99,12 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
             districts = DistrictModel.objects.filter(district__icontains=query).order_by('district')[:3]
             if districts.count() > 0:
                 temp_d = {
-                    'type': 'district',
                     'text': 'Districts',
                     'children': []
                 }
                 for district in districts:
                     temp_d['children'].append({
+                        'type': 'district',
                         'id': district.district,
                         'text': district.district,
                     })

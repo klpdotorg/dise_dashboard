@@ -34,8 +34,8 @@
                     'method': method,
                     'session': session,
                 }
-                console.log(base_params);
                 params = $.extend({}, base_params, params);
+
                 $.getJSON(
                     settings.base_url,
                     params,
