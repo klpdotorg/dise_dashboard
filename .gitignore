@@ -39,3 +39,7 @@ data
 
 # statics
 assets/collected-static
+
+# vagrant
+.vagrant
+Vagrantfile
