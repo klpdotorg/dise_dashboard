@@ -621,7 +621,7 @@ class Dise1213BasicData(BasicData):
     class Meta:
         db_table = 'dise_1213_basic_data'
 
-
+# FIXIT: use get_models() from olap_views
 basic_data = {
     '10-11': Dise1011BasicData,
     '11-12': Dise1112BasicData
@@ -639,7 +639,9 @@ class BaseEntity:
 
 
 class School(BaseEntity):
+    # For methods that start with `School`
     def _getinfo(self, params):
+        # gets the details of a school and returns a dictionary
         code = params.get('code', -1)
         result = dict()
         result['query'] = params
@@ -648,6 +650,7 @@ class School(BaseEntity):
             basic_data_model = basic_data.get(params.get('session', '10-11'))
             school = basic_data_model.objects.extra(
                 select={
+                    # FIXIT: use variable session
                     'centroid': 'ST_AsText("dise_1011_basic_data"."centroid")'
                 }
             ).values(
@@ -660,6 +663,8 @@ class School(BaseEntity):
         return result
 
     def _get_geojson(self, school):
+        # returns a geojson feature for the given DiseFFTTBasicData object.
+        # FFTT = sesstion from/to. for 2010-11: 1011
         return Feature(
             geometry=Point(
                 [school.centroid.x, school.centroid.y] if school.centroid is not None else []
@@ -676,10 +681,12 @@ class School(BaseEntity):
 
     @classmethod
     def getInfo(cls, params):
+        # this just parses the dictionary from _getinfo and returns JSON
         result = cls()._getinfo(params)
         return cls.to_json_str(result)
 
     def _search(self, params):
+        # This seaches all the base models, depending on the session and retuns list of schools
         result = dict()
         result['query'] = params
         basic_data_model = basic_data.get(params.get('session', '10-11'))
@@ -687,6 +694,7 @@ class School(BaseEntity):
         if len(params.keys()) > 1:
             schools = basic_data_model.objects.extra(
                 select={
+                    # FIXIT: use variable session
                     'centroid': 'ST_AsText("dise_1011_basic_data"."centroid")'
                 }
             ).values(
@@ -712,12 +720,17 @@ class School(BaseEntity):
 
     @classmethod
     def search(cls, params):
+        # this just parses the dictionary from _search() and returns JSON
         result = cls()._search(params)
         return cls.to_json_str(result)
 
 
 class Cluster(BaseEntity):
+    # For all methods that start with Cluster
     def _getschools(self, params):
+        # returns list of schools in a given cluster
+        # if format = geo, returns FeatureCollection
+        # if format = plain, returns a plain list
         name = params.get('name')
         result = dict()
         result['query'] = params
@@ -749,6 +762,7 @@ class Cluster(BaseEntity):
 
     @classmethod
     def getSchools(cls, params):
+        # this just parses the dictionary from _getschools() and returns JSON
         result = cls()._getschools(params)
         if params.get('format', 'plain') == 'plain':
             return cls.to_json_str(result)
@@ -756,6 +770,7 @@ class Cluster(BaseEntity):
             return cls.to_geojson_str(result)
 
     def _search(self, params):
+        # searches clusters and returns list
         result = dict()
         result['query'] = params
         basic_data_model = basic_data.get(params.get('session', '10-11'))
@@ -776,5 +791,6 @@ class Cluster(BaseEntity):
 
     @classmethod
     def search(cls, params):
+        # this just parses the dictionary from _search() and returns JSON
         result = cls()._search(params)
         return cls.to_json_str(result)

@@ -120,6 +120,7 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
 
         return self.get_json_response(json_results)
 
+
 class OLAPEndPoint(View, JSONResponseMixin):
     def get(self, *args, **kwargs):
         params = self.request.GET
