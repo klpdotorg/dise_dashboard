@@ -48,3 +48,100 @@
         }
     });
 })(jQuery);
+
+$(function(){
+    $("#filter-select").select2({
+        dropdownCssClass: "bigdrop",
+        minimumInputLength: 3,
+        ajax: {
+            url: "/api/v1/olap/search/",
+            quietMillis: 300,
+            data: function (term, page) {
+                var values = {};
+                $.each($('form[name=basic_filters]').serializeArray(), function(i, field) {
+                    values[field.name] = field.value;
+                });
+                return {
+                    q: term, // search term
+                    filters: values
+                };
+            },
+            results: function (data, page) {
+                return {results: data};
+            }
+        }
+        // data:
+        // [
+        //     {
+        //         text: "District",
+        //         children: [
+        //             {
+        //                 id: "d1",
+        //                 text: "Bellary"
+        //             },
+        //             {
+        //                 id: "d2",
+        //                 text: "Koppal"
+        //             }
+        //         ]
+        //     },
+        //     {
+        //         text: "Taluk",
+        //         children: [
+        //             {
+        //                 id: "t1",
+        //                 text: "Hospet"
+        //             }
+        //         ]
+        //     }
+        // ]
+    });
+
+    function onEachFeature(feature, layer) {
+        // does this feature have a property named popupContent?
+        if (feature.properties && feature.properties.popupContent) {
+            layer.bindPopup(feature.properties.popupContent);
+        }
+    }
+
+    function plotOnMap(feature_or_features, zoom) {
+        // @param {String} feature_or_features  Either Feature or FeatureCollection
+        // @param {String} zoom                 Zoom level of the map
+        // console.log(feature_or_features);
+        L.geoJson(
+            feature_or_features,
+            {
+                pointToLayer: function (feature, latlng) {
+                    window.map.setView(latlng, zoom);
+                    return L.marker(latlng);
+                },
+                onEachFeature: onEachFeature
+            }
+        ).addTo(window.map);
+    }
+
+    // Initialize the API wrapper
+    var DISE = $.DiseAPI({
+        'base_url': window.location.toString() + 'api/v1/olap/'
+    })
+
+    $("#filter-select").on("change", function(e) {
+        // console.log(e);
+        if (e.added.type == 'school') {
+            if(e.added.feature !== null && e.added.feature !== "{}"){
+                plotOnMap(JSON.parse(e.added.feature), 12);
+            } else {
+                alert("Sorry, this school doesn't have a location.");
+            }
+        } else if (e.added.type == 'cluster'){
+            DISE.call('Cluster.getSchools', '10-11', {
+                name: e.added.id,
+                format: 'geo'
+            }, function(data) {
+                plotOnMap(data.schools, 10);
+            });
+        } else {
+            // do nothing
+        }
+    });
+});
