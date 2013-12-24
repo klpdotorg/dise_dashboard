@@ -26,7 +26,8 @@ BEGIN
         SET coord=t.coord
         FROM
             dblink(''host=localhost dbname=klpwww_ver4 user=klp password=pg2klp''::text,
-                ''select * from vw_boundary_coord_wname''::text)
+                ''SELECT b.id, b.name, v.type, v.coord FROM tb_boundary b, vw_boundary_coord v
+                  WHERE b.id = v.id_bndry''::text)
                     t(id integer, name character varying(50), type character varying(20), coord geometry)
         WHERE t.type=''Cluster'' AND cluster_name ~* t.name';
 
