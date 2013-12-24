@@ -8,6 +8,8 @@
 # into your database.
 from __future__ import unicode_literals
 
+import re
+
 from django.contrib.gis.db import models
 from django.utils import simplejson as json
 from django.core import serializers
@@ -707,14 +709,30 @@ class School(BaseEntity):
         if 'cluster' in params and params.get('cluster', ''):
             schools = schools.filter(cluster_name__icontains=params.get('cluster'))
 
-        if params.get('geo') == 'true':
-            schools = schools.filter(centroid__isnull=False)
-        elif params.get('geo') == 'false':
-            schools = schools.filter(centroid__isnull=True)
+        if 'bbox' in params and params.get('bbox', ''):
+            # This is the bounds query
+            #          --lng-- --lat--,--lng-- --lat--
+            # &within="88.1234,22.1234,54.1234,17.1234"
+            #          ^-bottom-left-^,^--top-right--^
+            coords_match = re.match(r"(.*),(.*),(.*),(.*)", params.get('bbox'))
+            if len(coords_match.groups()) == 4:
+                schools = schools.extra(
+                    where=[
+                        "ST_Contains(ST_MakeEnvelope(%s, %s, %s, %s, 4326), centroid)"
+                    ],
+                    params=list(coords_match.groups())
+                )
+
+        if 'geo' in params:
+            if params.get('geo') == 'true':
+                schools = schools.filter(centroid__isnull=False)
+            elif params.get('geo') == 'false':
+                schools = schools.filter(centroid__isnull=True)
 
         if 'limit' in params and params.get('limit', 0):
             schools = schools[:params.get('limit')]
 
+        print schools.query
         result['schools'] = list(schools)
         return result
 
