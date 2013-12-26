@@ -298,13 +298,8 @@
 
 </div>
 {% endblock %}
-
+<!-- Not sure if this is good practice. -->
+{% load static from staticfiles %}
 {% block endbody %}
-<script>
-window.map = L.map('map-holder').setView([12.9711, 78.0798], 9);
-L.tileLayer('http://{s}.tile.cloudmade.com/3c4ab920016a46d8ba10c88227539774/997/256/{z}/{x}/{y}.png', {
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
-    maxZoom: 18
-}).addTo(window.map);
-</script>
+  <script type="text/javascript" src="{% static 'js/map.js' %}"></script>
 {% endblock %}
