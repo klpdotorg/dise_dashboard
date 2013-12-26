@@ -11,13 +11,17 @@ from __future__ import unicode_literals
 import re
 
 from django.contrib.gis.db import models
+from django.contrib.gis.geos import Polygon
 from django.utils import simplejson as json
 from django.core import serializers
 
 from geojson import Feature, FeatureCollection, Point, dumps as geojson_dumps
 
 
-class BasicData(models.Model):
+class BaseModel(models.Model):
+    pass
+
+class BasicData(BaseModel):
     school_code = models.BigIntegerField(primary_key=True)
     centroid = models.GeometryField(blank=True, null=True)
     district = models.CharField(max_length=50, blank=True)
@@ -86,10 +90,12 @@ class BasicData(models.Model):
     days_involved_in_non_tch_assgn = models.IntegerField(null=True, blank=True)
     teachers_involved_in_non_tch_assgn = models.IntegerField(null=True, blank=True)
 
+    objects = models.GeoManager()
+
     class Meta:
         abstract = True
 
-class AssemblyAggregations(models.Model):
+class AssemblyAggregations(BaseModel):
     assembly_name = models.CharField(max_length=35, primary_key=True)
     sum_schools = models.BigIntegerField(null=True, blank=True)
     sum_rural_schools = models.BigIntegerField(null=True, blank=True)
@@ -174,11 +180,13 @@ class AssemblyAggregations(models.Model):
     sum_teachers_involved_in_non_tch_assgn = models.BigIntegerField(null=True, blank=True)
     avg_teachers_involved_in_non_tch_assgn = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
 
+    objects = models.GeoManager()
+
     class Meta:
         abstract = True
 
 
-class BlockAggregations(models.Model):
+class BlockAggregations(BaseModel):
     block_name = models.CharField(max_length=50, primary_key=True)
     sum_schools = models.BigIntegerField(null=True, blank=True)
     sum_rural_schools = models.BigIntegerField(null=True, blank=True)
@@ -263,13 +271,16 @@ class BlockAggregations(models.Model):
     sum_teachers_involved_in_non_tch_assgn = models.BigIntegerField(null=True, blank=True)
     avg_teachers_involved_in_non_tch_assgn = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
 
+    objects = models.GeoManager()
+
     class Meta:
         abstract = True
 
 
-class ClusterAggregations(models.Model):
+class ClusterAggregations(BaseModel):
     cluster_name = models.CharField(max_length=50, primary_key=True)
     block_name = models.CharField(max_length=50, blank=True)
+    district = models.CharField(max_length=50, blank=True)
     sum_schools = models.BigIntegerField(null=True, blank=True)
     sum_rural_schools = models.BigIntegerField(null=True, blank=True)
     avg_distance_brc = models.FloatField(null=True, blank=True)
@@ -352,12 +363,15 @@ class ClusterAggregations(models.Model):
     avg_days_involved_in_non_tch_assgn = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
     sum_teachers_involved_in_non_tch_assgn = models.BigIntegerField(null=True, blank=True)
     avg_teachers_involved_in_non_tch_assgn = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    centroid = models.PointField(blank=True, null=True)
+
+    objects = models.GeoManager()
 
     class Meta:
         abstract = True
 
 
-class ParliamentAggregations(models.Model):
+class ParliamentAggregations(BaseModel):
     parliament_name = models.CharField(max_length=35, primary_key=True)
     sum_schools = models.BigIntegerField(null=True, blank=True)
     sum_rural_schools = models.BigIntegerField(null=True, blank=True)
@@ -442,10 +456,12 @@ class ParliamentAggregations(models.Model):
     sum_teachers_involved_in_non_tch_assgn = models.BigIntegerField(null=True, blank=True)
     avg_teachers_involved_in_non_tch_assgn = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
 
+    objects = models.GeoManager()
+
     class Meta:
         abstract = True
 
-class DistrictAggregations(models.Model):
+class DistrictAggregations(BaseModel):
     district = models.CharField(max_length=35, primary_key=True)
     sum_schools = models.BigIntegerField(null=True, blank=True)
     sum_rural_schools = models.BigIntegerField(null=True, blank=True)
@@ -529,6 +545,8 @@ class DistrictAggregations(models.Model):
     avg_days_involved_in_non_tch_assgn = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
     sum_teachers_involved_in_non_tch_assgn = models.BigIntegerField(null=True, blank=True)
     avg_teachers_involved_in_non_tch_assgn = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+
+    objects = models.GeoManager()
 
     class Meta:
         abstract = True
@@ -628,7 +646,6 @@ basic_data = {
     '10-11': Dise1011BasicData,
     '11-12': Dise1112BasicData
 }
-
 
 class BaseEntity:
     @classmethod
@@ -788,15 +805,20 @@ class Cluster(BaseEntity):
             return cls.to_geojson_str(result)
 
     def _search(self, params):
+        from schools.olap_views import get_models
         # searches clusters and returns list
         result = dict()
         result['query'] = params
-        basic_data_model = basic_data.get(params.get('session', '10-11'))
+        ClusterModel = get_models(params.get('session', '10-11'), 'cluster')
 
         if len(params.keys()) > 1:
-            clusters = basic_data_model.objects.values(
-                'cluster_name', 'block_name', 'village_name', 'district'
-            ).distinct('cluster_name')
+            clusters = ClusterModel.objects.extra(
+                select={
+                    'centroid': 'ST_AsText("dise_1011_cluster_aggregations"."centroid")'
+                }
+            ).values(
+                'cluster_name', 'block_name', 'district', 'centroid'
+            )
 
         if 'name' in params and params.get('name', ''):
             clusters = clusters.filter(cluster_name__icontains=params.get('name'))
@@ -804,6 +826,21 @@ class Cluster(BaseEntity):
         if 'block' in params and params.get('block', ''):
             clusters = clusters.filter(block_name__icontains=params.get('block'))
 
+        if 'bbox' in params and params.get('bbox', ''):
+            # This is the bounds query
+            #          --lng-- --lat--,--lng-- --lat--
+            # &within="88.1234,22.1234,54.1234,17.1234"
+            #          ^-bottom-left-^,^--top-right--^
+            coords_match = re.match(r"(.*),(.*),(.*),(.*)", params.get('bbox'))
+            if len(coords_match.groups()) == 4:
+                bbox = map(lambda x: float(x), coords_match.groups())
+                geom = Polygon.from_bbox(bbox)
+                clusters = clusters.filter(centroid__contained=geom)
+
+        if 'limit' in params and params.get('limit', 0):
+            clusters = clusters[:params.get('limit')]
+
+        print clusters.query
         result['clusters'] = list(clusters)
         return result
 
