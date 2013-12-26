@@ -18,3 +18,12 @@ var cloudmadeLayer = L.tileLayer(cloudmadeUrl, {key: cloudmadeKey}).addTo(map);
 
 // Custom attribution control.
 var attributionControl = L.control.attribution({position: 'bottomright', prefix: cloudmadeAttribution}).addTo(map);
+
+// Custom school icon.
+var schoolIcon = L.icon({
+  iconUrl: 'https://f.cloud.github.com/assets/9491/1809460/c7971e88-6de8-11e3-9d4e-077d00736010.png',
+  iconSize: [35, 40],
+  iconAnchor: [10, 40],
+  popupAnchor: [8, -35]
+});
+

@@ -104,7 +104,7 @@ $(function(){
         }
     }
 
-    function plotOnMap(feature_or_features, zoom) {
+    function plotOnMap(feature_or_features, zoom, icon) {
         // @param {String} feature_or_features  Either Feature or FeatureCollection
         // @param {String} zoom                 Zoom level of the map
         // console.log(feature_or_features);
@@ -113,7 +113,12 @@ $(function(){
             {
                 pointToLayer: function (feature, latlng) {
                     window.map.setView(latlng, zoom);
-                    return L.marker(latlng);
+                    if (icon != undefined) {
+                        return L.marker(latlng, {icon: icon});
+                    }
+                    else {
+                        return L.marker(latlng);
+                    }
                 },
                 onEachFeature: onEachFeature
             }
@@ -129,7 +134,7 @@ $(function(){
         // console.log(e);
         if (e.added.type == 'school') {
             if(e.added.feature !== null && e.added.feature !== "{}"){
-                plotOnMap(JSON.parse(e.added.feature), 12);
+                plotOnMap(JSON.parse(e.added.feature), 15, schoolIcon);
             } else {
                 alert("Sorry, this school doesn't have a location.");
             }
@@ -138,7 +143,8 @@ $(function(){
                 name: e.added.id,
                 format: 'geo'
             }, function(data) {
-                plotOnMap(data.schools, 10);
+                console.log(data);
+                plotOnMap(data.schools, 10, schoolIcon);
             });
         } else {
             // do nothing
