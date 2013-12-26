@@ -25,11 +25,25 @@ from schools.olap_models import Dise1011AssemblyAggregations, \
 # This shall become 0 when we have the map
 DEFAULT_LIMIT = 20
 
-def get_models(session='10-11'):
-    school_model = globals().get('Dise{}BasicData'.format(session.replace('-', '')))
-    cluster_model = globals().get('Dise{}ClusterAggregations'.format(session.replace('-', '')))
-    block_model = globals().get('Dise{}BlockAggregations'.format(session.replace('-', '')))
-    district_model = globals().get('Dise{}DistrictAggregations'.format(session.replace('-', '')))
+def get_models(session='10-11', what='all'):
+    session = session.replace('-', '')
+
+    school_model = globals().get('Dise{}BasicData'.format(session))
+    if what == 'school':
+        return school_model
+
+    cluster_model = globals().get('Dise{}ClusterAggregations'.format(session))
+    if what == 'cluster':
+        return cluster_model
+
+    block_model = globals().get('Dise{}BlockAggregations'.format(session))
+    if what == 'block':
+        return block_model
+
+    district_model = globals().get('Dise{}DistrictAggregations'.format(session))
+    if what == 'district':
+        return district_model
+
     return school_model, cluster_model, block_model, district_model
 
 
@@ -46,7 +60,7 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
             if session not in ['10-11', '11-12', '12-13']:
                 raise ValueError('Session not valid')
 
-            SchoolModel, ClusterModel, BlockModel, DistrictModel = get_models(session)
+            SchoolModel, ClusterModel, BlockModel, DistrictModel = get_models(session, "all")
 
             schools = SchoolModel.objects.filter(school_name__icontains=query).order_by('school_name')[:3]
             if schools.count() > 0:
