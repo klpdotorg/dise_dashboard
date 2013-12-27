@@ -670,8 +670,7 @@ class School(BaseEntity):
             basic_data_model = basic_data.get(params.get('session', '10-11'))
             school = basic_data_model.objects.extra(
                 select={
-                    # FIXIT: use variable session
-                    'centroid': 'ST_AsText("dise_1011_basic_data"."centroid")'
+                    'centroid': 'ST_AsText(centroid)'
                 }
             ).values(
                 'school_code', 'school_name', 'cluster_name', 'block_name', 'centroid'
