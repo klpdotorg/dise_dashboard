@@ -657,6 +657,18 @@ class BaseEntity:
     def to_geojson_str(cls, d=dict()):
         return geojson_dumps(d)
 
+    @classmethod
+    def getInfo(cls, params):
+        # this just parses the dictionary from _getinfo and returns JSON
+        result = cls()._getinfo(params)
+        return cls.to_json_str(result)
+
+    @classmethod
+    def search(cls, params):
+        # this just parses the dictionary from _search() and returns JSON
+        result = cls()._search(params)
+        return cls.to_json_str(result)
+
 
 class School(BaseEntity):
     # For methods that start with `School`
@@ -697,12 +709,6 @@ class School(BaseEntity):
             },
             id=school.school_code
         )
-
-    @classmethod
-    def getInfo(cls, params):
-        # this just parses the dictionary from _getinfo and returns JSON
-        result = cls()._getinfo(params)
-        return cls.to_json_str(result)
 
     def _search(self, params):
         from schools.olap_views import get_models
@@ -748,12 +754,6 @@ class School(BaseEntity):
         print schools.query
         result['schools'] = list(schools)
         return result
-
-    @classmethod
-    def search(cls, params):
-        # this just parses the dictionary from _search() and returns JSON
-        result = cls()._search(params)
-        return cls.to_json_str(result)
 
 
 class Cluster(BaseEntity):
@@ -838,9 +838,3 @@ class Cluster(BaseEntity):
         print clusters.query
         result['clusters'] = list(clusters)
         return result
-
-    @classmethod
-    def search(cls, params):
-        # this just parses the dictionary from _search() and returns JSON
-        result = cls()._search(params)
-        return cls.to_json_str(result)
