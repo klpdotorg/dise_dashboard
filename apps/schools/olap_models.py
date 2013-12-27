@@ -19,7 +19,8 @@ from geojson import Feature, FeatureCollection, Point, dumps as geojson_dumps
 
 
 class BaseModel(models.Model):
-    pass
+    class Meta:
+        abstract = True
 
 class BasicData(BaseModel):
     school_code = models.BigIntegerField(primary_key=True)

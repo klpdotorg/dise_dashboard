@@ -63,6 +63,7 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
             SchoolModel, ClusterModel, BlockModel, DistrictModel = get_models(session, "all")
 
             schools = SchoolModel.objects.filter(school_name__icontains=query).order_by('school_name')[:3]
+
             if schools.count() > 0:
                 temp_d = {
                     'text': 'Schools',
