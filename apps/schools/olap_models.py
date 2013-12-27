@@ -706,16 +706,16 @@ class School(BaseEntity):
         return cls.to_json_str(result)
 
     def _search(self, params):
+        from schools.olap_views import get_models
         # This seaches all the base models, depending on the session and retuns list of schools
         result = dict()
         result['query'] = params
-        basic_data_model = basic_data.get(params.get('session', '10-11'))
+        SchoolModel = get_models(params.get('session', '10-11'), 'school')
 
         if len(params.keys()) > 1:
-            schools = basic_data_model.objects.extra(
+            schools = SchoolModel.objects.extra(
                 select={
-                    # FIXIT: use variable session
-                    'centroid': 'ST_AsText("dise_1011_basic_data"."centroid")'
+                    'centroid': 'ST_AsText(centroid)'
                 }
             ).values(
                 'school_code', 'school_name', 'cluster_name', 'block_name', 'centroid'
@@ -728,18 +728,14 @@ class School(BaseEntity):
             schools = schools.filter(cluster_name__icontains=params.get('cluster'))
 
         if 'bbox' in params and params.get('bbox', ''):
-            # This is the bounds query
-            #          --lng-- --lat--,--lng-- --lat--
-            # &within="88.1234,22.1234,54.1234,17.1234"
-            #          ^-bottom-left-^,^--top-right--^
+            # &bbox="75.73974609375,12.5223906020692,79.4476318359375,13.424352095715332"
+            # southwest_lng,southwest_lat,northeast_lng,northeast_lat
+            # xmin,ymin,xmax,ymax
             coords_match = re.match(r"(.*),(.*),(.*),(.*)", params.get('bbox'))
             if len(coords_match.groups()) == 4:
-                schools = schools.extra(
-                    where=[
-                        "ST_Contains(ST_MakeEnvelope(%s, %s, %s, %s, 4326), centroid)"
-                    ],
-                    params=list(coords_match.groups())
-                )
+                bbox = map(lambda x: float(x), coords_match.groups())
+                geom = Polygon.from_bbox(bbox)
+                schools = schools.filter(centroid__contained=geom)
 
         if 'geo' in params:
             if params.get('geo') == 'true':
@@ -815,7 +811,7 @@ class Cluster(BaseEntity):
         if len(params.keys()) > 1:
             clusters = ClusterModel.objects.extra(
                 select={
-                    'centroid': 'ST_AsText("dise_1011_cluster_aggregations"."centroid")'
+                    'centroid': 'ST_AsText(centroid)'
                 }
             ).values(
                 'cluster_name', 'block_name', 'district', 'centroid'
@@ -828,10 +824,9 @@ class Cluster(BaseEntity):
             clusters = clusters.filter(block_name__icontains=params.get('block'))
 
         if 'bbox' in params and params.get('bbox', ''):
-            # This is the bounds query
-            #          --lng-- --lat--,--lng-- --lat--
-            # &within="88.1234,22.1234,54.1234,17.1234"
-            #          ^-bottom-left-^,^--top-right--^
+            # &bbox="75.73974609375,12.5223906020692,79.4476318359375,13.424352095715332"
+            # southwest_lng,southwest_lat,northeast_lng,northeast_lat
+            # xmin,ymin,xmax,ymax
             coords_match = re.match(r"(.*),(.*),(.*),(.*)", params.get('bbox'))
             if len(coords_match.groups()) == 4:
                 bbox = map(lambda x: float(x), coords_match.groups())
