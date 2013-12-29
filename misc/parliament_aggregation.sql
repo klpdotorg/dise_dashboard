@@ -148,6 +148,26 @@ BEGIN
         GROUP BY parliament_name
         ORDER BY parliament_name';
 
+        EXECUTE 'ALTER TABLE ' || table_name || '
+            ADD COLUMN centroid geometry';
+
+        EXECUTE 'ALTER TABLE ' || table_name || '
+            ADD CONSTRAINT enforce_dims_centroid CHECK (st_ndims(centroid) = 2)';
+        EXECUTE 'ALTER TABLE ' || table_name || '
+            ADD CONSTRAINT enforce_geotype_centroid CHECK (geometrytype(centroid) = ''POINT''::text OR centroid IS NULL)';
+        EXECUTE 'ALTER TABLE ' || table_name || '
+            ADD CONSTRAINT enforce_srid_centroid CHECK (st_srid(centroid) = 4326)';
+
+        EXECUTE 'UPDATE ' || table_name || '
+            SET centroid=parliament_centroid.centroid
+            FROM (SELECT t1.parliament_name, ST_Centroid(ST_Collect(t2.centroid)) as centroid
+                    FROM ' || table_name || ' AS t1,
+                    ' || basic_table_name || ' AS t2
+                WHERE t2.parliament_name=t1.parliament_name
+                GROUP BY t1.parliament_name
+                ORDER BY t1.parliament_name) as parliament_centroid
+            WHERE ' || table_name || '.parliament_name=parliament_centroid.parliament_name';
+
     END LOOP;
     RETURN;
 END

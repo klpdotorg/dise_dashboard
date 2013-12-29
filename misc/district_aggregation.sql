@@ -148,6 +148,26 @@ BEGIN
         GROUP BY district
         ORDER BY district';
 
+        EXECUTE 'ALTER TABLE ' || table_name || '
+            ADD COLUMN centroid geometry';
+
+        EXECUTE 'ALTER TABLE ' || table_name || '
+            ADD CONSTRAINT enforce_dims_centroid CHECK (st_ndims(centroid) = 2)';
+        EXECUTE 'ALTER TABLE ' || table_name || '
+            ADD CONSTRAINT enforce_geotype_centroid CHECK (geometrytype(centroid) = ''POINT''::text OR centroid IS NULL)';
+        EXECUTE 'ALTER TABLE ' || table_name || '
+            ADD CONSTRAINT enforce_srid_centroid CHECK (st_srid(centroid) = 4326)';
+
+        EXECUTE 'UPDATE ' || table_name || '
+            SET centroid=district_centroid.centroid
+            FROM (SELECT t1.district, ST_Centroid(ST_Collect(t2.centroid)) as centroid
+                    FROM ' || table_name || ' AS t1,
+                    ' || basic_table_name || ' AS t2
+                WHERE t2.district=t1.district
+                GROUP BY t1.district
+                ORDER BY t1.district) as district_centroid
+            WHERE ' || table_name || '.district=district_centroid.district';
+
     END LOOP;
     RETURN;
 END

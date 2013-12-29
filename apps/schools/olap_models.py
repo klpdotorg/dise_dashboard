@@ -30,6 +30,8 @@ class BasicData(BaseModel):
     block_name = models.CharField(max_length=50, blank=True)
     cluster_name = models.CharField(max_length=50, blank=True)
     village_name = models.CharField(max_length=50, blank=True)
+    assembly_name = models.CharField(max_length=35, blank=True)
+    parliament_name = models.CharField(max_length=35, blank=True)
     pincode = models.IntegerField(null=True, blank=True)
     rural_urban = models.IntegerField(null=True, blank=True)
     medium_of_instruction = models.IntegerField(null=True, blank=True)
