@@ -673,14 +673,15 @@ class BaseEntity:
 class School(BaseEntity):
     # For methods that start with `School`
     def _getinfo(self, params):
+        from schools.olap_views import get_models
         # gets the details of a school and returns a dictionary
         code = params.get('code', -1)
         result = dict()
         result['query'] = params
 
         try:
-            basic_data_model = basic_data.get(params.get('session', '10-11'))
-            school = basic_data_model.objects.extra(
+            SchoolModel = get_models(params.get('session', '10-11'), 'school')
+            school = SchoolModel.objects.extra(
                 select={
                     'centroid': 'ST_AsText(centroid)'
                 }
@@ -689,7 +690,7 @@ class School(BaseEntity):
             ).get(school_code__iexact=code)
 
             result['school'] = school
-        except (basic_data_model.DoesNotExist, Exception) as e:
+        except (SchoolModel.DoesNotExist, Exception) as e:
             result['error'] = str(e)
         return result
 
@@ -759,6 +760,7 @@ class School(BaseEntity):
 class Cluster(BaseEntity):
     # For all methods that start with Cluster
     def _getschools(self, params):
+        from schools.olap_views import get_models
         # returns list of schools in a given cluster
         # if format = geo, returns FeatureCollection
         # if format = plain, returns a plain list
@@ -767,12 +769,12 @@ class Cluster(BaseEntity):
         result['query'] = params
 
         try:
-            basic_data_model = basic_data.get(params.get('session', '10-11'))
+            SchoolModel = get_models(params.get('session', '10-11'), 'school')
             phormat = params.get('format')
             if phormat == 'geo':
                 temp_l = []
                 school_api = School()
-                schools = basic_data_model.objects.filter(
+                schools = SchoolModel.objects.filter(
                     cluster_name__iexact=name,
                     # NOTE: Not sending schools without centroid
                     # because there is no way to show them
@@ -782,12 +784,12 @@ class Cluster(BaseEntity):
                     temp_l.append(school_api._get_geojson(sch))
                 result['schools'] = FeatureCollection(temp_l)
             else:
-                schools = basic_data_model.objects.values(
+                schools = SchoolModel.objects.values(
                     'school_code', 'school_name'
                 ).filter(cluster_name__iexact=name)
                 result['schools'] = list(schools)
 
-        except (basic_data_model.DoesNotExist, Exception) as e:
+        except (SchoolModel.DoesNotExist, Exception) as e:
             result['error'] = str(e)
         return result
 
