@@ -1,4 +1,11 @@
 $(function(){
+
+    $('.check-list').iCheck({
+        checkboxClass: 'icheckbox_square-orange',
+        radioClass: 'iradio_flat'
+    });
+
+
     $(".filter-icon").tooltip();
     $("table.filter-icon-set td").click(function(){
 	    $(this).toggleClass("selected");
