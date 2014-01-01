@@ -43,3 +43,8 @@ assets/collected-static
 # vagrant
 .vagrant
 Vagrantfile
+
+# MacOS & Emacs
+.DS_Store
+*~
+*#
