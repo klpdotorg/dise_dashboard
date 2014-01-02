@@ -153,7 +153,13 @@ serializePreset = function() {
     var data = {
         "facilities" : [],
         "rte": [],
-        "teachers": []
+        "teachers": [],
+        "range": {
+            "classrooms": [],
+            "teachers": [],
+            "girls_in_class": [],
+            "boys_in_class": [],
+        }
     };
 
 
@@ -177,6 +183,12 @@ serializePreset = function() {
             data["teachers"].push($this.val());
         }
     });
+
+
+    data["range"]["classrooms"] = [$("#wncb-low").val(), $("#wncb-high").val()];
+    data["range"]["teachers"] = [$("#wntb-low").val(), $("#wntb-high").val()];
+    data["range"]["girls_in_class"] = [$("#wngic-low").val(), $("#wngic-high").val()];
+    data["range"]["boys_in_class"] = [$("#wnbic-low").val(), $("#wnbic-high").val()];
 
     return data;
 }
