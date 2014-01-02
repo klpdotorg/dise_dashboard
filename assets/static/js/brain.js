@@ -159,6 +159,11 @@ serializePreset = function() {
             "teachers": [],
             "girls_in_class": [],
             "boys_in_class": [],
+        },
+        "compound": {
+            "girls_lesser_than_boys": false,
+            "enrollment_from": [],
+            "pupil_teacher_ratio": []
         }
     };
 
@@ -184,6 +189,10 @@ serializePreset = function() {
         }
     });
 
+
+    data["compound"]["girls_lesser_than_boys"] = $("#wgltb").prop("checked");
+    data["compound"]["enrollment_from"] = [$("#wef-low").val(), $("#wef-high").val()];
+    data["compound"]["pupil_teacher_ratio"] = [$("#wptrf-low").val(), $("#wptrf-high").val()];
 
     data["range"]["classrooms"] = [$("#wncb-low").val(), $("#wncb-high").val()];
     data["range"]["teachers"] = [$("#wntb-low").val(), $("#wntb-high").val()];
