@@ -93,7 +93,7 @@ $(function(){
         ]
     });
 
-    serializeCategory();
+    serializePreset();
 });
 
 
@@ -122,7 +122,7 @@ serializeCategory = function(){
         "academic_year": [],
         "area": [],
         "management": [],
-    }
+    };
 
     $("input[name='academic_year']").each(function(){
         var $this = $(this);
@@ -142,6 +142,39 @@ serializeCategory = function(){
         var $this = $(this);
         if ($this.prop("checked")) {
             data["management"].push($this.val());
+        }
+    });
+
+    return data;
+}
+
+
+serializePreset = function() {
+    var data = {
+        "facilities" : [],
+        "rte": [],
+        "teachers": []
+    };
+
+
+    $("input[name='facilities']").each(function(){
+        var $this = $(this);
+        if ($this.prop("checked")) {
+            data["facilities"].push($this.val());
+        }
+    });
+
+    $("input[name='rte']").each(function(){
+        var $this = $(this);
+        if ($this.prop("checked")) {
+            data["rte"].push($this.val());
+        }
+    });
+
+    $("input[name='teachers']").each(function(){
+        var $this = $(this);
+        if ($this.prop("checked")) {
+            data["teachers"].push($this.val());
         }
     });
 
