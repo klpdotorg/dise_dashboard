@@ -92,6 +92,8 @@ $(function(){
             }
         ]
     });
+
+    serializeCategory();
 });
 
 
@@ -112,4 +114,36 @@ function renderCrumbs(bs){
     ol.find("li").each(function(i, e){
         $(e).addClass(class_array[i]);
     });
+}
+
+
+serializeCategory = function(){
+    var data = {
+        "academic_year": [],
+        "area": [],
+        "management": [],
+    }
+
+    $("input[name='academic_year']").each(function(){
+        var $this = $(this);
+        if ($this.prop("checked")) {
+            data["academic_year"].push($this.val());
+        }
+    });
+
+    $("input[name='area']").each(function(){
+        var $this = $(this);
+        if ($this.prop("checked")) {
+            data["area"].push($this.val());
+        }
+    });
+
+    $("input[name='management']").each(function(){
+        var $this = $(this);
+        if ($this.prop("checked")) {
+            data["management"].push($this.val());
+        }
+    });
+
+    return data;
 }
