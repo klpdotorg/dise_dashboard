@@ -50,6 +50,9 @@
 })(jQuery);
 
 $(function(){
+
+    UI.init(); // Initialize UI elements
+
     $("#filter-select").select2({
         dropdownCssClass: "bigdrop",
         allowClear: true,
