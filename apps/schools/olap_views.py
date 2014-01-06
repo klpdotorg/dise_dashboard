@@ -20,7 +20,8 @@ from schools.olap_models import Dise1011AssemblyAggregations, \
     Dise1011ParliamentAggregations, Dise1112ParliamentAggregations, \
     Dise1213ParliamentAggregations, Dise1011DistrictAggregations, \
     Dise1112DistrictAggregations, Dise1213DistrictAggregations, \
-    Dise1011BasicData, Dise1112BasicData, Dise1213BasicData, School, Cluster
+    Dise1011BasicData, Dise1112BasicData, Dise1213BasicData, \
+    School, Cluster, Block, District
 
 # This shall become 0 when we have the map
 DEFAULT_LIMIT = 20

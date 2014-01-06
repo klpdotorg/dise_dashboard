@@ -191,6 +191,8 @@ class AssemblyAggregations(BaseModel):
 
 class BlockAggregations(BaseModel):
     block_name = models.CharField(max_length=50, primary_key=True)
+    district = models.CharField(max_length=50, blank=True)
+    centroid = models.GeometryField(blank=True, null=True)
     sum_schools = models.BigIntegerField(null=True, blank=True)
     sum_rural_schools = models.BigIntegerField(null=True, blank=True)
     avg_distance_brc = models.FloatField(null=True, blank=True)
@@ -466,6 +468,7 @@ class ParliamentAggregations(BaseModel):
 
 class DistrictAggregations(BaseModel):
     district = models.CharField(max_length=35, primary_key=True)
+    centroid = models.GeometryField(blank=True, null=True)
     sum_schools = models.BigIntegerField(null=True, blank=True)
     sum_rural_schools = models.BigIntegerField(null=True, blank=True)
     avg_distance_brc = models.FloatField(null=True, blank=True)
@@ -841,4 +844,178 @@ class Cluster(BaseEntity):
 
         print clusters.query
         result['clusters'] = list(clusters)
+        return result
+
+
+class Block(BaseEntity):
+    # For all methods that start with Block
+    def _getschools(self, params):
+        from schools.olap_views import get_models
+        # returns list of schools in a given block
+        # if format = geo, returns FeatureCollection
+        # if format = plain, returns a plain list
+        name = params.get('name')
+        result = dict()
+        result['query'] = params
+
+        try:
+            SchoolModel = get_models(params.get('session', '10-11'), 'school')
+            phormat = params.get('format')
+            if phormat == 'geo':
+                temp_l = []
+                school_api = School()
+                schools = SchoolModel.objects.filter(
+                    block_name__iexact=name,
+                    # NOTE: Not sending schools without centroid
+                    # because there is no way to show them
+                    centroid__isnull=False
+                )
+                for sch in schools:
+                    temp_l.append(school_api._get_geojson(sch))
+                result['schools'] = FeatureCollection(temp_l)
+            else:
+                schools = SchoolModel.objects.values(
+                    'school_code', 'school_name'
+                ).filter(block_name__iexact=name)
+                result['schools'] = list(schools)
+
+        except (SchoolModel.DoesNotExist, Exception) as e:
+            result['error'] = str(e)
+        return result
+
+    @classmethod
+    def getSchools(cls, params):
+        # this just parses the dictionary from _getschools() and returns JSON
+        result = cls()._getschools(params)
+        if params.get('format', 'plain') == 'plain':
+            return cls.to_json_str(result)
+        elif params.get('format', 'plain') == 'geo':
+            return cls.to_geojson_str(result)
+
+    def _search(self, params):
+        from schools.olap_views import get_models
+        # searches blocks and returns list
+        result = dict()
+        result['query'] = params
+        BlockModel = get_models(params.get('session', '10-11'), 'block')
+
+        if len(params.keys()) > 1:
+            blocks = BlockModel.objects.extra(
+                select={
+                    'centroid': 'ST_AsText(centroid)'
+                }
+            ).values(
+                'block_name', 'district', 'centroid'
+            )
+
+        if 'name' in params and params.get('name', ''):
+            blocks = blocks.filter(block_name__icontains=params.get('name'))
+
+        if 'block' in params and params.get('block', ''):
+            blocks = blocks.filter(block_name__icontains=params.get('block'))
+
+        if 'bbox' in params and params.get('bbox', ''):
+            # &bbox="75.73974609375,12.3906020692,79.447631375,13.4243520332"
+            # southwest_lng,southwest_lat,northeast_lng,northeast_lat
+            # xmin,ymin,xmax,ymax
+            coords_match = re.match(r"(.*),(.*),(.*),(.*)", params.get('bbox'))
+            if len(coords_match.groups()) == 4:
+                bbox = map(lambda x: float(x), coords_match.groups())
+                geom = Polygon.from_bbox(bbox)
+                blocks = blocks.filter(centroid__contained=geom)
+
+        if 'limit' in params and params.get('limit', 0):
+            blocks = blocks[:params.get('limit')]
+
+        print blocks.query
+        result['blocks'] = list(blocks)
+        return result
+
+
+class District(BaseEntity):
+    # For all methods that start with District
+    def _getschools(self, params):
+        from schools.olap_views import get_models
+        # returns list of schools in a given district
+        # if format = geo, returns FeatureCollection
+        # if format = plain, returns a plain list
+        name = params.get('name')
+        result = dict()
+        result['query'] = params
+
+        try:
+            SchoolModel = get_models(params.get('session', '10-11'), 'school')
+            phormat = params.get('format')
+            if phormat == 'geo':
+                temp_l = []
+                school_api = School()
+                schools = SchoolModel.objects.filter(
+                    district__iexact=name,
+                    # NOTE: Not sending schools without centroid
+                    # because there is no way to show them
+                    centroid__isnull=False
+                )
+                for sch in schools:
+                    temp_l.append(school_api._get_geojson(sch))
+                result['schools'] = FeatureCollection(temp_l)
+            else:
+                schools = SchoolModel.objects.values(
+                    'school_code', 'school_name'
+                ).filter(district__iexact=name)
+                result['schools'] = list(schools)
+
+        except (SchoolModel.DoesNotExist, Exception) as e:
+            result['error'] = str(e)
+        return result
+
+    @classmethod
+    def getSchools(cls, params):
+        # this just parses the dictionary from _getschools() and returns JSON
+        result = cls()._getschools(params)
+        if params.get('format', 'plain') == 'plain':
+            return cls.to_json_str(result)
+        elif params.get('format', 'plain') == 'geo':
+            return cls.to_geojson_str(result)
+
+    def _search(self, params):
+        from schools.olap_views import get_models
+        # searches districts and returns list
+        result = dict()
+        result['query'] = params
+        DistrictModel = get_models(params.get('session', '10-11'), 'district')
+
+        if len(params.keys()) > 1:
+            districts = DistrictModel.objects.extra(
+                select={
+                    'centroid': 'ST_AsText(centroid)'
+                }
+            ).values(
+                'district', 'centroid'
+            )
+
+        if 'name' in params and params.get('name', ''):
+            districts = districts.filter(
+                district__icontains=params.get('name')
+            )
+
+        if 'block' in params and params.get('block', ''):
+            districts = districts.filter(
+                block_name__icontains=params.get('block')
+            )
+
+        if 'bbox' in params and params.get('bbox', ''):
+            # &bbox="75.73909375,12.52220692,79.447659375,13.424352095"
+            # southwest_lng,southwest_lat,northeast_lng,northeast_lat
+            # xmin,ymin,xmax,ymax
+            coords_match = re.match(r"(.*),(.*),(.*),(.*)", params.get('bbox'))
+            if len(coords_match.groups()) == 4:
+                bbox = map(lambda x: float(x), coords_match.groups())
+                geom = Polygon.from_bbox(bbox)
+                districts = districts.filter(centroid__contained=geom)
+
+        if 'limit' in params and params.get('limit', 0):
+            districts = districts[:params.get('limit')]
+
+        print districts.query
+        result['districts'] = list(districts)
         return result
