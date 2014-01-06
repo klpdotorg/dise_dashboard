@@ -10,8 +10,6 @@ import re
 
 from common import SumCase
 from common.views import JSONResponseMixin
-from schools.models import YearlyData, School, SchoolManaagement,\
-    DrinkingWaterSource, BoundaryWallType, search_choices, YESNO, MDM_STATUS
 
 from schools import olap_entities
 # This shall become 0 when we have the map
