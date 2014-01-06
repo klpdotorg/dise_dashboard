@@ -558,6 +558,98 @@ class DistrictAggregations(BaseModel):
         abstract = True
 
 
+class PincodeAggregations(models.Model):
+    pincode = models.IntegerField(blank=True, null=True)
+    sum_schools = models.BigIntegerField(blank=True, null=True)
+    sum_rural_schools = models.BigIntegerField(blank=True, null=True)
+    avg_distance_brc = models.FloatField(blank=True, null=True)
+    avg_distance_crc = models.FloatField(blank=True, null=True)
+    sum_pre_primary_schools = models.BigIntegerField(blank=True, null=True)
+    sum_residential_schools = models.BigIntegerField(blank=True, null=True)
+    sum_pre_primary_students = models.BigIntegerField(blank=True, null=True)
+    avg_pre_primary_students = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_shift_schools = models.BigIntegerField(blank=True, null=True)
+    sum_no_of_working_days = models.BigIntegerField(blank=True, null=True)
+    avg_no_of_working_days = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_no_of_acad_inspection = models.BigIntegerField(blank=True, null=True)
+    avg_no_of_acad_inspection = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_visits_by_brc = models.BigIntegerField(blank=True, null=True)
+    avg_visits_by_brc = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_visits_by_crc = models.BigIntegerField(blank=True, null=True)
+    avg_visits_by_crc = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_school_dev_grant_recd = models.FloatField(blank=True, null=True)
+    avg_school_dev_grant_recd = models.FloatField(blank=True, null=True)
+    sum_school_dev_grant_expnd = models.FloatField(blank=True, null=True)
+    avg_school_dev_grant_expnd = models.FloatField(blank=True, null=True)
+    sum_tlm_grant_recd = models.FloatField(blank=True, null=True)
+    avg_tlm_grant_recd = models.FloatField(blank=True, null=True)
+    sum_tlm_grant_expnd = models.FloatField(blank=True, null=True)
+    avg_tlm_grant_expnd = models.FloatField(blank=True, null=True)
+    sum_funds_from_students_recd = models.FloatField(blank=True, null=True)
+    avg_funds_from_students_recd = models.FloatField(blank=True, null=True)
+    sum_funds_from_students_expnd = models.FloatField(blank=True, null=True)
+    avg_funds_from_students_expnd = models.FloatField(blank=True, null=True)
+    sum_tot_clrooms = models.BigIntegerField(blank=True, null=True)
+    avg_tot_clrooms = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_classrooms_in_good_condition = models.BigIntegerField(blank=True, null=True)
+    avg_classrooms_in_good_condition = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_classrooms_require_major_repair = models.BigIntegerField(blank=True, null=True)
+    avg_classrooms_require_major_repair = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_classrooms_require_minor_repair = models.BigIntegerField(blank=True, null=True)
+    avg_classrooms_require_minor_repair = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_other_rooms_in_good_cond = models.BigIntegerField(blank=True, null=True)
+    avg_other_rooms_in_good_cond = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_other_rooms_need_major_rep = models.BigIntegerField(blank=True, null=True)
+    avg_other_rooms_need_major_rep = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_other_rooms_need_minor_rep = models.BigIntegerField(blank=True, null=True)
+    avg_other_rooms_need_minor_rep = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_toilet_common = models.BigIntegerField(blank=True, null=True)
+    avg_toilet_common = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_toilet_boys = models.BigIntegerField(blank=True, null=True)
+    avg_toilet_boys = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_toilet_girls = models.BigIntegerField(blank=True, null=True)
+    avg_toilet_girls = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_kitchen_devices_grant = models.BigIntegerField(blank=True, null=True)
+    avg_kitchen_devices_grant = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_has_mdm = models.BigIntegerField(blank=True, null=True)
+    sum_has_cal_lab = models.BigIntegerField(blank=True, null=True)
+    sum_has_separate_room_for_headmaster = models.BigIntegerField(blank=True, null=True)
+    sum_has_electricity = models.BigIntegerField(blank=True, null=True)
+    sum_has_boundary_wall = models.BigIntegerField(blank=True, null=True)
+    sum_has_library = models.BigIntegerField(blank=True, null=True)
+    sum_books_in_library = models.BigIntegerField(blank=True, null=True)
+    avg_books_in_library = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_has_playground = models.BigIntegerField(blank=True, null=True)
+    sum_has_blackboard = models.BigIntegerField(blank=True, null=True)
+    sum_has_drinking_water = models.BigIntegerField(blank=True, null=True)
+    sum_has_medical_checkup = models.BigIntegerField(blank=True, null=True)
+    sum_has_ramps = models.BigIntegerField(blank=True, null=True)
+    sum_no_of_computers = models.BigIntegerField(blank=True, null=True)
+    avg_no_of_computers = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_male_tch = models.BigIntegerField(blank=True, null=True)
+    avg_male_tch = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_female_tch = models.BigIntegerField(blank=True, null=True)
+    avg_female_tch = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_noresp_tch = models.BigIntegerField(blank=True, null=True)
+    avg_noresp_tch = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_head_teacher = models.BigIntegerField(blank=True, null=True)
+    avg_head_teacher = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_graduate_teachers = models.BigIntegerField(blank=True, null=True)
+    avg_graduate_teachers = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_tch_with_professional_qualification = models.BigIntegerField(blank=True, null=True)
+    avg_tch_with_professional_qualification = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_days_involved_in_non_tch_assgn = models.BigIntegerField(blank=True, null=True)
+    avg_days_involved_in_non_tch_assgn = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_teachers_involved_in_non_tch_assgn = models.BigIntegerField(blank=True, null=True)
+    avg_teachers_involved_in_non_tch_assgn = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    centroid = models.PointField(blank=True, null=True)
+
+    objects = models.GeoManager()
+
+    class Meta:
+        abstract = True
+
+
 class Dise1011AssemblyAggregations(AssemblyAggregations):
     class Meta:
         db_table = 'dise_1011_assembly_aggregations'
@@ -631,6 +723,21 @@ class Dise1112DistrictAggregations(DistrictAggregations):
 class Dise1213DistrictAggregations(DistrictAggregations):
     class Meta:
         db_table = 'dise_1213_district_aggregations'
+
+
+class Dise1011PincodeAggregations(PincodeAggregations):
+    class Meta:
+        db_table = 'dise_1011_pincode_aggregations'
+
+
+class Dise1112PincodeAggregations(PincodeAggregations):
+    class Meta:
+        db_table = 'dise_1112_pincode_aggregations'
+
+
+class Dise1213PincodeAggregations(PincodeAggregations):
+    class Meta:
+        db_table = 'dise_1213_pincode_aggregations'
 
 
 class Dise1011BasicData(BasicData):
@@ -911,9 +1018,6 @@ class Block(BaseEntity):
         if 'name' in params and params.get('name', ''):
             blocks = blocks.filter(block_name__icontains=params.get('name'))
 
-        if 'block' in params and params.get('block', ''):
-            blocks = blocks.filter(block_name__icontains=params.get('block'))
-
         if 'bbox' in params and params.get('bbox', ''):
             # &bbox="75.73974609375,12.3906020692,79.447631375,13.4243520332"
             # southwest_lng,southwest_lat,northeast_lng,northeast_lat
@@ -998,11 +1102,6 @@ class District(BaseEntity):
                 district__icontains=params.get('name')
             )
 
-        if 'block' in params and params.get('block', ''):
-            districts = districts.filter(
-                block_name__icontains=params.get('block')
-            )
-
         if 'bbox' in params and params.get('bbox', ''):
             # &bbox="75.73909375,12.52220692,79.447659375,13.424352095"
             # southwest_lng,southwest_lat,northeast_lng,northeast_lat
@@ -1018,4 +1117,88 @@ class District(BaseEntity):
 
         print districts.query
         result['districts'] = list(districts)
+        return result
+
+
+class Pincode(BaseEntity):
+    # For all methods that start with Pincode
+    def _getschools(self, params):
+        from schools.olap_views import get_models
+        # returns list of schools in a given pincode
+        # if format = geo, returns FeatureCollection
+        # if format = plain, returns a plain list
+        name = params.get('name')
+        result = dict()
+        result['query'] = params
+
+        try:
+            SchoolModel = get_models(params.get('session', '10-11'), 'school')
+            phormat = params.get('format')
+            if phormat == 'geo':
+                temp_l = []
+                school_api = School()
+                schools = SchoolModel.objects.filter(
+                    pincode__iexact=name,
+                    # NOTE: Not sending schools without centroid
+                    # because there is no way to show them
+                    centroid__isnull=False
+                )
+                for sch in schools:
+                    temp_l.append(school_api._get_geojson(sch))
+                result['schools'] = FeatureCollection(temp_l)
+            else:
+                schools = SchoolModel.objects.values(
+                    'school_code', 'school_name'
+                ).filter(pincode__iexact=name)
+                result['schools'] = list(schools)
+
+        except (SchoolModel.DoesNotExist, Exception) as e:
+            result['error'] = str(e)
+        return result
+
+    @classmethod
+    def getSchools(cls, params):
+        # this just parses the dictionary from _getschools() and returns JSON
+        result = cls()._getschools(params)
+        if params.get('format', 'plain') == 'plain':
+            return cls.to_json_str(result)
+        elif params.get('format', 'plain') == 'geo':
+            return cls.to_geojson_str(result)
+
+    def _search(self, params):
+        from schools.olap_views import get_models
+        # searches pincodes and returns list
+        result = dict()
+        result['query'] = params
+        PincodeModel = get_models(params.get('session', '10-11'), 'pincode')
+
+        if len(params.keys()) > 1:
+            pincodes = PincodeModel.objects.extra(
+                select={
+                    'centroid': 'ST_AsText(centroid)'
+                }
+            ).values(
+                'pincode', 'centroid'
+            )
+
+        if 'pincode' in params and params.get('pincode', ''):
+            pincodes = pincodes.filter(
+                pincode__icontains=params.get('pincode')
+            )
+
+        if 'bbox' in params and params.get('bbox', ''):
+            # &bbox="75.73909375,12.52220692,79.447659375,13.424352095"
+            # southwest_lng,southwest_lat,northeast_lng,northeast_lat
+            # xmin,ymin,xmax,ymax
+            coords_match = re.match(r"(.*),(.*),(.*),(.*)", params.get('bbox'))
+            if len(coords_match.groups()) == 4:
+                bbox = map(lambda x: float(x), coords_match.groups())
+                geom = Polygon.from_bbox(bbox)
+                pincodes = pincodes.filter(centroid__contained=geom)
+
+        if 'limit' in params and params.get('limit', 0):
+            pincodes = pincodes[:params.get('limit')]
+
+        print pincodes.query
+        result['pincodes'] = list(pincodes)
         return result
