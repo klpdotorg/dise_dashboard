@@ -3,6 +3,101 @@
 {% block body %}
 <div id="map-holder"></div>
 
+<div id="popup-cluster" class="popup">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h4>Bellary <small>(cluster)</small></h4>
+      </div>
+
+      <div class="col-md-1">
+        <h5>Schools</h5>
+        <div class="circle_stat">442</div>
+      </div>
+
+      <div class="col-md-1">
+        <h5>Students</h5>
+        <div class="circle_stat">40,182</div>
+      </div>
+
+      <div class="col-md-1">
+        <h5>Teachers</h5>
+        <div class="circle_stat">1,200</div>
+      </div>
+
+      <div class="col-md-1">
+        <h5>Libraries</h5>
+        <div class="circle_stat">152</div>
+      </div>
+
+      <div class="col-md-1">
+        <h5>Electricity</h5>
+        <div class="circle_stat">342</div>
+      </div>
+
+      <div class="col-md-1">
+        <h5>Toilets</h5>
+        <div class="circle_stat">100</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="popup-school" class="popup">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h4>Apeejay, NOIDA <small>1984</small></h4>
+      </div>
+
+      <div class="col-md-1">
+        <h5>Students</h5>
+        <div class="circle_stat">3,000</div>
+      </div>
+
+      <div class="col-md-1">
+        <h5>Teachers</h5>
+        <div class="circle_stat">100</div>
+      </div>
+
+      <div class="col-md-2">
+        <h5 class="question">Medium of Instruction</h5>
+        <p class="answer">English</p>
+
+        <h5 class="question">Category</h5>
+        <p class="answer">Public School</p>
+      </div>
+
+      <div class="col-md-2">
+        <h5 class="question">Management</h5>
+        <p class="answer">Government</p>
+
+        <h5 class="question">Electricity</h5>
+        <p class="answer">Yes</p>
+      </div>
+
+      <div class="col-md-2">
+        <h5 class="question">Libary</h5>
+        <p class="answer">Yes</p>
+
+        <h5 class="question">Number of books</h5>
+        <p class="answer">400</p>
+      </div>
+
+      <div class="col-md-2">
+        <h5 class="question">Address</h5>
+        <p class="answer">
+          Apeejay, Film City,
+          Sector 16-A, NOIDA
+          201303, Uttar Pradesh
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <!-- Preset Editor -->
 <div id="preset-editor">
   <div class="container">
@@ -15,33 +110,33 @@
       <div class="col-md-4">
         <h3><span class="glyphicon glyphicon-briefcase"></span> Facilities</h3>
         <div class="check-list">
-          <label><input type="checkbox"> Classrooms need repair</label><br>
-          <label><input type="checkbox"> Doesn't have Toilet</label><br>
-          <label><input type="checkbox"> Doesn't have Toilet for Girls</label><br>
-          <label><input type="checkbox"> Doesn't have Electricity</label><br>
-          <label><input type="checkbox"> Doesn't have Secure Wall</label><br>
-          <label><input type="checkbox"> Doesn't have Mid-day meal</label><br>
-          <label><input type="checkbox"> Doesn't have Library</label><br>
-          <label><input type="checkbox"> Doesn't have Ramp</label><br>
-          <label><input type="checkbox"> Doesn't have Blackboard</label><br>
-          <label><input type="checkbox"> Doesn't have Playground</label><br>
-          <label><input type="checkbox"> Doesn't have Medical Checkup</label><br>
-          <label><input type="checkbox"> Doesn't have Drinking Water</label>
+          <label><input type="checkbox" name="facilities" value="repair"> Classrooms need repair</label><br>
+          <label><input type="checkbox" name="facilities" value="toilet"> Doesn't have Toilet</label><br>
+          <label><input type="checkbox" name="facilities" value="toilet_for_girls"> Doesn't have Toilet for Girls</label><br>
+          <label><input type="checkbox" name="facilities" value="electricity"> Doesn't have Electricity</label><br>
+          <label><input type="checkbox" name="facilities" value="secure_wall"> Doesn't have Secure Wall</label><br>
+          <label><input type="checkbox" name="facilities" value="mid_day_meal"> Doesn't have Mid-day meal</label><br>
+          <label><input type="checkbox" name="facilities" value="library"> Doesn't have Library</label><br>
+          <label><input type="checkbox" name="facilities" value="ramp"> Doesn't have Ramp</label><br>
+          <label><input type="checkbox" name="facilities" value="blackboard"> Doesn't have Blackboard</label><br>
+          <label><input type="checkbox" name="facilities" value="playground"> Doesn't have Playground</label><br>
+          <label><input type="checkbox" name="facilities" value="medical_checkup"> Doesn't have Medical Checkup</label><br>
+          <label><input type="checkbox" name="facilities" value="drinking_water"> Doesn't have Drinking Water</label>
         </div>
       </div>
 
       <div class="col-md-4">
         <h3><span class="glyphicon glyphicon-transfer"></span> RTE</h3>
         <div class="check-list">
-          <label><input type="checkbox"> Without SDMC Constituted</label><br>
-          <label><input type="checkbox"> Without SDMC Meetings</label><br>
-          <label><input type="checkbox"> Without Textbooks</label><br>
-          <label><input type="checkbox"> With Chilren from Weaker Section Enrolled</label><br>
+          <label><input type="checkbox" name="rte" value="sdmc_constituted"> Without SDMC Constituted</label><br>
+          <label><input type="checkbox" name="rte" value="sdmc_meetings"> Without SDMC Meetings</label><br>
+          <label><input type="checkbox" name="rte" value="textbooks"> Without Textbooks</label><br>
+          <label><input type="checkbox" name="rte" value="weaker_sections"> With Chilren from Weaker Section Enrolled</label><br>
         </div>
 
         <h3><span class="glyphicon glyphicon-certificate"></span> Compound Indicators</h3>
         <div class="check-list">
-          <label><input type="checkbox"> With Girls <strong>&lt;</strong> Boys</label><br><br>
+          <label><input type="checkbox" id="wgltb"> With Girls <strong>&lt;</strong> Boys</label><br><br>
 
 
           <label class="range">
@@ -73,8 +168,8 @@
       <div class="col-md-4">
         <h3><span class="glyphicon glyphicon-user"></span> Teachers</h3>
         <div class="check-list">
-          <label><input type="checkbox"> Without seperate room for HM</label><br>
-          <label><input type="checkbox"> Without HM</label>
+          <label><input type="checkbox" name="teachers" value="room_for_hm"> Without seperate room for HM</label><br>
+          <label><input type="checkbox" name="teachers" value="hm"> Without HM</label>
         </div>
 
 
@@ -144,56 +239,6 @@
 </div>
 <!-- Preset Editor -->
 
-<!-- Filter Editor -->
-<div id="filter-editor">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <h3>Filter</h3>
-      </div>
-    </div>
-    <div class="row lined-cols">
-      <div class="col-md-3">
-        <h4>District</h4>
-        <ul>
-          <li><a href="#">Belgaum</a></li>
-          <li><a href="#">Bellary</a></li>
-          <li><a href="#">Gadag</a></li>
-          <li><a href="#">Dharwad</a></li>
-        </ul>
-      </div>
-      <div class="col-md-3">
-        <h4>Taluk</h4>
-        <ul>
-          <li><a href="#">Belgaum</a></li>
-          <li><a href="#">Bellary</a></li>
-          <li><a href="#">Gadag</a></li>
-          <li><a href="#">Dharwad</a></li>
-        </ul>
-      </div>
-      <div class="col-md-3">
-        <h4>MP</h4>
-        <ul>
-          <li><a href="#">Belgaum</a></li>
-          <li><a href="#">Bellary</a></li>
-          <li><a href="#">Gadag</a></li>
-          <li><a href="#">Dharwad</a></li>
-        </ul>
-      </div>
-      <div class="col-md-3">
-        <h4>MLA</h4>
-        <ul>
-          <li><a href="#">Belgaum</a></li>
-          <li><a href="#">Bellary</a></li>
-          <li><a href="#">Gadag</a></li>
-          <li><a href="#">Dharwad</a></li>
-        </ul>
-      </div>
-    </div>
-
-  </div>
-</div>
-<!-- Filter Editor -->
 
 <div id="controls">
   <div id="super-search-container">
@@ -210,13 +255,13 @@
       <label>Academic Year</label><br>
       <div class="btn-group" data-toggle="buttons">
         <label class="btn btn-primary">
-          <input type="radio" name="session" value="10-11" checked="checked"> 2010-2011
+          <input type="radio" name="academic_year" value="10-11"> 2010-2011
         </label>
         <label class="btn btn-primary">
-          <input type="radio" name="session" value="11-12"> 2011-2012
+          <input type="radio" name="academic_year" value="11-12"> 2011-2012
         </label>
         <label class="btn btn-primary">
-          <input type="radio" name="session" value="12-13"> 2012-2013
+          <input type="radio" name="academic_year" value="12-13"> 2012-2013
         </label>
       </div>
 
@@ -225,10 +270,10 @@
       <label>Area</label><br>
       <div class="btn-group" data-toggle="buttons">
         <label class="btn btn-primary">
-          <input type="checkbox" name="" value="rural"> Rural
+          <input type="checkbox" name="area" value="rural"> Rural
         </label>
         <label class="btn btn-primary">
-          <input type="checkbox" name="" value="urban"> Urban
+          <input type="checkbox" name="area" value="urban"> Urban
         </label>
       </div>
 
@@ -237,10 +282,10 @@
       <label>Management</label><br>
       <div class="btn-group" data-toggle="buttons">
         <label class="btn btn-primary">
-          <input type="checkbox" name="" value="private"> Private
+          <input type="checkbox" name="management" value="private"> Private
         </label>
         <label class="btn btn-primary">
-          <input type="checkbox" name="" value="govt"> Goverment
+          <input type="checkbox" name="management" value="govt"> Goverment
         </label>
       </div>
     </form>
