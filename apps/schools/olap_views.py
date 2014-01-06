@@ -10,47 +10,10 @@ import re
 
 from common import SumCase
 from common.views import JSONResponseMixin
-from schools.models import YearlyData, School, SchoolManaagement,\
-    DrinkingWaterSource, BoundaryWallType, search_choices, YESNO, MDM_STATUS
-from schools.olap_models import Dise1011AssemblyAggregations, \
-    Dise1112AssemblyAggregations, Dise1213AssemblyAggregations, \
-    Dise1011BlockAggregations, Dise1112BlockAggregations, \
-    Dise1213BlockAggregations, Dise1011ClusterAggregations, \
-    Dise1112ClusterAggregations, Dise1213ClusterAggregations, \
-    Dise1011ParliamentAggregations, Dise1112ParliamentAggregations, \
-    Dise1213ParliamentAggregations, Dise1011DistrictAggregations, \
-    Dise1112DistrictAggregations,Dise1011PincodeAggregations, \
-    Dise1112PincodeAggregations, Dise1213DistrictAggregations, \
-    Dise1011BasicData, Dise1112BasicData, Dise1213BasicData, \
-    School, Cluster, Block, District, Pincode
 
+from schools import olap_entities
 # This shall become 0 when we have the map
 DEFAULT_LIMIT = 20
-
-def get_models(session='10-11', what='all'):
-    session = session.replace('-', '')
-
-    school_model = globals().get('Dise{}BasicData'.format(session))
-    if what == 'school':
-        return school_model
-
-    cluster_model = globals().get('Dise{}ClusterAggregations'.format(session))
-    if what == 'cluster':
-        return cluster_model
-
-    block_model = globals().get('Dise{}BlockAggregations'.format(session))
-    if what == 'block':
-        return block_model
-
-    district_model = globals().get('Dise{}DistrictAggregations'.format(session))
-    if what == 'district':
-        return district_model
-
-    pincode_model = globals().get('Dise{}PincodeAggregations'.format(session))
-    if what == 'pincode':
-        return pincode_model
-
-    return school_model, cluster_model, block_model, district_model, pincode_model
 
 
 class OLAPUnifiedSearch(View, JSONResponseMixin):
@@ -157,7 +120,14 @@ class OLAPEndPoint(View, JSONResponseMixin):
 
             # Make sure School, Cluster and other entities are imported
             # for this to work
-            entity = globals().get(entity_name)
+            entities = {
+                'School': olap_entities.School,
+                'Cluster': olap_entities.Cluster,
+                'Block': olap_entities.Block,
+                'District': olap_entities.District,
+                'Pincode': olap_entities.Pincode,
+            }
+            entity = entities.get(entity_name)
 
             # get the actual classmethod that returns JSON string
             endpoint = getattr(entity, endpoint_name)
