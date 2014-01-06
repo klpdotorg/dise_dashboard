@@ -93,8 +93,8 @@ class School(BaseEntity):
             # &bbox="75.73974609375,12.5223906020692,79.4476318359375,13.424352095715332"
             # southwest_lng,southwest_lat,northeast_lng,northeast_lat
             # xmin,ymin,xmax,ymax
-            coords_match = re.match(r"(.*),(.*),(.*),(.*)", params.get('bbox'))
-            if len(coords_match.groups()) == 4:
+            coords_match = re.match(r"([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)", params.get('bbox'))
+            if coords_match and len(coords_match.groups()) == 4:
                 bbox = map(lambda x: float(x), coords_match.groups())
                 geom = Polygon.from_bbox(bbox)
                 schools = schools.filter(centroid__contained=geom)
@@ -182,8 +182,8 @@ class Cluster(BaseEntity):
             # &bbox="75.73974609375,12.5223906020692,79.4476318359375,13.424352095715332"
             # southwest_lng,southwest_lat,northeast_lng,northeast_lat
             # xmin,ymin,xmax,ymax
-            coords_match = re.match(r"(.*),(.*),(.*),(.*)", params.get('bbox'))
-            if len(coords_match.groups()) == 4:
+            coords_match = re.match(r"([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)", params.get('bbox'))
+            if coords_match and len(coords_match.groups()) == 4:
                 bbox = map(lambda x: float(x), coords_match.groups())
                 geom = Polygon.from_bbox(bbox)
                 clusters = clusters.filter(centroid__contained=geom)
@@ -262,8 +262,8 @@ class Block(BaseEntity):
             # &bbox="75.73974609375,12.3906020692,79.447631375,13.4243520332"
             # southwest_lng,southwest_lat,northeast_lng,northeast_lat
             # xmin,ymin,xmax,ymax
-            coords_match = re.match(r"(.*),(.*),(.*),(.*)", params.get('bbox'))
-            if len(coords_match.groups()) == 4:
+            coords_match = re.match(r"([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)", params.get('bbox'))
+            if coords_match and len(coords_match.groups()) == 4:
                 bbox = map(lambda x: float(x), coords_match.groups())
                 geom = Polygon.from_bbox(bbox)
                 blocks = blocks.filter(centroid__contained=geom)
@@ -344,8 +344,8 @@ class District(BaseEntity):
             # &bbox="75.73909375,12.52220692,79.447659375,13.424352095"
             # southwest_lng,southwest_lat,northeast_lng,northeast_lat
             # xmin,ymin,xmax,ymax
-            coords_match = re.match(r"(.*),(.*),(.*),(.*)", params.get('bbox'))
-            if len(coords_match.groups()) == 4:
+            coords_match = re.match(r"([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)", params.get('bbox'))
+            if coords_match and len(coords_match.groups()) == 4:
                 bbox = map(lambda x: float(x), coords_match.groups())
                 geom = Polygon.from_bbox(bbox)
                 districts = districts.filter(centroid__contained=geom)
@@ -426,8 +426,8 @@ class Pincode(BaseEntity):
             # &bbox="75.73909375,12.52220692,79.447659375,13.424352095"
             # southwest_lng,southwest_lat,northeast_lng,northeast_lat
             # xmin,ymin,xmax,ymax
-            coords_match = re.match(r"(.*),(.*),(.*),(.*)", params.get('bbox'))
-            if len(coords_match.groups()) == 4:
+            coords_match = re.match(r"([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)", params.get('bbox'))
+            if coords_match and len(coords_match.groups()) == 4:
                 bbox = map(lambda x: float(x), coords_match.groups())
                 geom = Polygon.from_bbox(bbox)
                 pincodes = pincodes.filter(centroid__contained=geom)
