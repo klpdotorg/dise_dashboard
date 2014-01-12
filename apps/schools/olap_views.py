@@ -11,7 +11,8 @@ import re
 from common import SumCase
 from common.views import JSONResponseMixin
 
-from schools import olap_entities
+from schools.olap_entities import School, Cluster, Block, District, Pincode
+from schools.olap_models import get_models
 # This shall become 0 when we have the map
 DEFAULT_LIMIT = 20
 
@@ -25,7 +26,7 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
 
         try:
             query = params.get('q')
-            session = params.get('filters[session]')
+            session = params.get('filters[academic_year]')
             if session not in ['10-11', '11-12', '12-13']:
                 raise ValueError('Session not valid')
 
