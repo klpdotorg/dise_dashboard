@@ -21,9 +21,9 @@ var attributionControl = L.control.attribution({position: 'bottomright', prefix:
 
 // Custom school icon.
 var schoolIcon = L.icon({
-  iconUrl: 'https://f.cloud.github.com/assets/9491/1809460/c7971e88-6de8-11e3-9d4e-077d00736010.png',
-  iconSize: [35, 40],
+  iconUrl: 'https://f.cloud.github.com/assets/9491/1829370/d0ebd4c0-72a6-11e3-9468-1fb33d0f7038.png',
+  iconSize: [25, 30],
   iconAnchor: [10, 40],
-  popupAnchor: [8, -35]
+  popupAnchor: [4, -35]
 });
 
