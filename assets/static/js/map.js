@@ -19,11 +19,20 @@ var cloudmadeLayer = L.tileLayer(cloudmadeUrl, {key: cloudmadeKey}).addTo(map);
 // Custom attribution control.
 var attributionControl = L.control.attribution({position: 'bottomright', prefix: cloudmadeAttribution}).addTo(map);
 
-// Custom school icon.
-var schoolIcon = L.icon({
-  iconUrl: 'https://f.cloud.github.com/assets/9491/1829370/d0ebd4c0-72a6-11e3-9468-1fb33d0f7038.png',
+// Custom icons.
+function customIcon (entity) {
+  return L.icon({
+  iconUrl: 'static/img/'+entity+'.png',
   iconSize: [25, 30],
   iconAnchor: [10, 40],
   popupAnchor: [4, -35]
-});
+ });
+}
+
+districtIcon = customIcon('district');
+blockIcon = customIcon('block');
+clusterIcon = customIcon('cluster');
+schoolIcon = customIcon('school');
+
+
 
