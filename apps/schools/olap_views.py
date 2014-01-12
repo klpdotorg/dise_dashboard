@@ -11,7 +11,7 @@ import re
 from common import SumCase
 from common.views import JSONResponseMixin
 
-from schools.olap_entities import School, Cluster, Block, District, Pincode
+from schools import olap_entities
 from schools.olap_models import get_models
 # This shall become 0 when we have the map
 DEFAULT_LIMIT = 20
@@ -19,7 +19,7 @@ DEFAULT_LIMIT = 20
 
 class OLAPUnifiedSearch(View, JSONResponseMixin):
     def get(self, *args, **kwargs):
-        school_api = School()
+        school_api = olap_entities.School()
         params = self.request.GET
         results = []
         json_results = ''
