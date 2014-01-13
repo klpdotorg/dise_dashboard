@@ -6,7 +6,7 @@ var bangalore = L.latLng([12.9719,77.5937]);
 var bounds;
 
 // Initialise the map object.
-map = L.map('map-holder', {zoomControl: true, attributionControl: false}).setView(bangalore, 9);
+map = L.map('map-holder', {zoomControl: true, attributionControl: false}).setView(bangalore, 8);
 
 // Tile URL, Key and attribution.
 var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/{key}/997/256/{z}/{x}/{y}.png',
@@ -18,6 +18,10 @@ var cloudmadeLayer = L.tileLayer(cloudmadeUrl, {key: cloudmadeKey}).addTo(map);
 
 // Custom attribution control.
 var attributionControl = L.control.attribution({position: 'bottomright', prefix: cloudmadeAttribution}).addTo(map);
+
+// Group of layers that are on the map at any given
+// time.
+var currentLayers = L.layerGroup().addTo(map);
 
 // Custom icons.
 function customIcon (entity) {
@@ -33,6 +37,11 @@ districtIcon = customIcon('district');
 blockIcon = customIcon('block');
 clusterIcon = customIcon('cluster');
 schoolIcon = customIcon('school');
+
+// 1. Zoom level <=8 - districts.
+// 2. Zoom level 9 - blocks.
+// 3. Zoom level 10 - clusters.
+// 4. Zoom level >=11 = schools.
 
 
 

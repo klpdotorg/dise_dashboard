@@ -126,7 +126,7 @@ $(function(){
                 },
                 onEachFeature: onEachFeature
             }
-        ).addTo(window.map);
+        ).addTo(currentLayers);
     }
 
     // Initialize the API wrapper
@@ -134,8 +134,24 @@ $(function(){
         'base_url': window.location.toString() + 'api/v1/olap/'
     })
 
+    function mapInit () {
+        // Set the map view to Bangalore and zoom at 8.
+        // Load the district data and plot.
+        map.setView(bangalore, 8);
+        bbox = map.getBounds().toBBoxString();
+        DISE.call('District.search', '10-11', {
+            bbox: bbox,
+            format: 'geo',
+        }, function(data) {
+            plotOnMap(data.districts, 8, districtIcon);
+        });
+    }
+    // Invoke initial map layers.
+    mapInit();
+
     $("#filter-select").on("change", function(e) {
-        // console.log(e);
+        // Clear the preloaded layers when the search has been used
+        currentLayers.clearLayers();
         if (e.added.type == 'school') {
             if(e.added.feature !== null && e.added.feature !== "{}"){
                 plotOnMap(JSON.parse(e.added.feature), 15, schoolIcon);
