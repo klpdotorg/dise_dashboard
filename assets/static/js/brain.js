@@ -30,6 +30,11 @@ var UI = {
         });
 
 
+        $(".close_popup").on("click", function() {
+           $(".popup").hide();
+        });
+
+
         this.renderCrumbs([
             ["Karnataka", "#"],
             ["Bangalore", "#"],
