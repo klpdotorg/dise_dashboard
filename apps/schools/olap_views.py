@@ -95,8 +95,22 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
                     })
                 results.append(temp_d)
 
+            pincodes = PincodeModel.objects.filter(pincode__icontains=query).order_by('pincode')[:3]
+            if pincodes.count() > 0:
+                temp_d = {
+                    'text': 'pincodes',
+                    'children': []
+                }
+                for pincode in pincodes:
+                    temp_d['children'].append({
+                        'type': 'pincode',
+                        'id': pincode.pincode,
+                        'text': str(pincode.pincode),
+                    })
+                results.append(temp_d)
+
             json_results = json.dumps(results)
-        except (KeyError, ValueError, ImportError, AttributeError) as e:
+        except (KeyError, ValueError, ImportError, AttributeError, NameError) as e:
             # results['error'] = str(e)
             results.append({
                 'error': str(e)
