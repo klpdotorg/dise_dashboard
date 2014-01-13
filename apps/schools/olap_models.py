@@ -243,7 +243,7 @@ class DistrictAggregations(BaseModel, AggregationBase):
 
 
 class PincodeAggregations(BaseModel, AggregationBase):
-    pincode = models.IntegerField(blank=True, null=True)
+    pincode = models.IntegerField(blank=True, primary_key=True)
     centroid = models.PointField(blank=True, null=True)
 
     objects = models.GeoManager()
