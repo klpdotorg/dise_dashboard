@@ -28,6 +28,13 @@ class BaseEntity:
         return cls.to_geojson_str(result)
 
 
+    @classmethod
+    def getSchools(cls, params):
+        # this just parses the dictionary from _getschools() and returns JSON
+        result = cls()._getschools(params)
+        return cls.to_geojson_str(result)
+
+
 class School(BaseEntity):
     # For methods that start with `School`
     def _getinfo(self, params):
@@ -110,37 +117,22 @@ class Cluster(BaseEntity):
 
         try:
             SchoolModel = get_models(params.get('session', '10-11'), 'school')
-            phormat = params.get('format')
-            if phormat == 'geo':
-                temp_l = []
-                school_api = School()
-                schools = SchoolModel.objects.filter(
-                    cluster_name__iexact=name,
-                    # NOTE: Not sending schools without centroid
-                    # because there is no way to show them
-                    centroid__isnull=False
-                )
-                for sch in schools:
-                    temp_l.append(school_api._get_geojson(sch))
-                result['schools'] = FeatureCollection(temp_l)
-            else:
-                schools = SchoolModel.objects.values(
-                    'school_code', 'school_name'
-                ).filter(cluster_name__iexact=name)
-                result['schools'] = list(schools)
+
+            temp_l = []
+            school_api = School()
+            schools = SchoolModel.objects.filter(
+                cluster_name__iexact=name,
+                # NOTE: Not sending schools without centroid
+                # because there is no way to show them
+                centroid__isnull=False
+            )
+            for sch in schools:
+                temp_l.append(school_api._get_geojson(sch))
+            result['schools'] = FeatureCollection(temp_l)
 
         except (SchoolModel.DoesNotExist, Exception) as e:
             result['error'] = str(e)
         return result
-
-    @classmethod
-    def getSchools(cls, params):
-        # this just parses the dictionary from _getschools() and returns JSON
-        result = cls()._getschools(params)
-        if params.get('format', 'plain') == 'plain':
-            return cls.to_json_str(result)
-        elif params.get('format', 'plain') == 'geo':
-            return cls.to_geojson_str(result)
 
     def _get_geojson(self, cluster):
         # returns a geojson feature for the given DiseFFTTBasicData object.
