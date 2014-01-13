@@ -316,13 +316,7 @@ class District(BaseEntity):
         DistrictModel = get_models(params.get('session', '10-11'), 'district')
 
         if len(params.keys()) > 1:
-            districts = DistrictModel.objects.extra(
-                select={
-                    'centroid': 'ST_AsText(centroid)'
-                }
-            ).values(
-                'district', 'centroid'
-            )
+            districts = DistrictModel.objects.filter(centroid__isnull=False)
 
         if 'name' in params and params.get('name', ''):
             districts = districts.filter(
@@ -353,6 +347,21 @@ class District(BaseEntity):
 
 class Pincode(BaseEntity):
     # For all methods that start with Pincode
+
+    def _get_geojson(self, pincode):
+        # returns a geojson feature for the given DiseFFTTBasicData object.
+        # FFTT = sesstion from/to. for 2010-11: 1011
+        return Feature(
+            geometry=Point(
+                [pincode.centroid.x, pincode.centroid.y] if pincode.centroid is not None else []
+            ),
+            properties={
+                'pincode': pincode.pincode,
+                'popupContent': pincode.pincode
+            },
+            id=pincode.pincode
+        )
+
     def _getschools(self, params):
         # returns list of schools in a given pincode
         # if format = geo, returns FeatureCollection
@@ -363,37 +372,22 @@ class Pincode(BaseEntity):
 
         try:
             SchoolModel = get_models(params.get('session', '10-11'), 'school')
-            phormat = params.get('format')
-            if phormat == 'geo':
-                temp_l = []
-                school_api = School()
-                schools = SchoolModel.objects.filter(
-                    pincode__iexact=pincode,
-                    # NOTE: Not sending schools without centroid
-                    # because there is no way to show them
-                    centroid__isnull=False
-                )
-                for sch in schools:
-                    temp_l.append(school_api._get_geojson(sch))
-                result['schools'] = FeatureCollection(temp_l)
-            else:
-                schools = SchoolModel.objects.values(
-                    'school_code', 'school_name'
-                ).filter(pincode__iexact=pincode)
-                result['schools'] = list(schools)
+
+            temp_l = []
+            school_api = School()
+            schools = SchoolModel.objects.filter(
+                pincode__iexact=pincode,
+                # NOTE: Not sending schools without centroid
+                # because there is no way to show them
+                centroid__isnull=False
+            )
+            for sch in schools:
+                temp_l.append(school_api._get_geojson(sch))
+            result['schools'] = FeatureCollection(temp_l)
 
         except (SchoolModel.DoesNotExist, Exception) as e:
             result['error'] = str(e)
         return result
-
-    @classmethod
-    def getSchools(cls, params):
-        # this just parses the dictionary from _getschools() and returns JSON
-        result = cls()._getschools(params)
-        if params.get('format', 'plain') == 'plain':
-            return cls.to_json_str(result)
-        elif params.get('format', 'plain') == 'geo':
-            return cls.to_geojson_str(result)
 
     def _search(self, params):
         # searches pincodes and returns list
@@ -402,13 +396,7 @@ class Pincode(BaseEntity):
         PincodeModel = get_models(params.get('session', '10-11'), 'pincode')
 
         if len(params.keys()) > 1:
-            pincodes = PincodeModel.objects.extra(
-                select={
-                    'centroid': 'ST_AsText(centroid)'
-                }
-            ).values(
-                'pincode', 'centroid'
-            )
+            pincodes = PincodeModel.objects.filter(centroid__isnull=False)
 
         if 'pincode' in params and params.get('pincode', ''):
             pincodes = pincodes.filter(
@@ -428,6 +416,9 @@ class Pincode(BaseEntity):
         if 'limit' in params and params.get('limit', 0):
             pincodes = pincodes[:params.get('limit')]
 
-        print pincodes.query
-        result['pincodes'] = list(pincodes)
+        # print pincodes.query
+        temp_l = []
+        for pin in pincodes:
+            temp_l.append(self._get_geojson(pin))
+        result['pincodes'] = FeatureCollection(temp_l)
         return result
