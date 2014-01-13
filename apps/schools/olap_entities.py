@@ -267,6 +267,21 @@ class Block(BaseEntity):
 
 class District(BaseEntity):
     # For all methods that start with District
+
+    def _get_geojson(self, district):
+        # returns a geojson feature for the given DiseFFTTBasicData object.
+        # FFTT = sesstion from/to. for 2010-11: 1011
+        return Feature(
+            geometry=Point(
+                [district.centroid.x, district.centroid.y] if district.centroid is not None else []
+            ),
+            properties={
+                'district': district.district,
+                'popupContent': ', '.join([district.district])
+            },
+            id=district.district
+        )
+
     def _getschools(self, params):
         # returns list of schools in a given district
         # if format = geo, returns FeatureCollection
@@ -277,37 +292,22 @@ class District(BaseEntity):
 
         try:
             SchoolModel = get_models(params.get('session', '10-11'), 'school')
-            phormat = params.get('format')
-            if phormat == 'geo':
-                temp_l = []
-                school_api = School()
-                schools = SchoolModel.objects.filter(
-                    district__iexact=name,
-                    # NOTE: Not sending schools without centroid
-                    # because there is no way to show them
-                    centroid__isnull=False
-                )
-                for sch in schools:
-                    temp_l.append(school_api._get_geojson(sch))
-                result['schools'] = FeatureCollection(temp_l)
-            else:
-                schools = SchoolModel.objects.values(
-                    'school_code', 'school_name'
-                ).filter(district__iexact=name)
-                result['schools'] = list(schools)
+
+            temp_l = []
+            school_api = School()
+            schools = SchoolModel.objects.filter(
+                district__iexact=name,
+                # NOTE: Not sending schools without centroid
+                # because there is no way to show them
+                centroid__isnull=False
+            )
+            for sch in schools:
+                temp_l.append(school_api._get_geojson(sch))
+            result['schools'] = FeatureCollection(temp_l)
 
         except (SchoolModel.DoesNotExist, Exception) as e:
             result['error'] = str(e)
         return result
-
-    @classmethod
-    def getSchools(cls, params):
-        # this just parses the dictionary from _getschools() and returns JSON
-        result = cls()._getschools(params)
-        if params.get('format', 'plain') == 'plain':
-            return cls.to_json_str(result)
-        elif params.get('format', 'plain') == 'geo':
-            return cls.to_geojson_str(result)
 
     def _search(self, params):
         # searches districts and returns list
@@ -343,7 +343,11 @@ class District(BaseEntity):
             districts = districts[:params.get('limit')]
 
         print districts.query
-        result['districts'] = list(districts)
+        temp_l = []
+        for dist in districts:
+            temp_l.append(self._get_geojson(dist))
+
+        result['districts'] = FeatureCollection(temp_l)
         return result
 
 
