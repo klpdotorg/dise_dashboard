@@ -465,6 +465,17 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
     margin-bottom: 0;
 }
 
+.close_popup{
+    float: right;
+    color: #fff;
+    margin-top: -20px;
+    font-size: 20px;
+}
+
+.close_popup:hover{
+    color: #f18352;
+}
+
 .popup h4 small{
     color: #fff;
     font-size: 15px;
