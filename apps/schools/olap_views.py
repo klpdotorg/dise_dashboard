@@ -98,8 +98,9 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
             json_results = json.dumps(results)
         except (KeyError, ValueError, ImportError, AttributeError) as e:
             # results['error'] = str(e)
-            print str(e)
-            results = []
+            results.append({
+                'error': str(e)
+            })
             json_results = json.dumps(results)
             return self.get_json_response(json_results)
 
