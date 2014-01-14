@@ -1,12 +1,13 @@
 // Global variable for the map.
 var map;
 // Central location, Bangalore
-var bangalore = L.latLng([12.9719,77.5937]);
+var karnataka = L.latLng([15.040,76.223]);
+var bangalore = L.latLng([12.979,77.590]);
 // FIXME: Set Bounds for the map
 var bounds;
 
 // Initialise the map object.
-map = L.map('map-holder', {zoomControl: true, attributionControl: false}).setView(bangalore, 8);
+map = L.map('map-holder', {zoomControl: true, attributionControl: false}).setView(karnataka, 8);
 
 // Tile URL, Key and attribution.
 var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/{key}/997/256/{z}/{x}/{y}.png',
@@ -37,11 +38,6 @@ districtIcon = customIcon('district');
 blockIcon = customIcon('block');
 clusterIcon = customIcon('cluster');
 schoolIcon = customIcon('school');
-
-// 1. Zoom level <=8 - districts.
-// 2. Zoom level 9 - blocks.
-// 3. Zoom level 10 - clusters.
-// 4. Zoom level >=11 = schools.
 
 
 

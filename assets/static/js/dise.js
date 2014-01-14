@@ -52,6 +52,7 @@
 $(function(){
 
     UI.init(); // Initialize UI elements
+    filtersEnabled = false;
 
     $("#filter-select").select2({
         dropdownCssClass: "bigdrop",
@@ -134,14 +135,34 @@ $(function(){
         'base_url': window.location.toString() + 'api/v1/olap/'
     })
 
+    function loadEntityData (entity) {
+      var entityData;
+      bbox = map.getBounds().toBBoxString();
+      // Clear current layers.
+      currentLayers.clearLayers();
+      DISE.call(entity+'.search', '10-11', {
+          bbox: bbox,
+      }, function(data) {
+          if (entity=='Block') {
+            plotOnMap(data.blocks, map.getZoom(), blockIcon);
+          }
+          else if (entity=='Cluster') {
+            plotOnMap(data.clusters, map.getZoom(), clusterIcon);
+          }
+          else if (entity=='District') {
+            plotOnMap(data.district, map.getZoom(), districtIcon);
+          }
+          else {
+            plotOnMap(data.schools, map.getZoom(), schoolIcon);
+          }
+
+      });
+    }
     function mapInit () {
-        // Set the map view to Bangalore and zoom at 8.
         // Load the district data and plot.
-        map.setView(bangalore, 8);
         bbox = map.getBounds().toBBoxString();
         DISE.call('District.search', '10-11', {
             bbox: bbox,
-            format: 'geo',
         }, function(data) {
             plotOnMap(data.districts, 8, districtIcon);
         });
@@ -149,9 +170,37 @@ $(function(){
     // Invoke initial map layers.
     mapInit();
 
+    function updateLayers (zoom) {
+        if (zoom <=8) {
+          // Load districts.
+          mapInit();
+        }
+        else if (zoom == 9) {
+          // Load blocks.
+          loadEntityData('Block');
+        }
+        else if (zoom > 9 && zoom < 12) {
+          // Load clusters.
+          loadEntityData('Cluster');
+        }
+        else {
+          // Load schools.
+          loadEntityData('School');
+        }
+    }
+
+    map.on('zoomend', function(e) {
+      // If filters are enabled then don't load the usual layers.
+      if (!filtersEnabled) {
+        updateLayers(map.getZoom());
+      }
+    })
+
     $("#filter-select").on("change", function(e) {
         // Clear the preloaded layers when the search has been used
         currentLayers.clearLayers();
+        // Flip the filter switch to disable all usual map interactions.
+        filtersEnabled = true;
         if (e.added.type == 'school') {
             if(e.added.feature !== null && e.added.feature !== "{}"){
                 plotOnMap(JSON.parse(e.added.feature), 15, schoolIcon);
