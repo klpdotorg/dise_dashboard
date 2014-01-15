@@ -6,7 +6,9 @@ from geojson import Feature, FeatureCollection, Point, dumps as geojson_dumps
 
 from schools.olap_models import get_models
 
+
 class BaseEntity:
+
     @classmethod
     def to_json_str(cls, d=dict()):
         return json.dumps(d)
@@ -27,7 +29,6 @@ class BaseEntity:
         result = cls()._search(params)
         return cls.to_geojson_str(result)
 
-
     @classmethod
     def getSchools(cls, params):
         # this just parses the dictionary from _getschools() and returns JSON
@@ -35,42 +36,73 @@ class BaseEntity:
         return cls.to_geojson_str(result)
 
 
-class School(BaseEntity):
-    # For methods that start with `School`
+    def _get_geojson(self, entity):
+        # returns a geojson feature for the given DiseFFTTBasicData object.
+        # FFTT = sesstion from/to. for 2010-11: 1011
+        if hasattr(self, 'display_field'):
+            popup_content = [str(getattr(entity, self.display_field))]
+        else:
+            popup_content = [str(getattr(entity, self.primary_key))]
+
+        if hasattr(self, 'secondary_key') and self.secondary_key:
+            popup_content.append(str(getattr(entity, self.secondary_key)))
+
+        properties = {
+            'popupContent': ', '.join(popup_content)
+        }
+        for field in self.only_fields:
+            properties[field] = getattr(entity, field)
+
+        return Feature(
+            geometry=Point(
+                [entity.centroid.x,
+                    entity.centroid.y] if entity.centroid is not None else []
+            ),
+            properties=properties,
+            id=str(getattr(entity, self.primary_key))
+        )
+
     def _getinfo(self, params):
         # gets the details of a school and returns a dictionary
-        code = params.get('code', -1)
+        primary_key = params.get(self.param_name_for_primary_key, -1)
         result = dict()
         result['query'] = params
 
         try:
-            SchoolModel = get_models(params.get('session', '10-11'), 'school')
-            school = SchoolModel.objects.get(school_code__iexact=code)
+            EntityModel = get_models(
+                params.get('session', '10-11'), self.entity_type)
+            filters = dict()
+            filters[self.primary_key + '__iexact'] = primary_key
 
-            result['school'] = self._get_geojson(school)
-        except (SchoolModel.DoesNotExist, Exception) as e:
+            if hasattr(self, 'secondary_key') and hasattr(self, 'param_name_for_secondary_key'):
+                if self.secondary_key and self.param_name_for_secondary_key and params.get(self.param_name_for_secondary_key):
+                    secondary_key = params.get(
+                        self.param_name_for_secondary_key)
+                    filters[self.secondary_key + '__iexact'] = secondary_key
+
+            entity_obj = EntityModel.objects.get(**filters)
+
+            result[self.entity_type] = self._get_geojson(entity_obj)
+        except (EntityModel.DoesNotExist, Exception) as e:
             result['error'] = str(e)
         return result
 
-    def _get_geojson(self, school):
-        # returns a geojson feature for the given DiseFFTTBasicData object.
-        # FFTT = sesstion from/to. for 2010-11: 1011
-        return Feature(
-            geometry=Point(
-                [school.centroid.x, school.centroid.y] if school.centroid is not None else []
-            ),
-            properties={
-                'name': school.school_name,
-                'cluster_name': school.cluster_name,
-                'block_name': school.block_name,
-                'district': school.district,
-                'popupContent': ', '.join([school.school_name, school.cluster_name])
-            },
-            id=school.school_code
-        )
 
+class School(BaseEntity):
+    entity_type = 'school'
+    display_field = 'school_name'
+
+    primary_key = 'school_code'
+    param_name_for_primary_key = 'code'
+    secondary_key = ''
+    param_name_for_secondary_key = ''
+
+    only_fields = ['school_name', 'cluster_name', 'block_name', 'district', 'pincode']
+
+    # For methods that start with `School`
     def _search(self, params):
-        # This seaches all the base models, depending on the session and retuns list of schools
+        # This seaches all the base models, depending on the session and retuns
+        # list of schools
         result = dict()
         result['query'] = params
         SchoolModel = get_models(params.get('session', '10-11'), 'school')
@@ -82,13 +114,15 @@ class School(BaseEntity):
             schools = schools.filter(school_name__icontains=params.get('name'))
 
         if 'cluster' in params and params.get('cluster', ''):
-            schools = schools.filter(cluster_name__icontains=params.get('cluster'))
+            schools = schools.filter(
+                cluster_name__icontains=params.get('cluster'))
 
         if 'bbox' in params and params.get('bbox', ''):
             # &bbox="75.73974609375,12.5223906020692,79.4476318359375,13.424352095715332"
             # southwest_lng,southwest_lat,northeast_lng,northeast_lat
             # xmin,ymin,xmax,ymax
-            coords_match = re.match(r"([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)", params.get('bbox'))
+            coords_match = re.match(
+                r"([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)", params.get('bbox'))
             if coords_match and len(coords_match.groups()) == 4:
                 bbox = map(lambda x: float(x), coords_match.groups())
                 geom = Polygon.from_bbox(bbox)
@@ -106,6 +140,15 @@ class School(BaseEntity):
 
 
 class Cluster(BaseEntity):
+    entity_type = 'cluster'
+
+    primary_key = 'cluster_name'
+    param_name_for_primary_key = 'name'
+    secondary_key = 'block_name'
+    param_name_for_secondary_key = 'block'
+
+    only_fields = ['cluster_name', 'block_name', 'district', 'sum_boys', 'sum_girls']
+
     # For all methods that start with Cluster
     def _getschools(self, params):
         # returns list of schools in a given cluster
@@ -134,22 +177,6 @@ class Cluster(BaseEntity):
             result['error'] = str(e)
         return result
 
-    def _get_geojson(self, cluster):
-        # returns a geojson feature for the given DiseFFTTBasicData object.
-        # FFTT = sesstion from/to. for 2010-11: 1011
-        return Feature(
-            geometry=Point(
-                [cluster.centroid.x, cluster.centroid.y] if cluster.centroid is not None else []
-            ),
-            properties={
-                'cluster_name': cluster.cluster_name,
-                'block_name': cluster.block_name,
-                'district': cluster.district,
-                'popupContent': ', '.join([cluster.cluster_name, cluster.block_name])
-            },
-            id=cluster.cluster_name
-        )
-
     def _search(self, params):
         # searches clusters and returns list
         result = dict()
@@ -159,16 +186,19 @@ class Cluster(BaseEntity):
         clusters = ClusterModel.objects.filter(centroid__isnull=False)
 
         if 'name' in params and params.get('name', ''):
-            clusters = clusters.filter(cluster_name__icontains=params.get('name'))
+            clusters = clusters.filter(
+                cluster_name__icontains=params.get('name'))
 
         if 'block' in params and params.get('block', ''):
-            clusters = clusters.filter(block_name__icontains=params.get('block'))
+            clusters = clusters.filter(
+                block_name__icontains=params.get('block'))
 
         if 'bbox' in params and params.get('bbox', ''):
             # &bbox="75.73974609375,12.5223906020692,79.4476318359375,13.424352095715332"
             # southwest_lng,southwest_lat,northeast_lng,northeast_lat
             # xmin,ymin,xmax,ymax
-            coords_match = re.match(r"([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)", params.get('bbox'))
+            coords_match = re.match(
+                r"([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)", params.get('bbox'))
             if coords_match and len(coords_match.groups()) == 4:
                 bbox = map(lambda x: float(x), coords_match.groups())
                 geom = Polygon.from_bbox(bbox)
@@ -188,21 +218,14 @@ class Cluster(BaseEntity):
 
 class Block(BaseEntity):
     # For all methods that start with Block
+    entity_type = 'block'
 
-    def _get_geojson(self, block):
-        # returns a geojson feature for the given DiseFFTTBasicData object.
-        # FFTT = sesstion from/to. for 2010-11: 1011
-        return Feature(
-            geometry=Point(
-                [block.centroid.x, block.centroid.y] if block.centroid is not None else []
-            ),
-            properties={
-                'block_name': block.block_name,
-                'district': block.district,
-                'popupContent': ', '.join([block.block_name, block.district])
-            },
-            id=block.block_name
-        )
+    primary_key = 'block_name'
+    param_name_for_primary_key = 'name'
+    secondary_key = ''
+    param_name_for_secondary_key = ''
+
+    only_fields = ['block_name', 'district', 'sum_boys', 'sum_girls']
 
     def _getschools(self, params):
         # returns list of schools in a given block
@@ -247,7 +270,8 @@ class Block(BaseEntity):
             # &bbox="75.73974609375,12.3906020692,79.447631375,13.4243520332"
             # southwest_lng,southwest_lat,northeast_lng,northeast_lat
             # xmin,ymin,xmax,ymax
-            coords_match = re.match(r"([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)", params.get('bbox'))
+            coords_match = re.match(
+                r"([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)", params.get('bbox'))
             if coords_match and len(coords_match.groups()) == 4:
                 bbox = map(lambda x: float(x), coords_match.groups())
                 geom = Polygon.from_bbox(bbox)
@@ -267,20 +291,14 @@ class Block(BaseEntity):
 
 class District(BaseEntity):
     # For all methods that start with District
+    entity_type = 'district'
 
-    def _get_geojson(self, district):
-        # returns a geojson feature for the given DiseFFTTBasicData object.
-        # FFTT = sesstion from/to. for 2010-11: 1011
-        return Feature(
-            geometry=Point(
-                [district.centroid.x, district.centroid.y] if district.centroid is not None else []
-            ),
-            properties={
-                'district': district.district,
-                'popupContent': ', '.join([district.district])
-            },
-            id=district.district
-        )
+    primary_key = 'district'
+    param_name_for_primary_key = 'name'
+    secondary_key = ''
+    param_name_for_secondary_key = ''
+
+    only_fields = ['district', 'sum_boys', 'sum_girls']
 
     def _getschools(self, params):
         # returns list of schools in a given district
@@ -327,7 +345,8 @@ class District(BaseEntity):
             # &bbox="75.73909375,12.52220692,79.447659375,13.424352095"
             # southwest_lng,southwest_lat,northeast_lng,northeast_lat
             # xmin,ymin,xmax,ymax
-            coords_match = re.match(r"([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)", params.get('bbox'))
+            coords_match = re.match(
+                r"([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)", params.get('bbox'))
             if coords_match and len(coords_match.groups()) == 4:
                 bbox = map(lambda x: float(x), coords_match.groups())
                 geom = Polygon.from_bbox(bbox)
@@ -347,20 +366,14 @@ class District(BaseEntity):
 
 class Pincode(BaseEntity):
     # For all methods that start with Pincode
+    entity_type = 'pincode'
 
-    def _get_geojson(self, pincode):
-        # returns a geojson feature for the given DiseFFTTBasicData object.
-        # FFTT = sesstion from/to. for 2010-11: 1011
-        return Feature(
-            geometry=Point(
-                [pincode.centroid.x, pincode.centroid.y] if pincode.centroid is not None else []
-            ),
-            properties={
-                'pincode': pincode.pincode,
-                'popupContent': pincode.pincode
-            },
-            id=pincode.pincode
-        )
+    primary_key = 'pincode'
+    param_name_for_primary_key = 'pincode'
+    secondary_key = ''
+    param_name_for_secondary_key = ''
+
+    only_fields = ['sum_boys', 'sum_girls']
 
     def _getschools(self, params):
         # returns list of schools in a given pincode
@@ -407,7 +420,8 @@ class Pincode(BaseEntity):
             # &bbox="75.73909375,12.52220692,79.447659375,13.424352095"
             # southwest_lng,southwest_lat,northeast_lng,northeast_lat
             # xmin,ymin,xmax,ymax
-            coords_match = re.match(r"([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)", params.get('bbox'))
+            coords_match = re.match(
+                r"([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)", params.get('bbox'))
             if coords_match and len(coords_match.groups()) == 4:
                 bbox = map(lambda x: float(x), coords_match.groups())
                 geom = Polygon.from_bbox(bbox)
