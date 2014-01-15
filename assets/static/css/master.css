@@ -456,6 +456,7 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
     bottom: 0;
     left: 0;
     box-shadow: 0 0 10px #000;
+    overflow: hidden;
 }
 
 .popup h4{
