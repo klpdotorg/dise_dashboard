@@ -93,6 +93,22 @@ class BasicData(BaseModel):
     tch_with_professional_qualification = models.IntegerField(null=True, blank=True)
     days_involved_in_non_tch_assgn = models.IntegerField(null=True, blank=True)
     teachers_involved_in_non_tch_assgn = models.IntegerField(null=True, blank=True)
+    class1_total_enr_boys = models.IntegerField(blank=True, null=True)
+    class2_total_enr_boys = models.IntegerField(blank=True, null=True)
+    class3_total_enr_boys = models.IntegerField(blank=True, null=True)
+    class4_total_enr_boys = models.IntegerField(blank=True, null=True)
+    class5_total_enr_boys = models.IntegerField(blank=True, null=True)
+    class6_total_enr_boys = models.IntegerField(blank=True, null=True)
+    class7_total_enr_boys = models.IntegerField(blank=True, null=True)
+    class8_total_enr_boys = models.IntegerField(blank=True, null=True)
+    class1_total_enr_girls = models.IntegerField(blank=True, null=True)
+    class2_total_enr_girls = models.IntegerField(blank=True, null=True)
+    class3_total_enr_girls = models.IntegerField(blank=True, null=True)
+    class4_total_enr_girls = models.IntegerField(blank=True, null=True)
+    class5_total_enr_girls = models.IntegerField(blank=True, null=True)
+    class6_total_enr_girls = models.IntegerField(blank=True, null=True)
+    class7_total_enr_girls = models.IntegerField(blank=True, null=True)
+    class8_total_enr_girls = models.IntegerField(blank=True, null=True)
 
     objects = models.GeoManager()
 
@@ -243,7 +259,7 @@ class DistrictAggregations(BaseModel, AggregationBase):
 
 
 class PincodeAggregations(BaseModel, AggregationBase):
-    pincode = models.IntegerField(blank=True, null=True)
+    pincode = models.IntegerField(blank=True, primary_key=True)
     centroid = models.PointField(blank=True, null=True)
 
     objects = models.GeoManager()
