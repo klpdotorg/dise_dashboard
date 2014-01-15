@@ -24,10 +24,12 @@ class Command(BaseCommand):
 
                 query = "ALTER TABLE {} \n".format(SchoolModel._meta.db_table)
                 for c in columns[2:]:
-                    query += " ADD COLUMN {} integer,\n".format(c)
-                query = query.rstrip(',\n')
-                query += ';'
-                self.stdout.write(query)
+                    q = query + " ADD COLUMN {} integer;".format(c)
+                    self.stdout.write(q)
+                q = query + " ADD COLUMN total_boys integer;"
+                self.stdout.write(q)
+                q = query + " ADD COLUMN total_girls integer;"
+                self.stdout.write(q)
 
                 for row in reader:
                     school_code = int(row[columns.index('school_code')])
@@ -35,6 +37,8 @@ class Command(BaseCommand):
                     query = "UPDATE {} SET \n".format(SchoolModel._meta.db_table)
                     for c in columns[2:]:
                         query += "\t{}='{}',\n".format(c, int(row[columns.index(c)]))
+                    query += '\ttotal_boys = ({}),\n'.format('+'.join(columns[2:10]))
+                    query += '\ttotal_girls = ({}),\n'.format('+'.join(columns[10:]))
                     query = query.rstrip(',\n')
                     query += "\nWHERE school_code='{}';".format(school_code)
                     self.stdout.write(query)
