@@ -136,9 +136,7 @@ $(function(){
     })
 
     function loadEntityData (entity) {
-      // console.log('loading d data');
       bbox = map.getBounds().toBBoxString();
-      // console.log(bbox);
       // Clear current layers.
       currentLayers.clearLayers();
       DISE.call(entity+'.search', '10-11', {
@@ -209,16 +207,13 @@ $(function(){
 
     function updateData (layer) {
       layerID = layer._leaflet_id;
-      console.log(layerID);
       if (layerID == layerIDs.district) {
-        console.log('Matched D layer');
         loadEntityData('District');
       }
       else if (layerID == layerIDs.block) {
         loadEntityData('Block');
       }
       else if (layerID == layerIDs.cluster) {
-        console.log('matched cluster');
         loadEntityData('Cluster');
       }
       else {
@@ -229,7 +224,6 @@ $(function(){
     map.on('dragend', function(e) {
       if (!filtersEnabled) {
         currentLayers.eachLayer(function(layer) {
-          console.log(layer);
           updateData(layer);
         });
       }
