@@ -1,12 +1,13 @@
 // Global variable for the map.
 var map;
 // Central location, Bangalore
-var bangalore = L.latLng([12.9719,77.5937]);
+var karnataka = L.latLng([15.040,76.223]);
+var bangalore = L.latLng([12.979,77.590]);
 // FIXME: Set Bounds for the map
 var bounds;
 
 // Initialise the map object.
-map = L.map('map-holder', {zoomControl: true, attributionControl: false}).setView(bangalore, 9);
+map = L.map('map-holder', {zoomControl: true, attributionControl: false}).setView(karnataka, 8);
 
 // Tile URL, Key and attribution.
 var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/{key}/997/256/{z}/{x}/{y}.png',
@@ -19,11 +20,24 @@ var cloudmadeLayer = L.tileLayer(cloudmadeUrl, {key: cloudmadeKey}).addTo(map);
 // Custom attribution control.
 var attributionControl = L.control.attribution({position: 'bottomright', prefix: cloudmadeAttribution}).addTo(map);
 
-// Custom school icon.
-var schoolIcon = L.icon({
-  iconUrl: 'https://f.cloud.github.com/assets/9491/1829370/d0ebd4c0-72a6-11e3-9468-1fb33d0f7038.png',
+// Group of layers that are on the map at any given
+// time.
+var currentLayers = L.layerGroup().addTo(map);
+
+// Custom icons.
+function customIcon (entity) {
+  return L.icon({
+  iconUrl: 'static/img/'+entity+'.png',
   iconSize: [25, 30],
   iconAnchor: [10, 40],
   popupAnchor: [4, -35]
-});
+ });
+}
+
+districtIcon = customIcon('district');
+blockIcon = customIcon('block');
+clusterIcon = customIcon('cluster');
+schoolIcon = customIcon('school');
+
+
 
