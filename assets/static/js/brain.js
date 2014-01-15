@@ -70,7 +70,7 @@ var UI = {
 
     renderCrumbs: function(bs){
         var ol = $("ol.top-breadcrumbs");
-        ol.html('<li><a class="navbar-brand" href="#">DISE</a></li>');
+        ol.html('<li><a class="navbar-brand" href="javascript:void(0)">DISE</a></li>');
 
         for (var i in bs){
             var b = bs[i];
