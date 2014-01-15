@@ -199,6 +199,10 @@ class AggregationBase(models.Model):
     avg_days_involved_in_non_tch_assgn = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
     sum_teachers_involved_in_non_tch_assgn = models.BigIntegerField(null=True, blank=True)
     avg_teachers_involved_in_non_tch_assgn = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
+    sum_boys = models.BigIntegerField(blank=True, null=True)
+    avg_boys = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    sum_girls = models.BigIntegerField(blank=True, null=True)
+    avg_girls = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
 
     class Meta:
         abstract = True
