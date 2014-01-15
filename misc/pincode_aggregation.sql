@@ -142,7 +142,12 @@ BEGIN
             Avg(days_involved_in_non_tch_assgn) as avg_days_involved_in_non_tch_assgn,
 
             Sum(teachers_involved_in_non_tch_assgn) as sum_teachers_involved_in_non_tch_assgn,
-            Avg(teachers_involved_in_non_tch_assgn) as avg_teachers_involved_in_non_tch_assgn
+            Avg(teachers_involved_in_non_tch_assgn) as avg_teachers_involved_in_non_tch_assgn,
+
+            Sum(total_boys) as sum_boys,
+            Avg(total_boys) as avg_boys,
+            Sum(total_girls) as sum_girls,
+            Avg(total_girls) as avg_girls
 
         FROM ' || basic_table_name || '
         GROUP BY pincode
