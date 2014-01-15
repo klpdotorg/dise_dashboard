@@ -109,15 +109,15 @@ $(function(){
         }
     }
 
-    function plotOnMap(feature_or_features, zoom, icon) {
+    function createLayer(feature_or_features, icon) {
         // @param {String} feature_or_features  Either Feature or FeatureCollection
         // @param {String} zoom                 Zoom level of the map
         // console.log(feature_or_features);
-        L.geoJson(
+        return L.geoJson(
             feature_or_features,
             {
                 pointToLayer: function (feature, latlng) {
-                    window.map.setView(latlng, zoom);
+                    // window.map.setView(latlng, zoom);
                     if (icon != undefined) {
                         return L.marker(latlng, {icon: icon});
                     }
@@ -127,7 +127,7 @@ $(function(){
                 },
                 onEachFeature: onEachFeature
             }
-        ).addTo(currentLayers);
+        );
     }
 
     // Initialize the API wrapper
@@ -136,7 +136,6 @@ $(function(){
     })
 
     function loadEntityData (entity) {
-      var entityData;
       bbox = map.getBounds().toBBoxString();
       // Clear current layers.
       currentLayers.clearLayers();
@@ -144,27 +143,38 @@ $(function(){
           bbox: bbox,
       }, function(data) {
           if (entity=='Block') {
-            plotOnMap(data.blocks, map.getZoom(), blockIcon);
+            blockLayer = createLayer(data.blocks, blockIcon);
+            layerIDs.block = blockLayer._leaflet_id;
+            blockLayer.addTo(currentLayers);
           }
           else if (entity=='Cluster') {
-            plotOnMap(data.clusters, map.getZoom(), clusterIcon);
+            clusterLayer = createLayer(data.clusters, clusterIcon);
+            layerIDs.cluster = clusterLayer._leaflet_id;
+            clusterLayer.addTo(currentLayers);
           }
           else if (entity=='District') {
-            plotOnMap(data.district, map.getZoom(), districtIcon);
+            districtLayer = createLayer(data.districts, districtIcon);
+            layerIDs.district = districtLayer._leaflet_id;
+            districtLayer.addTo(currentLayers);
           }
           else {
-            plotOnMap(data.schools, map.getZoom(), schoolIcon);
+            schoolLayer = createLayer(data.schools, schoolIcon);
+            schoolLayer._leaflet_id = layerIDs.school;
+            schoolLayer.addTo(currentLayers);
           }
 
       });
     }
+
     function mapInit () {
         // Load the district data and plot.
         bbox = map.getBounds().toBBoxString();
         DISE.call('District.search', '10-11', {
             bbox: bbox,
         }, function(data) {
-            plotOnMap(data.districts, 8, districtIcon);
+            districtLayer = createLayer(data.districts, districtIcon);
+            layerIDs.district = districtLayer._leaflet_id;
+            districtLayer.addTo(currentLayers);
         });
     }
     // Invoke initial map layers.
@@ -189,12 +199,46 @@ $(function(){
         }
     }
 
+
+    function updateData (layer) {
+      layerID = layer._leaflet_id;
+      if (layerID == layerIDs.district) {
+        loadEntityData('District');
+      }
+      else if (layerID == layerIDs.block) {
+        loadEntityData('Block');
+      }
+      else if (layerID == layerIDs.cluster) {
+        loadEntityData('Cluster');
+      }
+      else {
+        loadEntityData('School');
+      }
+    }
+
+// When the map is zoomed, load the necessary data
     map.on('zoomend', function(e) {
       // If filters are enabled then don't load the usual layers.
       if (!filtersEnabled) {
         updateLayers(map.getZoom());
       }
     })
+
+// When the map is panned, load the data in the new bounds.
+    map.on('dragend', function(e) {
+      if (!filtersEnabled) {
+        currentLayers.eachLayer(function(layer) {
+          updateData(layer);
+        });
+      }
+    })
+
+// Function to set the map view to the layer when a filter/search
+// is triggered.
+    function setLayerView (layer, zoom) {
+      map.setView(layer.getLayers()[0].getLatLng(), zoom);
+    }
+
 
     $("#filter-select").on("change", function(e) {
         // Clear the preloaded layers when the search has been used
@@ -203,7 +247,9 @@ $(function(){
         filtersEnabled = true;
         if (e.added.type == 'school') {
             if(e.added.feature !== null && e.added.feature !== "{}"){
-                plotOnMap(JSON.parse(e.added.feature), 15, schoolIcon);
+                newLayer = createLayer(JSON.parse(e.added.feature), schoolIcon);
+                setLayerView(newLayer, 15);
+                newLayer.addTo(currentLayers);
             } else {
                 alert("Sorry, this school doesn't have a location.");
             }
@@ -212,8 +258,9 @@ $(function(){
                 name: e.added.id,
                 format: 'geo'
             }, function(data) {
-                console.log(data);
-                plotOnMap(data.schools, 10, schoolIcon);
+                newLayer = createLayer(data.schools, schoolIcon);
+                setLayerView(newLayer, 12);
+                newLayer.addTo(currentLayers);
             });
         } else {
             // do nothing
