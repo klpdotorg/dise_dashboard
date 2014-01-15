@@ -233,6 +233,13 @@ $(function(){
       }
     })
 
+// Function to set the map view to the layer when a filter/search
+// is triggered.
+    function setLayerView (layer, zoom) {
+      map.setView(layer.getLayers()[0].getLatLng(), zoom);
+    }
+
+
     $("#filter-select").on("change", function(e) {
         // Clear the preloaded layers when the search has been used
         currentLayers.clearLayers();
@@ -241,6 +248,7 @@ $(function(){
         if (e.added.type == 'school') {
             if(e.added.feature !== null && e.added.feature !== "{}"){
                 newLayer = createLayer(JSON.parse(e.added.feature), schoolIcon);
+                setLayerView(newLayer, 15);
                 newLayer.addTo(currentLayers);
             } else {
                 alert("Sorry, this school doesn't have a location.");
@@ -251,6 +259,7 @@ $(function(){
                 format: 'geo'
             }, function(data) {
                 newLayer = createLayer(data.schools, schoolIcon);
+                setLayerView(newLayer, 12);
                 newLayer.addTo(currentLayers);
             });
         } else {
