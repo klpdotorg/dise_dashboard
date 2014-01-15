@@ -3,9 +3,15 @@ var map;
 // Central location, Bangalore
 var karnataka = L.latLng([15.040,76.223]);
 var bangalore = L.latLng([12.979,77.590]);
+
 // FIXME: Set Bounds for the map
 var bounds;
 
+// Layers for each entities.
+var districtLayer, blockLayer, clusterLayer, schoolLayer;
+// Structure to hold auto-assigned layer IDs
+var layerIDs = {'district': '', 'block': '', 'cluster': '',
+              'school': ''};              
 // Initialise the map object.
 map = L.map('map-holder', {zoomControl: true, attributionControl: false}).setView(karnataka, 8);
 
