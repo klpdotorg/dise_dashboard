@@ -35,7 +35,6 @@ class BaseEntity:
         result = cls()._getschools(params)
         return cls.to_geojson_str(result)
 
-
     def _get_geojson(self, entity):
         # returns a geojson feature for the given DiseFFTTBasicData object.
         # FFTT = sesstion from/to. for 2010-11: 1011
@@ -97,7 +96,8 @@ class School(BaseEntity):
     secondary_key = ''
     param_name_for_secondary_key = ''
 
-    only_fields = ['school_name', 'cluster_name', 'block_name', 'district', 'pincode']
+    only_fields = ['school_name', 'cluster_name',
+                   'block_name', 'district', 'pincode']
 
     # For methods that start with `School`
     def _search(self, params):
@@ -147,7 +147,9 @@ class Cluster(BaseEntity):
     secondary_key = 'block_name'
     param_name_for_secondary_key = 'block'
 
-    only_fields = ['cluster_name', 'block_name', 'district', 'sum_boys', 'sum_girls']
+    only_fields = [
+        'cluster_name', 'block_name', 'district', 'sum_boys', 'sum_girls', 'sum_schools', 'sum_male_tch',
+        'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common', 'sum_toilet_boys', 'sum_toilet_girls']
 
     # For all methods that start with Cluster
     def _getschools(self, params):
@@ -225,7 +227,9 @@ class Block(BaseEntity):
     secondary_key = ''
     param_name_for_secondary_key = ''
 
-    only_fields = ['block_name', 'district', 'sum_boys', 'sum_girls']
+    only_fields = [
+        'block_name', 'district', 'sum_boys', 'sum_girls', 'sum_schools', 'sum_male_tch',
+        'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common', 'sum_toilet_boys', 'sum_toilet_girls']
 
     def _getschools(self, params):
         # returns list of schools in a given block
@@ -298,7 +302,9 @@ class District(BaseEntity):
     secondary_key = ''
     param_name_for_secondary_key = ''
 
-    only_fields = ['district', 'sum_boys', 'sum_girls']
+    only_fields = [
+        'district', 'sum_boys', 'sum_girls', 'sum_schools', 'sum_male_tch',
+        'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common', 'sum_toilet_boys', 'sum_toilet_girls']
 
     def _getschools(self, params):
         # returns list of schools in a given district
@@ -373,7 +379,9 @@ class Pincode(BaseEntity):
     secondary_key = ''
     param_name_for_secondary_key = ''
 
-    only_fields = ['sum_boys', 'sum_girls']
+    only_fields = [
+        'pincode', 'sum_boys', 'sum_girls', 'sum_schools', 'sum_male_tch',
+        'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common', 'sum_toilet_boys', 'sum_toilet_girls']
 
     def _getschools(self, params):
         # returns list of schools in a given pincode
