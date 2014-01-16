@@ -97,7 +97,11 @@ class School(BaseEntity):
     param_name_for_secondary_key = ''
 
     only_fields = ['school_name', 'cluster_name',
-                   'block_name', 'district', 'pincode']
+                   'block_name', 'district', 'pincode', 'yeur_estd',
+                   'total_boys', 'total_girls', 'male_tch', 'female_tch',
+                   'medium_of_instruction', 'sch_management', 'sch_category',
+                   'library_yn', 'books_in_library', 'no_of_computers',
+                   'electricity', 'drinking_water']
 
     # For methods that start with `School`
     def _search(self, params):

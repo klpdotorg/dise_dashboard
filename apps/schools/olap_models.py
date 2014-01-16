@@ -109,6 +109,8 @@ class BasicData(BaseModel):
     class6_total_enr_girls = models.IntegerField(blank=True, null=True)
     class7_total_enr_girls = models.IntegerField(blank=True, null=True)
     class8_total_enr_girls = models.IntegerField(blank=True, null=True)
+    total_boys = models.IntegerField(blank=True, null=True)
+    total_girls = models.IntegerField(blank=True, null=True)
 
     objects = models.GeoManager()
 
