@@ -103,10 +103,24 @@ $(function(){
     });
 
     function onEachFeature(feature, layer) {
-        // does this feature have a property named popupContent?
-        if (feature.properties && feature.properties.popupContent) {
-            layer.bindPopup(feature.properties.popupContent);
-        }
+      // Bypass the usual click event and register based on
+      // the entity.
+        layer.on({
+          click: function(e) {
+            if (feature.properties.entity_type == 'district') {
+              // Call district.getInfo and populate popup.
+            }
+            else if (feature.properties.entity_type == 'block') {
+              // Call block.getInfo and populate popup.
+            }
+            else if (feature.properties.entity_type == 'cluster') {
+              // Call cluster.getInfo and populate popup.
+            }
+            else {
+              // Call school.getInfo and populate popup.
+            };
+          }
+        });
     }
 
     function createLayer(feature_or_features, icon) {
