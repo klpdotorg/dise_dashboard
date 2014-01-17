@@ -118,22 +118,40 @@ $(function(){
         },
         fill: function(school) {
             // fills the pane for Schools
+            OtherPane.hide();
+            this.hide();
 
+            $('#'+this.divid).find('.name').html(school.school_name + ' <small> Estd. ' + school.yeur_estd + '</small>');
+            $('#'+this.divid).find('.total_student').html(school.total_boys+school.total_girls);
+            $('#'+this.divid).find('.total_tch').html(school.male_tch+school.female_tch);
+            $('#'+this.divid).find('.medium_of_instruction').html(school.medium_of_instruction);
+            $('#'+this.divid).find('.sch_category').html(school.sch_category);
+            $('#'+this.divid).find('.sch_management').html(school.sch_management);
+            $('#'+this.divid).find('.electricity').html(school.electricity);
+            $('#'+this.divid).find('.library_yn').html(school.library_yn);
+            $('#'+this.divid).find('.books_in_library').html(school.books_in_library);
+            $('#'+this.divid).find('.address').html([
+                    school.school_name, school.cluster_name,
+                    school.block_name, school.district
+                ].join(', '));
+
+            this.show();
         }
     }
 
     var OtherPane = {
         divid: 'popup-cluster',
         show: function() {
-            // shows the school pane
+            // shows the other entity pane
             $('#'+this.divid).show();
         },
         hide: function() {
-            // hides the school pane
+            // hides the other entity pane
             $('#'+this.divid).hide();
         },
         fill: function(entity) {
-            // fills the pane for Schools
+            // fills the pane for other entities
+            SchoolPane.hide();
             this.hide();
 
             var entity_name = '';
@@ -143,6 +161,7 @@ $(function(){
                 entity_name = entity.entity_type + '_name';
             }
             $('#'+this.divid).find('.entity_name').html(entity[entity_name] + ' <small>' + entity.entity_type + '</small>');
+            $('#'+this.divid).find('.entity_school').html(entity.sum_schools);
             $('#'+this.divid).find('.entity_student').html(entity.sum_boys+entity.sum_girls);
             $('#'+this.divid).find('.entity_teacher').html(entity.sum_male_tch+entity.sum_female_tch);
             $('#'+this.divid).find('.entity_library').html(entity.sum_has_library);
@@ -201,8 +220,18 @@ $(function(){
                         }
                     });
                 }
-                else {
+                else if (feature.properties.entity_type == 'school') {
                   // Call school.getInfo and populate popup.
+                    var academic_year = $('input[name="academic_year"]').val() || '10-11';
+                    DISE.call('School.getInfo', academic_year, {
+                        'code': feature.id
+                    }, function (data) {
+                        if(data.error !== undefined){
+                            alert(data.error);
+                        }else{
+                            SchoolPane.fill(data.school.properties);
+                        }
+                    });
                 };
             }
         });
