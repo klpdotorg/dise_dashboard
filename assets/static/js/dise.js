@@ -53,6 +53,10 @@ $(function(){
 
     UI.init(); // Initialize UI elements
     filtersEnabled = false;
+    // Initialize the API wrapper
+    var DISE = $.DiseAPI({
+        'base_url': window.location.toString() + 'api/v1/olap/'
+    });
 
     $("#filter-select").select2({
         dropdownCssClass: "bigdrop",
@@ -102,24 +106,105 @@ $(function(){
         // ]
     });
 
+    var SchoolPane = {
+        divid: 'popup-school',
+        show: function() {
+            // shows the school pane
+            $('#'+this.divid).show();
+        },
+        hide: function() {
+            // hides the school pane
+            $('#'+this.divid).hide();
+        },
+        fill: function(school) {
+            // fills the pane for Schools
+
+        }
+    }
+
+    var OtherPane = {
+        divid: 'popup-cluster',
+        show: function() {
+            // shows the school pane
+            $('#'+this.divid).show();
+        },
+        hide: function() {
+            // hides the school pane
+            $('#'+this.divid).hide();
+        },
+        fill: function(entity) {
+            // fills the pane for Schools
+            this.hide();
+
+            var entity_name = '';
+            if(entity.entity_type == 'district') {
+                entity_name = 'district';
+            }else{
+                entity_name = entity.entity_type + '_name';
+            }
+            $('#'+this.divid).find('.entity_name').html(entity[entity_name] + ' <small>' + entity.entity_type + '</small>');
+            $('#'+this.divid).find('.entity_student').html(entity.sum_boys+entity.sum_girls);
+            $('#'+this.divid).find('.entity_teacher').html(entity.sum_male_tch+entity.sum_female_tch);
+            $('#'+this.divid).find('.entity_library').html(entity.sum_has_library);
+            $('#'+this.divid).find('.entity_electricity').html(entity.sum_has_electricity);
+            $('#'+this.divid).find('.entity_toilet').html(entity.sum_toilet_common+entity.sum_toilet_boys+entity.sum_toilet_girls);
+
+            this.show();
+        }
+    }
+
+    SchoolPane.hide();
+    OtherPane.hide();
+
     function onEachFeature(feature, layer) {
-      // Bypass the usual click event and register based on
-      // the entity.
+        // Bypass the usual click event and register based on
+        // the entity.
         layer.on({
-          click: function(e) {
-            if (feature.properties.entity_type == 'district') {
-              // Call district.getInfo and populate popup.
+            click: function(e) {
+                if (feature.properties.entity_type == 'district') {
+                    // Call district.getInfo and populate popup.
+                    var academic_year = $('input[name="academic_year"]').val() || '10-11';
+                    DISE.call('District.getInfo', academic_year, {
+                        'name': feature.properties.district
+                    }, function (data) {
+                        if(data.error !== undefined){
+                            alert(data.error);
+                        }else{
+                            OtherPane.fill(data.district.properties);
+                        }
+                    });
+                }
+                else if (feature.properties.entity_type == 'block') {
+                    // Call block.getInfo and populate popup.
+                    var academic_year = $('input[name="academic_year"]').val() || '10-11';
+                    DISE.call('Block.getInfo', academic_year, {
+                        'name': feature.properties.block_name
+                    }, function (data) {
+                        if(data.error !== undefined){
+                            alert(data.error);
+                        }else{
+                            OtherPane.fill(data.block.properties);
+                        }
+                    });
+                }
+                else if (feature.properties.entity_type == 'cluster') {
+                  // Call cluster.getInfo and populate popup.
+                    var academic_year = $('input[name="academic_year"]').val() || '10-11';
+                    DISE.call('Cluster.getInfo', academic_year, {
+                        'name': feature.properties.cluster_name,
+                        'block': feature.properties.block_name
+                    }, function (data) {
+                        if(data.error !== undefined){
+                            alert(data.error);
+                        }else{
+                            OtherPane.fill(data.cluster.properties);
+                        }
+                    });
+                }
+                else {
+                  // Call school.getInfo and populate popup.
+                };
             }
-            else if (feature.properties.entity_type == 'block') {
-              // Call block.getInfo and populate popup.
-            }
-            else if (feature.properties.entity_type == 'cluster') {
-              // Call cluster.getInfo and populate popup.
-            }
-            else {
-              // Call school.getInfo and populate popup.
-            };
-          }
         });
     }
 
@@ -143,11 +228,6 @@ $(function(){
             }
         );
     }
-
-    // Initialize the API wrapper
-    var DISE = $.DiseAPI({
-        'base_url': window.location.toString() + 'api/v1/olap/'
-    })
 
     function loadEntityData (entity) {
       bbox = map.getBounds().toBBoxString();
