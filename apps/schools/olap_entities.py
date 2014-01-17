@@ -47,6 +47,7 @@ class BaseEntity:
             popup_content.append(str(getattr(entity, self.secondary_key)))
 
         properties = {
+            'entity_type': self.entity_type,
             'popupContent': ', '.join(popup_content)
         }
         for field in self.only_fields:
