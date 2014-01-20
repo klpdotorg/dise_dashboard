@@ -377,7 +377,8 @@ $(function(){
             }
         } else if (e.added.type == 'cluster'){
             DISE.call('Cluster.getSchools', academic_year, {
-                name: e.added.id
+                name: e.added.id,
+                include_entities: 'True'
             }, function(data) {
                 newLayer = createLayer(data.schools, schoolIcon);
                 setLayerView(newLayer, 12);
@@ -385,7 +386,8 @@ $(function(){
             });
         } else if (e.added.type == 'block'){
             DISE.call('Block.getSchools', academic_year, {
-                name: e.added.id
+                name: e.added.id,
+                include_entities: 'True'
             }, function(data) {
                 newLayer = createLayer(data.schools, schoolIcon);
                 setLayerView(newLayer, 12);
@@ -393,7 +395,8 @@ $(function(){
             });
         } else if (e.added.type == 'district'){
             DISE.call('District.getSchools', academic_year, {
-                name: e.added.id
+                name: e.added.id,
+                include_entities: 'True'
             }, function(data) {
                 newLayer = createLayer(data.schools, schoolIcon);
                 setLayerView(newLayer, 12);
@@ -401,7 +404,8 @@ $(function(){
             });
         } else if (e.added.type == 'pincode'){
             DISE.call('Pincode.getSchools', academic_year, {
-                pincode: e.added.id
+                pincode: e.added.id,
+                include_entities: 'True'
             }, function(data) {
                 newLayer = createLayer(data.schools, schoolIcon);
                 setLayerView(newLayer, 12);
