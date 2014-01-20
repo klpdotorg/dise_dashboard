@@ -10,7 +10,7 @@
 // Then make calls like -
 
 //     DISE.call('Cluster.getSchools', '10-11', {
-//         name: e.added.id,
+//         name: e.object.id,
 //         format: 'geo'
 //     }, function(data) {
 //         plotOnMap(data.schools, 8);
@@ -83,31 +83,70 @@ $(function(){
                 return {results: data};
             }
         }
-        // data:
-        // [
-        //     {
-        //         text: "District",
-        //         children: [
-        //             {
-        //                 id: "d1",
-        //                 text: "Bellary"
-        //             },
-        //             {
-        //                 id: "d2",
-        //                 text: "Koppal"
-        //             }
-        //         ]
-        //     },
-        //     {
-        //         text: "Taluk",
-        //         children: [
-        //             {
-        //                 id: "t1",
-        //                 text: "Hospet"
-        //             }
-        //         ]
-        //     }
-        // ]
+    }).on('select2-clearing', function(e) {
+        // When you clear select2 with close button
+        console.log('select2 clearing called');
+    }).on("select2-selecting", function(e) {
+        // Clear the preloaded layers when the search has been used
+        console.log('select2-selecting called');
+
+        currentLayers.clearLayers();
+        // Flip the filter switch to disable all usual map interactions.
+        filtersEnabled = true;
+        var academic_year = $('input[name=academic_year]:checked').val();
+        if (e.object.type == 'school') {
+            if(e.object.feature !== null && e.object.feature !== "{}"){
+                school = JSON.parse(e.object.feature);
+                SchoolPane.fill(school.properties);
+                newLayer = createLayer(school, schoolIcon);
+                setLayerView(newLayer, 15);
+                newLayer.addTo(currentLayers);
+            } else {
+                alert("Sorry, this school doesn't have a location.");
+            }
+        } else if (e.object.type == 'cluster'){
+            DISE.call('Cluster.getSchools', academic_year, {
+                name: e.object.id,
+                include_entities: 'True'
+            }, function(data) {
+                OtherPane.fill(data.cluster.properties);
+                newLayer = createLayer(data.schools, schoolIcon);
+                setLayerView(newLayer, 12);
+                newLayer.addTo(currentLayers);
+            });
+        } else if (e.object.type == 'block'){
+            DISE.call('Block.getSchools', academic_year, {
+                name: e.object.id,
+                include_entities: 'True'
+            }, function(data) {
+                OtherPane.fill(data.block.properties);
+                newLayer = createLayer(data.schools, schoolIcon);
+                setLayerView(newLayer, 12);
+                newLayer.addTo(currentLayers);
+            });
+        } else if (e.object.type == 'district'){
+            DISE.call('District.getSchools', academic_year, {
+                name: e.object.id,
+                include_entities: 'True'
+            }, function(data) {
+                OtherPane.fill(data.district.properties);
+                newLayer = createLayer(data.schools, schoolIcon);
+                setLayerView(newLayer, 12);
+                newLayer.addTo(currentLayers);
+            });
+        } else if (e.object.type == 'pincode'){
+            DISE.call('Pincode.getSchools', academic_year, {
+                pincode: e.object.id,
+                include_entities: 'True'
+            }, function(data) {
+                OtherPane.fill(data.pincode.properties);
+                newLayer = createLayer(data.schools, schoolIcon);
+                setLayerView(newLayer, 12);
+                newLayer.addTo(currentLayers);
+            });
+        } else {
+            // do nothing
+        }
     });
 
     var SchoolPane = {
@@ -158,12 +197,18 @@ $(function(){
             SchoolPane.hide();
             this.hide();
 
+            console.log('OtherPane.fill called');
+            console.log(entity);
+
             var entity_name = '';
             if(entity.entity_type == 'district') {
                 entity_name = 'district';
+            }else if (entity.entity_type == 'pincode'){
+                entity_name = 'pincode'
             }else{
                 entity_name = entity.entity_type + '_name';
             }
+
             $('#'+this.divid).find('.entity_name').html(entity[entity_name] + ' <small>' + entity.entity_type + '</small>');
             $('#'+this.divid).find('.entity_school').html(entity.sum_schools);
             $('#'+this.divid).find('.entity_student').html(entity.sum_boys+entity.sum_girls);
@@ -360,59 +405,4 @@ $(function(){
         map.setView(layer.getLayers()[0].getLatLng(), zoom);
     }
 
-
-    $("#filter-select").on("change", function(e) {
-        // Clear the preloaded layers when the search has been used
-        currentLayers.clearLayers();
-        // Flip the filter switch to disable all usual map interactions.
-        filtersEnabled = true;
-        var academic_year = $('input[name=academic_year]:checked').val();
-        if (e.added.type == 'school') {
-            if(e.added.feature !== null && e.added.feature !== "{}"){
-                newLayer = createLayer(JSON.parse(e.added.feature), schoolIcon);
-                setLayerView(newLayer, 15);
-                newLayer.addTo(currentLayers);
-            } else {
-                alert("Sorry, this school doesn't have a location.");
-            }
-        } else if (e.added.type == 'cluster'){
-            DISE.call('Cluster.getSchools', academic_year, {
-                name: e.added.id,
-                include_entities: 'True'
-            }, function(data) {
-                newLayer = createLayer(data.schools, schoolIcon);
-                setLayerView(newLayer, 12);
-                newLayer.addTo(currentLayers);
-            });
-        } else if (e.added.type == 'block'){
-            DISE.call('Block.getSchools', academic_year, {
-                name: e.added.id,
-                include_entities: 'True'
-            }, function(data) {
-                newLayer = createLayer(data.schools, schoolIcon);
-                setLayerView(newLayer, 12);
-                newLayer.addTo(currentLayers);
-            });
-        } else if (e.added.type == 'district'){
-            DISE.call('District.getSchools', academic_year, {
-                name: e.added.id,
-                include_entities: 'True'
-            }, function(data) {
-                newLayer = createLayer(data.schools, schoolIcon);
-                setLayerView(newLayer, 12);
-                newLayer.addTo(currentLayers);
-            });
-        } else if (e.added.type == 'pincode'){
-            DISE.call('Pincode.getSchools', academic_year, {
-                pincode: e.added.id,
-                include_entities: 'True'
-            }, function(data) {
-                newLayer = createLayer(data.schools, schoolIcon);
-                setLayerView(newLayer, 12);
-                newLayer.addTo(currentLayers);
-            });
-        } else {
-            // do nothing
-        }
-    });
 });
