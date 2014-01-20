@@ -17,6 +17,10 @@
 //     });
 
 ;(function($){
+    String.prototype.toProperCase = function () {
+        return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+    };
+
     $.extend({
         DiseAPI: function(options) {
             this.defaultOptions = {};
@@ -131,9 +135,9 @@ $(function(){
             $('#'+this.divid).find('.library_yn').html(school.library_yn);
             $('#'+this.divid).find('.books_in_library').html(school.books_in_library);
             $('#'+this.divid).find('.address').html([
-                    school.school_name, school.cluster_name,
-                    school.block_name, school.district, school.pincode
-                ].join(', '));
+                    school.cluster_name, school.block_name,
+                    school.district, school.pincode
+                ].join(', ').toString().toProperCase());
 
             this.show();
         }
