@@ -32,7 +32,15 @@ class BaseEntity:
     @classmethod
     def getSchools(cls, params):
         # this just parses the dictionary from _getschools() and returns JSON
-        result = cls()._getschools(params)
+        obj = cls()
+        result = obj._getschools(params)
+
+        # Check if we should send back the entity
+        include_entities = params.get('include_entities', False)
+        if include_entities:
+            entity_info = obj._getinfo(params)
+            result[obj.entity_type] = entity_info[obj.entity_type]
+
         return cls.to_geojson_str(result)
 
     def _get_geojson(self, entity):
