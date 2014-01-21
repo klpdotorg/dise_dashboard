@@ -267,8 +267,9 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
     position: absolute;
     background: #222;
     color: #fff;
-    height: 560px;
-    overflow: scroll;
+    height: 580px;
+    overflow-y: auto;
+    overflow-x: hidden;
     border-bottom: 10px solid #000;
     width: 100%;
     z-index: 10000;
