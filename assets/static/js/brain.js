@@ -70,7 +70,8 @@ var UI = {
 
     renderCrumbs: function(bs){
         var ol = $("ol.top-breadcrumbs");
-        ol.html('<li><a class="navbar-brand" href="/">DISE</a></li>');
+        var logo = $("ol.top-breadcrumbs li").detach();
+        ol.html("").append(logo);
 
         for (var i in bs){
             var b = bs[i];
