@@ -1,6 +1,7 @@
 body{
     background: #343539;
     font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    overflow: hidden;
 }
 
 #map-holder{
@@ -62,7 +63,7 @@ button[type="submit"].btn-default{
 .hidden_controls{
     transition: all 1s ease;
     margin-left: 300px;
-    margin-right: -300px;
+    margin-right: -320px;
 }
 
 #controls .form-holder{
