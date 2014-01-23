@@ -1,4 +1,20 @@
 {% extends 'base.html' %}
+{% load static from staticfiles %}
+
+
+{% block head%}
+    <link rel="stylesheet" type="text/css" href="{% static 'lib/jquery-ui.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'lib/select2.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'lib/orange.css' %}">
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bounce.css' %}">
+
+    <script type="text/javascript" src="{% static 'js/brain.js' %}"></script>
+    <script type="text/javascript" src="{% static 'lib/select2.js' %}"></script>
+    <script type="text/javascript" src="{% static 'lib/icheck.min.js' %}"></script>
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
+    <script type="text/javascript" src="{% static 'js/dise.js' %}"></script>
+{% endblock %}
 
 {% block body %}
 <div id="map-holder"></div>
@@ -353,4 +369,14 @@
 {% load static from staticfiles %}
 {% block endbody %}
   <script type="text/javascript" src="{% static 'js/map.js' %}"></script>
+{% endblock %}
+
+
+{% block navbar %}
+          <li>
+            <a href="javascript:void(0)" id="control_toggle">
+              <span class="text">Hide</span>
+              <span class="glyphicon glyphicon-chevron-right" id="control_toggle_icon"></span>
+            </a>
+          </li>
 {% endblock %}
