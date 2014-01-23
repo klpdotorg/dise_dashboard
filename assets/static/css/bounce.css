@@ -1,60 +1,72 @@
 keyframes bounce{
     0%{
         width: 23px;
-        transform: translateY(0px);
+        margin-top: -40px;
+        margin-left: -10px;
     }
     35%{
         width: 25px;
-        transform: translateY(-5px) translateX(-1px);
+        margin-top: -45px;
+        margin-left: -11px;
     }
     100%{
         width: 23px;
-        transform: translateY(0px);
+        margin-top: -40px;
+        margin-left: -10px;
     }
 }
 
 @-webkit-keyframes bounce{
     0%{
         width: 23px;
-        -webkit-transform: translateY(0px);
+        margin-top: -40px;
+        margin-left: -10px;
     }
     35%{
         width: 25px;
-        -webkit-transform: translateY(-5px) translateX(-1px);
+        margin-top: -45px;
+        margin-left: -11px;
     }
     100%{
         width: 23px;
-        -webkit-transform: translateY(0px);
+        margin-top: -40px;
+        margin-left: -10px;
     }
 }
 
 @-moz-keyframes bounce{
     0%{
         width: 23px;
-        -moz-transform: translateY(0px);
+        margin-top: -40px;
+        margin-left: -10px;
     }
     35%{
         width: 25px;
-        -moz-transform: translateY(-5px) translateX(-1px);
+        margin-top: -45px;
+        margin-left: -11px;
     }
     100%{
         width: 23px;
-        -moz-transform: translateY(0px);
+        margin-top: -40px;
+        margin-left: -10px;
     }
 }
 
 @-o-keyframes bounce{
     0%{
         width: 23px;
-        -o-transform: translateY(0px);
+        margin-top: -40px;
+        margin-left: -10px;
     }
     35%{
         width: 25px;
-        -o-transform: translateY(-5px) translateX(-1px);
+        margin-top: -45px;
+        margin-left: -11px;
     }
     100%{
         width: 23px;
-        -o-transform: translateY(0px);
+        margin-top: -40px;
+        margin-left: -10px;
     }
 }
 
