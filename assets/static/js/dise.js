@@ -85,11 +85,11 @@ $(function(){
         }
     }).on('select2-clearing', function(e) {
         // When you clear select2 with close button
-        console.log('select2 clearing called');
+        filtersEnabled = false;
+        currentLayers.clearLayers();
+        map.setZoom(8);
     }).on("select2-selecting", function(e) {
         // Clear the preloaded layers when the search has been used
-        console.log('select2-selecting called');
-
         currentLayers.clearLayers();
         // Flip the filter switch to disable all usual map interactions.
         filtersEnabled = true;
