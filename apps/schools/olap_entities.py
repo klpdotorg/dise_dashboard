@@ -36,8 +36,8 @@ class BaseEntity:
         result = obj._getschools(params)
 
         # Check if we should send back the entity
-        include_entities = params.get('include_entities', False)
-        if include_entities:
+        include_entity = params.get('include_entity', False)
+        if include_entity:
             entity_info = obj._getinfo(params)
             result[obj.entity_type] = entity_info[obj.entity_type]
 

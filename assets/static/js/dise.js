@@ -107,7 +107,7 @@ $(function(){
         } else if (e.object.type == 'cluster'){
             DISE.call('Cluster.getSchools', academic_year, {
                 name: e.object.id,
-                include_entities: 'True'
+                include_entity: 'True'
             }, function(data) {
                 OtherPane.fill(data.cluster.properties);
                 newLayer = createLayer(data.schools, schoolIcon);
@@ -117,7 +117,7 @@ $(function(){
         } else if (e.object.type == 'block'){
             DISE.call('Block.getSchools', academic_year, {
                 name: e.object.id,
-                include_entities: 'True'
+                include_entity: 'True'
             }, function(data) {
                 OtherPane.fill(data.block.properties);
                 newLayer = createLayer(data.schools, schoolIcon);
@@ -127,7 +127,7 @@ $(function(){
         } else if (e.object.type == 'district'){
             DISE.call('District.getSchools', academic_year, {
                 name: e.object.id,
-                include_entities: 'True'
+                include_entity: 'True'
             }, function(data) {
                 OtherPane.fill(data.district.properties);
                 newLayer = createLayer(data.schools, schoolIcon);
@@ -137,7 +137,7 @@ $(function(){
         } else if (e.object.type == 'pincode'){
             DISE.call('Pincode.getSchools', academic_year, {
                 pincode: e.object.id,
-                include_entities: 'True'
+                include_entity: 'True'
             }, function(data) {
                 OtherPane.fill(data.pincode.properties);
                 newLayer = createLayer(data.schools, schoolIcon);
