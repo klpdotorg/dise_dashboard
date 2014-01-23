@@ -1,0 +1,28 @@
+body{
+
+    overflow: auto;
+}
+
+.container{
+    margin-top: 70px;
+    margin-bottom: 50px;
+}
+
+li,
+p{
+    color: #eee;
+}
+
+
+h1,
+h2,
+h3{
+    color: #F18352;
+    margin-bottom: 10px;
+    margin-top: 50px;
+}
+
+
+a{
+    color: #F18352;
+}
