@@ -5,7 +5,9 @@ django-bootstrap-form==2.0.6
 django-debug-toolbar==0.11.0
 django-grappelli==2.4.5
 geojson==1.0.1
+ipdb==0.8
 ipython==0.13.2
+newrelic==2.10.0.8
 psycopg2==2.5.1
 raven==3.5.0
 simplejson==3.3.0
