@@ -59,7 +59,7 @@ $(function(){
     filtersEnabled = false;
     // Initialize the API wrapper
     var DISE = $.DiseAPI({
-        'base_url': window.location.toString() + 'api/v1/olap/'
+        'base_url': window.location.protocol + '//' + window.location.host + '/api/v1/olap/'
     });
 
     $("#filter-select").select2({
