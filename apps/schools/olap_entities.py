@@ -60,6 +60,8 @@ class BaseEntity:
         }
         for field in self.only_fields:
             properties[field] = getattr(entity, field)
+            if hasattr(entity, "get_%s_display" % field):
+                properties[field + '_display'] = getattr(entity, "get_%s_display" % field)()
 
         return Feature(
             geometry=Point(
