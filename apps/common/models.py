@@ -1,67 +1,120 @@
-from django.db import models
-from datetime import datetime
+# from django.db import models
 
 
-class BaseManager(models.Manager):
-    use_for_related_fields = True
+def search_choices(t, value):
+    """
+    looks for index in a tuple of tuples
 
-    def get_query_set(self):
-        return super(BaseManager, self).get_query_set().select_related()
+    >>> search_choices(YESNO, 'Yes')
+    1
 
-
-class BaseModel(models.Model):
-    date_created = models.DateTimeField()
-    date_modified = models.DateTimeField()
-
-    objects = BaseManager()
-
-    class Meta:
-        abstract = True
-        ordering = ('id', )
-
-    def save(self, *args, **kwargs):
-        if not self.date_created:
-            self.date_created = datetime.now()
-        self.date_modified = datetime.now()
-        return super(BaseModel, self).save(*args, **kwargs)
+    """
+    for k, v in t:
+        if v == value:
+            return k
+    return False
 
 
-# class Cluster(models.Model):
-#     name = models.CharField(max_length=255)
-#     block = models.ForeignKey('Block', blank=True, null=True)
+YESNO = (
+    (0, 'Not Applicable'),
+    (1, 'Yes'),
+    (2, 'No'),
+    (3, 'Yes but not functional')
+)
 
-#     def __unicode__(self):
-#         return u"%s" % self.name
+AREA = (
+    (1, 'Rural'),
+    (2, 'Urban'),
+)
 
+SCHOOL_CATEGORY = (
+    (1, "Primary only (1-5)"),
+    (2, "Primary With Upper Primary(1-8)"),
+    (3, "Primary with Upper Primary and Secondary and higher Secondary(1-12)"),
+    (4, "Upper Primary only(6-8)"),
+    (5, "Upper Primary with Secondary and higher Secondary(6-12)"),
+    (6, "Primary, with Upper Primary and Secondary(1-10)"),
+    (7, "Upper Primary with Secondary(6-10)"),
+    (8, "Secondary only(9 & 10)"),
+    (10, "Secondary with Hr. Secondary(9-12) "),
+    (11, "Hr. Secondary only/Jr. College(11 & 12)")
+)
 
-# class Block(models.Model):
-#     name = models.CharField(max_length=255, unique=True)
-#     education_district = models.ForeignKey('EducationDistrict', blank=True, null=True)
+SCHOOL_MANAGEMENT = (
+    (1, "Department of Education"),
+    (2, "Tribal/Social Welfare Department"),
+    (3, "Local body"),
+    (4, "Pvt. Aided"),
+    (5, "Pvt. Unaided"),
+    (6, "Others"),
+    (7, "Central Govt."),
+    (8, "Unrecognised"),
+    (97, "Madarsa recognized (by Wakf board/Madarsa Board)"),
+    (98, "Madarsa unrecognized")
+)
 
-#     def __unicode__(self):
-#         return u"%s" % self.name
+SCHOOL_TYPES = (
+    (1, 'Boys'),
+    (2, 'Girls'),
+    (3, 'Co-educational')
+)
 
+MEDIUM = (
+    (1, "Assamese"),
+    (2, "Bengali"),
+    (3, "Gujarati"),
+    (4, "Hindi"),
+    (5, "Kannada"),
+    (6, "Kashmiri"),
+    (7, "Konkani"),
+    (8, "Malayalam"),
+    (9, "Manipuri"),
+    (10, "Marathi"),
+    (11, "Nepali"),
+    (12, "Odia"),
+    (13, "Punjabi"),
+    (14, "Sanskrit"),
+    (15, "Sindhi"),
+    (16, "Tamil"),
+    (17, "Telugu"),
+    (18, "Urdu"),
+    (19, "English"),
+    (20, "Bodo"),
+    (21, "Mising"),
+    (22, "Dogri"),
+    (23, "Khasi"),
+    (24, "Garo"),
+    (25, "Mizo"),
+    (26, "Bhutia"),
+    (27, "Lepcha"),
+    (28, "Limboo"),
+    (29, "French"),
+    (99, "Others")
+)
 
-# class EducationDistrict(models.Model):
-#     name = models.CharField(max_length=255, unique=True)
-#     state = models.ForeignKey('State', blank=True, null=True)
+MDM_STATUS = (
+    (0, 'Not applicable'),
+    (1, 'Not provided'),
+    (2, 'Provided & prepared in school premises'),
+    (3, 'Provided but not prepared in school premises')
+)
 
-#     def __unicode__(self):
-#         return u"%s" % self.name
+KITCHENSHED_STATUS = (
+    (0, 'not applicable'),
+    (1, 'available'),
+    (2, 'not available'),
+    (3, 'UNder construction'),
+    (4, 'classroom used as kitchen'),
+)
 
-
-# class Village(models.Model):
-#     name = models.CharField(max_length=255, unique=True)
-
-#     def __unicode__(self):
-#         return u"%s" % self.name
-
-#     class Meta:
-#         ordering = ('name', )
-
-
-# class State(models.Model):
-#     name = models.CharField(max_length=255, unique=True)
-
-#     def __unicode__(self):
-#         return u"%s" % self.name
+BOUNDARY_WALL = (
+    (0, "Not Applicable "),
+    (1, "Pucca"),
+    (2, "Pucca but broken"),
+    (3, "barbed wire fencing"),
+    (4, "Hedges"),
+    (5, "No boundary wall"),
+    (6, "others"),
+    (7, "Partial"),
+    (8, "Under Construction"),
+)
