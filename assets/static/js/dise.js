@@ -230,6 +230,8 @@ $(function(){
         layer.on({
             click: function(e) {
                 console.log(e);
+                $('.marker-bounce').removeClass('marker-bounce');
+                $(e.target._icon).addClass('marker-bounce');
                 var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
                 if (feature.properties.entity_type == 'district') {
                     // Call district.getInfo and populate popup.
