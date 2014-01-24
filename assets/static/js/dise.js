@@ -167,11 +167,11 @@ $(function(){
             $('#'+this.divid).find('.name').html(school.school_name + ' <small> Estd. ' + school.yeur_estd + '</small>');
             $('#'+this.divid).find('.total_student').html(school.total_boys+school.total_girls);
             $('#'+this.divid).find('.total_tch').html(school.male_tch+school.female_tch);
-            $('#'+this.divid).find('.medium_of_instruction').html(school.medium_of_instruction);
-            $('#'+this.divid).find('.sch_category').html(school.sch_category);
-            $('#'+this.divid).find('.sch_management').html(school.sch_management);
-            $('#'+this.divid).find('.electricity').html(school.electricity);
-            $('#'+this.divid).find('.library_yn').html(school.library_yn);
+            $('#'+this.divid).find('.medium_of_instruction').html(school.medium_of_instruction_display);
+            $('#'+this.divid).find('.sch_category').html(school.sch_category_display);
+            $('#'+this.divid).find('.sch_management').html(school.sch_management_display);
+            $('#'+this.divid).find('.electricity').html(school.electricity_display);
+            $('#'+this.divid).find('.library_yn').html(school.library_yn_display);
             $('#'+this.divid).find('.books_in_library').html(school.books_in_library);
             $('#'+this.divid).find('.address').html([
                     school.cluster_name, school.block_name,
