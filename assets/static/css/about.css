@@ -26,3 +26,14 @@ h3{
 a{
     color: #F18352;
 }
+
+footer{
+    font-size: 0.8em;
+    text-align: center;
+    margin-top: 50px;
+}
+
+footer > p{
+    margin: 2px;
+    color: #aaa;
+}
