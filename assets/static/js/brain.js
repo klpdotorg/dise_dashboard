@@ -43,8 +43,26 @@ var UI = {
 
         this.initICheck();
         this.initSliders();
+
+        UI.resize();
+        $(window).on("resize", function(){
+            UI.resize();
+        });
     },
 
+
+    resize: function(){
+        $("#map-holder").height(
+            $(window).height() - $(".navbar").height()
+        ).width(
+            $(window).width() - $("#controls").width()
+        );
+
+        $("#controls").height(
+            $(window).height() - $(".navbar").height()
+        );
+
+    },
 
     initICheck: function(){
         $('.check-list').iCheck({
