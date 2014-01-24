@@ -67,7 +67,7 @@ button[type="submit"].btn-default{
 }
 
 #controls .form-holder{
-    margin: 10px;
+    margin: 0;
 }
 
 #controls .form-holder > label{
@@ -158,11 +158,18 @@ button[type="submit"].btn-default{
 
 
 /* General Bootstrap Stuff */
+div[data-toggle=buttons]{
+    display: block;
+    float: right;
+}
+
 .btn-group label{
+    margin-top: -3px;
     background: #F18352;
     border-color: #cd5e00;
-    padding: 8px;
-    font-size: 13px;
+    padding: 5px;
+    text-transform: uppercase;
+    font-size: 11px;
 }
 
 .btn-group label:hover{
@@ -174,6 +181,17 @@ button[type="submit"].btn-default{
     background: #cd5e00;
     border-color: #cd5e00;
     box-shadow: rgba(0, 0, 0, 0.121569) 0px 3px 5px 0px inset;
+}
+
+.category_filter{
+    margin: 0;
+    padding: 12px;
+    border-bottom: 1px solid #2f2f2f;
+    border-top: 1px solid #444;
+}
+
+.category_filter > label{
+    text-shadow: 0 2px 0 #000;
 }
 
 /* Top Breadcrumbs */
