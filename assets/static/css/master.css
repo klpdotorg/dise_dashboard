@@ -544,6 +544,8 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
     background: #f18352;
     padding: 12px;
     box-shadow: 0 -5px 7px rgba(0,0,0,0.2) inset;
+    border-top: 1px solid rgba(255,255,255,0.4);
+    border-bottom: 1px solid rgba(0,0,0,0.6);
 }
 
 #presets:hover{
@@ -561,4 +563,45 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
 .customSelect{
     width: 220px;
     margin-right: 22px;
+}
+
+
+/* School list */
+#schools ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-indent: 0;
+}
+
+#schools ul li{
+    padding: 12px;
+    color: #f18352;
+    font: 18px 'Roboto Slab', 'Helvetica', 'Arial', sans-serif;
+    font-weight: 700;
+    margin: 0;
+    border-bottom: 1px solid #2f2f2f;
+    border-top: 1px solid #444;
+    cursor: pointer;
+}
+
+#schools ul li:hover{
+    box-shadow: 0 -5px 7px rgba(0,0,0,0.2) inset;
+}
+
+#schools ul li small{
+    display: block;
+    color: #fff;
+    font-weight: 200;
+    font-size: 13px;
+    margin-top: -3px;
+}
+
+#schools ul li span.glyphicon-map-marker{
+    float: right;
+    margin: 8px;
+}
+
+#schools ul li.not-on-map span.glyphicon-map-marker{
+    color: #2d2d2d;
 }
