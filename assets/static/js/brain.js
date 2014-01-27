@@ -57,6 +57,10 @@ var UI = {
             $(window).height() - $(".navbar").height()
         );
 
+        $("#schools").height(
+            $("#controls").height() - 285
+        );
+
     },
 
     initICheck: function(){

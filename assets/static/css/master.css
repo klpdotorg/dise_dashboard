@@ -49,7 +49,7 @@ button[type="submit"].btn-default{
 }
 
 #controls{
-    transition: all 1s ease;
+    transition: margin-left 1s ease;
     z-index: 9999;
     position: absolute;
     background: #343539;
@@ -543,11 +543,16 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
 
 
 /* School list */
+#schools{
+    overflow-y: auto;
+}
+
 #schools ul{
     list-style: none;
     margin: 0;
     padding: 0;
     text-indent: 0;
+    height: auto;
 }
 
 #schools ul li{
