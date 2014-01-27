@@ -2,18 +2,12 @@ var UI = {
 
     init: function(){
 
-        $("#presets li").click(function(){
-	        $("#presets li").removeClass("active");
-	        $(this).addClass("active");
-        });
-
         $(".reset_preset").tooltip();
-
         $(".reset_preset").click(function(e){
             if(!confirm("Are you sure? This action cannot be undone!")) return false;
         });
 
-        $("#presets li .glyphicon-cog").click(function(){
+        $("#presets .glyphicon-cog").click(function(){
             $("#preset-editor").toggleClass("activate");
         });
 
@@ -29,6 +23,7 @@ var UI = {
             t.html(t_html);
         });
 
+        $(".preset_selector").customSelect();
 
         $(".close_popup").on("click", function() {
            $(".popup").hide();

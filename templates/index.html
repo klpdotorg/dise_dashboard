@@ -12,6 +12,7 @@
     <script type="text/javascript" src="{% static 'js/brain.js' %}"></script>
     <script type="text/javascript" src="{% static 'lib/select2.js' %}"></script>
     <script type="text/javascript" src="{% static 'lib/icheck.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'lib/jquery.customSelect.min.js' %}"></script>
     <script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
     <script type="text/javascript" src="{% static 'js/dise.js' %}"></script>
 {% endblock %}
@@ -318,52 +319,19 @@
   </div>
 
   <div id="presets">
-    <ul>
-      <li>
-        <a href="javascript:void(0)">Preset A</a>
-        <a href="javascript:void(0)" class="preset-edit">
-          <span class="glyphicon glyphicon-refresh reset_preset" data-toggle="tooltip" title="Reset the changes in the preset"></span>
-          <span class="glyphicon glyphicon-cog"></span>
-        </a>
-        <p>lorem impus dolor sit amet</p>
-      </li>
-      <li>
-        <a href="javascript:void(0)">Preset A</a>
-        <a href="javascript:void(0)" class="preset-edit">
-          <span class="glyphicon glyphicon-refresh reset_preset" data-toggle="tooltip" title="Reset the changes in the preset"></span>
-          <span class="glyphicon glyphicon-cog"></span>
-        </a>
 
-        <p>lorem impus dolor sit amet</p>
-      </li>
-      <li class="active">
-        <a href="javascript:void(0)">Preset A</a>
-        <a href="javascript:void(0)" class="preset-edit">
-          <span class="glyphicon glyphicon-refresh reset_preset" data-toggle="tooltip" title="Reset the changes in the preset"></span>
-          <span class="glyphicon glyphicon-cog"></span>
-        </a>
 
-        <p>lorem impus dolor sit amet</p>
-      </li>
-      <li>
-        <a href="javascript:void(0)">Preset A</a>
-        <a href="javascript:void(0)" class="preset-edit">
-          <span class="glyphicon glyphicon-refresh reset_preset" data-toggle="tooltip" title="Reset the changes in the preset"></span>
-          <span class="glyphicon glyphicon-cog"></span>
-        </a>
+    <select class="preset_selector">
+      <option>Preset 1</option>
+      <option>Preset 2</option>
+      <option>Preset 3</option>
+      <option>Preset 4</option>
+      <option>Preset 5</option>
+      <option>Preset 6</option>
+    </select>
 
-        <p>lorem impus dolor sit amet</p>
-      </li>
-      <li>
-        <a href="javascript:void(0)">Preset A</a>
-        <a href="javascript:void(0)" class="preset-edit">
-          <span class="glyphicon glyphicon-refresh reset_preset" data-toggle="tooltip" title="Reset the changes in the preset"></span>
-          <span class="glyphicon glyphicon-cog"></span>
-        </a>
-
-        <p>lorem impus dolor sit amet</p>
-      </li>
-    </ul>
+    <span class="glyphicon glyphicon-refresh reset_preset" data-toggle="tooltip" title="Reset the changes in the preset"></span>
+    <span class="glyphicon glyphicon-cog"></span>
   </div>
 
 </div>

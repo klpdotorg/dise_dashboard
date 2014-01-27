@@ -152,7 +152,7 @@ button[type="submit"].btn-default{
     margin: 0;
 }
 
-#presets ul li:hover p{
+#preset ul li:hover p{
     height: 20px;
 }
 
@@ -285,7 +285,7 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
     position: absolute;
     background: #222;
     color: #fff;
-    height: 580px;
+    height: 620px;
     overflow-y: auto;
     overflow-x: hidden;
     border-bottom: 10px solid #000;
@@ -348,14 +348,14 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
 }
 
 .ui-slider-horizontal{
-    border: none;
-    background: #666;
+    border: none !important;
+    background: #666 !important;
     height:5px;
     border-radius: 0;
 }
 
 .ui-slider-range{
-    background: #cd5e00;
+    background: #cd5e00 !important;
     margin-left: 10px;
 }
 
@@ -536,4 +536,29 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
     color: #fff;
     font-weight: 200;
     margin: 0;
+}
+
+
+/* customSelect */
+#presets{
+    background: #f18352;
+    padding: 12px;
+    box-shadow: 0 -5px 7px rgba(0,0,0,0.2) inset;
+}
+
+#presets:hover{
+    background: #cd5e00;
+}
+
+#presets span.glyphicon{
+    cursor: pointer;
+}
+
+.preset_selector{
+    cursor: pointer;
+}
+
+.customSelect{
+    width: 220px;
+    margin-right: 22px;
 }
