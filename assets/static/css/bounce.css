@@ -1,80 +1,48 @@
 keyframes bounce{
     0%{
-        width: 23px;
-        height: 32px
-        margin-top: -40px;
-        margin-left: -10px;
-    }
-    35%{
-        width: 25px;
         margin-top: -45px;
-        margin-left: -11px;
+    }
+    45%{
+        margin-top: -45px;
     }
     100%{
-        width: 23px;
-        height: 32px
         margin-top: -40px;
-        margin-left: -10px;
     }
 }
 
 @-webkit-keyframes bounce{
     0%{
-        width: 23px;
-        height: 32px
         margin-top: -40px;
-        margin-left: -10px;
     }
-    35%{
-        width: 25px;
+    45%{
         margin-top: -45px;
-        margin-left: -11px;
     }
     100%{
-        width: 23px;
-        height: 32px
         margin-top: -40px;
-        margin-left: -10px;
     }
 }
 
 @-moz-keyframes bounce{
     0%{
-        width: 23px;
-        height: 32px
         margin-top: -40px;
-        margin-left: -10px;
     }
-    35%{
-        width: 25px;
+    45%{
         margin-top: -45px;
-        margin-left: -11px;
     }
     100%{
-        width: 23px;
-        height: 32px
         margin-top: -40px;
-        margin-left: -10px;
     }
 }
 
 @-o-keyframes bounce{
     0%{
-        width: 23px;
-        height: 32px
         margin-top: -40px;
-        margin-left: -10px;
     }
-    35%{
-        width: 25px;
+    45%{
         margin-top: -45px;
-        margin-left: -11px;
     }
     100%{
-        width: 23px;
-        height: 32px
         margin-top: -40px;
-        margin-left: -10px;
     }
 }
 
