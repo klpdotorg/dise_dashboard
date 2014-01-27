@@ -255,30 +255,6 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
 
 
 
-/* No of matches */
-.no-of-matches{
-    cursor: pointer;
-    transition: all 1s ease;
-    display: inline-block;
-    text-align: center;
-    line-height: 30px;
-    margin-left: 40px;
-    background: #cd5e00;
-    font-size: 11px;
-    color: #fff;
-    height: 30px;
-    width: 30px;
-    border-radius: 20px;
-    margin-top: 10px;
-    overflow: hidden;
-}
-
-.no-of-matches:hover{
-    transition: all 1s ease;
-    width: 120px;
-}
-
-
 /* Preset Editor */
 #preset-editor{
     transition: all 1s ease;
@@ -604,4 +580,18 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
 
 #schools ul li.not-on-map span.glyphicon-map-marker{
     color: #2d2d2d;
+}
+
+/* No of matches */
+.no-of-matches{
+    background: #222;
+    color: #fff;
+    padding: 7px 12px;
+    font-size: 11px;
+}
+
+.no-of-matches small{
+    color: #ccc;
+    font-size: 11px;
+    float: right;
 }
