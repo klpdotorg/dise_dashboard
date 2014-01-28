@@ -51,21 +51,19 @@ button[type="submit"].btn-default{
 }
 
 #controls{
-    transition: margin-left 1s ease;
     z-index: 9999;
     position: absolute;
     background: #343539;
     margin-top: 53px;
-    width: 300px;
+    width: 400px;
     right: 0;
     color: #fff;
     box-shadow: 0 0 20px #000;
 }
 
 .hidden_controls{
-    transition: all 1s ease;
     margin-left: 300px;
-    margin-right: -320px;
+    margin-right: -420px;
 }
 
 #controls .form-holder{
@@ -457,6 +455,8 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
 
 #presets span.glyphicon{
     cursor: pointer;
+    float: right;
+    margin-right: 5px;
 }
 
 .preset_selector{
@@ -464,7 +464,7 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
 }
 
 .customSelect{
-    width: 220px;
+    width: 300px;
     margin-right: 22px;
 }
 

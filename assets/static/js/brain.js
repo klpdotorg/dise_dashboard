@@ -21,6 +21,7 @@ var UI = {
             var t = $("#control_toggle").find("span.text");
             var t_html = (t.html() === "Hide") ? "Show" : "Hide";
             t.html(t_html);
+            UI.resize();
         });
 
         $(".preset_selector").customSelect();
@@ -47,10 +48,12 @@ var UI = {
 
 
     resize: function(){
+        var mapRightMargin = $("#controls").hasClass("hidden_controls") ? 0 : $("#controls").width();
+
         $("#map-holder").height(
             $(window).height() - $(".navbar").height()
         ).width(
-            $(window).width() - $("#controls").width()
+            $(window).width() - mapRightMargin
         );
 
         $("#controls").height(
