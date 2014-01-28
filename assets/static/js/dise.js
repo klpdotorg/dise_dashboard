@@ -48,16 +48,26 @@
                 return result;
             }
 
+            this.search = function(entity, session, params, success) {
+                return this.call(entity + '.search', session, params, success);
+            }
+
+            this.info = function(entity, session, params, success) {
+                return this.call(entity + '.getInfo', session, params, success);
+            }
+
             return this;
         },
         mergeObj: function(obj1, obj2) {
-            for (var attrname in obj2) {
-                obj1[attrname] = obj2[attrname];
+            var obj = {};
+            for (var attrname in obj1) {
+                obj[attrname] = obj1[attrname];
             }
-        }
-    });
-
-    $.extend({
+            for (var attrname in obj2) {
+                obj[attrname] = obj2[attrname];
+            }
+            return obj;
+        },
         getUrlVars: function() {
             var vars = [],
                 hash;
@@ -115,7 +125,7 @@ $(function(){
         currentLayers.clearLayers();
         // Flip the filter switch to disable all usual map interactions.
         filtersEnabled = true;
-        var academic_year = $('input[name=academic_year]:checked').val();
+        var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
         if (e.object.type == 'school') {
             if(e.object.feature !== null && e.object.feature !== "{}"){
                 school = JSON.parse(e.object.feature);
@@ -337,10 +347,11 @@ $(function(){
         }
 
         if(typeof params !== 'undefined' && typeof params === 'object'){
-            $.mergeObj(extraParams, params);
+            extraParams = $.mergeObj(extraParams, params);
         }
 
-        DISE.call(entity + '.search', '10-11', extraParams, function(data) {
+        var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
+        DISE.search(entity, academic_year, extraParams, function(data) {
             if (entity == 'Block') {
                 blockLayer = createLayer(data.blocks, blockIcon);
                 layerIDs.block = blockLayer._leaflet_id;
@@ -372,6 +383,7 @@ $(function(){
         mapInit();
     } else {
         // Invoke search mechanism
+        filtersEnabled = true;
         console.log('do ' + $.getUrlVar('do'));
     };
 
