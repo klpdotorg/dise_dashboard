@@ -49,6 +49,11 @@
             }
 
             return this;
+        },
+        mergeObj: function(obj1, obj2) {
+            for (var attrname in obj2) {
+                obj1[attrname] = obj2[attrname];
+            }
         }
     });
 
@@ -322,13 +327,20 @@ $(function(){
         );
     }
 
-    function loadEntityData(entity) {
+    function loadEntityData(entity, params) {
         bbox = map.getBounds().toBBoxString();
         // Clear current layers.
         currentLayers.clearLayers();
-        DISE.call(entity + '.search', '10-11', {
+
+        var extraParams = {
             bbox: bbox,
-        }, function(data) {
+        }
+
+        if(typeof params !== 'undefined' && typeof params === 'object'){
+            $.mergeObj(extraParams, params);
+        }
+
+        DISE.call(entity + '.search', '10-11', extraParams, function(data) {
             if (entity == 'Block') {
                 blockLayer = createLayer(data.blocks, blockIcon);
                 layerIDs.block = blockLayer._leaflet_id;
@@ -351,18 +363,12 @@ $(function(){
 
     function mapInit () {
         // Load the district data and plot.
-        bbox = map.getBounds().toBBoxString();
-        DISE.call('District.search', '10-11', {
-            bbox: bbox,
-        }, function(data) {
-            districtLayer = createLayer(data.districts, districtIcon);
-            layerIDs.district = districtLayer._leaflet_id;
-            districtLayer.addTo(currentLayers);
-        });
+        loadEntityData('District');
     }
 
     if ($.getUrlVar('do') === undefined) {
         // Invoke initial map layers.
+        console.log('initiating map');
         mapInit();
     } else {
         // Invoke search mechanism
