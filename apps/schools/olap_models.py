@@ -237,6 +237,7 @@ class ClusterAggregations(BaseModel, AggregationBase):
 
     class Meta:
         abstract = True
+        unique_together = ("cluster_name", "block_name")
 
 
 class ParliamentAggregations(BaseModel, AggregationBase):

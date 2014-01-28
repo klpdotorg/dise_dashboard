@@ -90,7 +90,7 @@ class BaseEntity:
                         self.param_name_for_secondary_key)
                     filters[self.secondary_key + '__iexact'] = secondary_key
 
-            entity_obj = EntityModel.objects.get(**filters)
+            entity_obj = EntityModel.objects.only(*self.only_fields).get(**filters)
 
             result[self.entity_type] = self._get_geojson(entity_obj)
         except (EntityModel.DoesNotExist, Exception) as e:
@@ -123,7 +123,7 @@ class School(BaseEntity):
         SchoolModel = get_models(params.get('session', '10-11'), 'school')
 
         if len(params.keys()) > 1:
-            schools = SchoolModel.objects.filter(centroid__isnull=False)
+            schools = SchoolModel.objects.only(*self.only_fields).filter(centroid__isnull=False)
 
         if 'name' in params and params.get('name', ''):
             schools = schools.filter(school_name__icontains=params.get('name'))
@@ -146,7 +146,7 @@ class School(BaseEntity):
         if 'limit' in params and params.get('limit', 0):
             schools = schools[:params.get('limit')]
 
-        # print schools.query
+        print schools.query
         temp_l = []
         for sch in schools:
             temp_l.append(self._get_geojson(sch))
@@ -280,7 +280,7 @@ class Block(BaseEntity):
         BlockModel = get_models(params.get('session', '10-11'), 'block')
 
         if len(params.keys()) > 1:
-            blocks = BlockModel.objects.filter(centroid__isnull=False)
+            blocks = BlockModel.objects.only(*self.only_fields).filter(centroid__isnull=False)
 
         if 'name' in params and params.get('name', ''):
             blocks = blocks.filter(block_name__icontains=params.get('name'))
@@ -355,7 +355,7 @@ class District(BaseEntity):
         DistrictModel = get_models(params.get('session', '10-11'), 'district')
 
         if len(params.keys()) > 1:
-            districts = DistrictModel.objects.filter(centroid__isnull=False)
+            districts = DistrictModel.objects.only(*self.only_fields).filter(centroid__isnull=False)
 
         if 'name' in params and params.get('name', ''):
             districts = districts.filter(
