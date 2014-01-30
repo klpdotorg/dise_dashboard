@@ -22,6 +22,13 @@
     };
 
     $.extend({
+        updateUrlParams: function(params) {
+            var existingParams = $.getUrlVars();
+            console.log(existingParams);
+            var params = $.mergeObj(existingParams, params);
+            var hash = decodeURIComponent($.param(params));
+            window.location.hash = hash;
+        },
         DiseAPI: function(options) {
             this.defaultOptions = {};
 
@@ -71,10 +78,10 @@
         getUrlVars: function() {
             var vars = [],
                 hash;
-            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            var hashes = window.location.href.slice(window.location.href.indexOf('#') + 1).split('&');
             for (var i = 0; i < hashes.length; i++) {
                 hash = hashes[i].split('=');
-                vars.push(hash[0]);
+                // vars.push(hash[0]);
                 vars[hash[0]] = hash[1];
             }
             return vars;
@@ -377,16 +384,6 @@ $(function(){
         loadEntityData('District');
     }
 
-    if ($.getUrlVar('do') === undefined) {
-        // Invoke initial map layers.
-        console.log('initiating map');
-        mapInit();
-    } else {
-        // Invoke search mechanism
-        filtersEnabled = true;
-        console.log('do ' + $.getUrlVar('do'));
-    };
-
     function updateLayers (zoom) {
         if (zoom <=8) {
           // Load districts.
@@ -428,6 +425,9 @@ $(function(){
       // If filters are enabled then don't load the usual layers.
       if (!filtersEnabled) {
         updateLayers(map.getZoom());
+      }else{
+        var bbox = map.getBounds().toBBoxString();
+        $.updateUrlParams({bbox: bbox});
       }
     })
 
@@ -437,6 +437,9 @@ $(function(){
         currentLayers.eachLayer(function(layer) {
           updateData(layer);
         });
+      }else{
+        var bbox = map.getBounds().toBBoxString();
+        $.updateUrlParams({bbox: bbox});
       }
     })
 
@@ -445,5 +448,68 @@ $(function(){
     function setLayerView (layer, zoom) {
         map.setView(layer.getLayers()[0].getLatLng(), zoom);
     }
+
+    function handleHashChange(e) {
+        if ($.getUrlVar('do') !== undefined) {
+            // Invoke initial map layers.
+            var params = $.getUrlVars();
+            var method = params.do;
+            if(method.split('.').length !== 2){
+                alert('invalid do parameter');
+            }else{
+                delete params.do;
+                var entity = method.split('.')[0];
+            }
+
+            var session = params.academic_year || '10-11';
+            delete params.academic_year;
+
+            // Clear current layers.
+            currentLayers.clearLayers();
+
+            var bbox = $.getUrlVar('bbox').split(',');
+            map.fitBounds([
+                [bbox[1], bbox[0]],
+                [bbox[3], bbox[2]]
+            ]);
+
+            DISE.call(method, session, params, function(data) {
+                if (entity == 'Block') {
+                    blockLayer = createLayer(data.blocks, blockIcon);
+                    layerIDs.block = blockLayer._leaflet_id;
+                    blockLayer.addTo(currentLayers);
+                } else if (entity == 'Cluster') {
+                    clusterLayer = createLayer(data.clusters, clusterIcon);
+                    layerIDs.cluster = clusterLayer._leaflet_id;
+                    clusterLayer.addTo(currentLayers);
+                } else if (entity == 'District') {
+                    districtLayer = createLayer(data.districts, districtIcon);
+                    layerIDs.district = districtLayer._leaflet_id;
+                    districtLayer.addTo(currentLayers);
+                } else if (entity == 'School'){
+                    schoolLayer = createLayer(data.schools, schoolIcon);
+                    schoolLayer._leaflet_id = layerIDs.school;
+                    schoolLayer.addTo(currentLayers);
+                }
+            });
+        }
+    }
+
+    if ("onhashchange" in window){
+        $(window).on('hashchange', handleHashChange);
+    }
+
+    if ($.getUrlVar('do') === undefined) {
+        // Invoke initial map layers.
+        console.log('initiating map');
+        mapInit();
+    } else {
+        // Invoke search mechanism
+        filtersEnabled = true;
+        console.log('do ' + $.getUrlVar('do'));
+
+        // query and show the results in hash
+        handleHashChange();
+    };
 
 });
