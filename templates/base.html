@@ -5,22 +5,16 @@
     <title>Explore DISE Data - The Karnataka Learning Partnership</title>
 
     <link rel="stylesheet" type="text/css" href="{% static 'lib/bootstrap.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'lib/jquery-ui.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'lib/select2.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'lib/orange.css' %}">
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/master.css' %}">
-
     <link href="http://fonts.googleapis.com/css?family=Roboto:400,100italic,100,300,300italic,400italic,500,500italic,700,700italic,900,900italic|Roboto+Condensed:300italic,400italic,700italic,400,300,700|Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css">
 
     <script type="text/javascript" src="{% static 'lib/jquery.js' %}"></script>
     <script type="text/javascript" src="{% static 'lib/jquery-ui.js' %}"></script>
     <script type="text/javascript" src="{% static 'lib/bootstrap.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'lib/select2.js' %}"></script>
-    <script type="text/javascript" src="{% static 'lib/icheck.min.js' %}"></script>
-    <script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
-    <script type="text/javascript" src="{% static 'js/brain.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/dise.js' %}"></script>
+
+    {% block head %}
+    {% endblock %}
+
   </head>
 
   <body>
@@ -37,24 +31,22 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <ol class="top-breadcrumbs"></ol>
+        <ol class="top-breadcrumbs">
+          <li>
+            <a href="/" class="navbar-brand">
+              DISE
+            </a>
+          </li>
+        </ol>
       </div>
 
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse navbar-ex1-collapse">
-        <span class="no-of-matches">
-          42
-          matches found
-        </span>
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="#">About</a></li>
-          <li><a href="#">Contact</a></li>
-          <li>
-            <a href="javascript:void(0)" id="control_toggle">
-              <span class="text">Hide</span>
-              <span class="glyphicon glyphicon-chevron-right" id="control_toggle_icon"></span>
-            </a>
-          </li>
+          <li><a href="/about/">About</a></li>
+          <li> <a href="mailto:dev@klp.org.in">Contact</a></li>
+          {% block navbar %}
+          {% endblock %}
         </ul>
       </div><!-- /.navbar-collapse -->
     </nav>

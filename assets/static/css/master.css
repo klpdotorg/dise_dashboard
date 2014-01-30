@@ -1,7 +1,10 @@
 body{
     background: #343539;
     font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    overflow: hidden;
 }
+
+.clear{clear: both;}
 
 #map-holder{
     margin: 0;
@@ -48,25 +51,23 @@ button[type="submit"].btn-default{
 }
 
 #controls{
-    transition: all 1s ease;
     z-index: 9999;
     position: absolute;
     background: #343539;
     margin-top: 53px;
-    width: 300px;
+    width: 400px;
     right: 0;
     color: #fff;
-    box-shadow: 0 0 20px #000;
+    box-shadow: 0 0 20px #000 inset;
 }
 
 .hidden_controls{
-    transition: all 1s ease;
     margin-left: 300px;
-    margin-right: -300px;
+    margin-right: -420px;
 }
 
 #controls .form-holder{
-    margin: 10px;
+    margin: 0;
 }
 
 #controls .form-holder > label{
@@ -151,17 +152,24 @@ button[type="submit"].btn-default{
     margin: 0;
 }
 
-#presets ul li:hover p{
+#preset ul li:hover p{
     height: 20px;
 }
 
 
 /* General Bootstrap Stuff */
+div[data-toggle=buttons]{
+    display: block;
+    float: right;
+}
+
 .btn-group label{
+    margin-top: -3px;
     background: #F18352;
     border-color: #cd5e00;
-    padding: 8px;
-    font-size: 13px;
+    padding: 5px;
+    text-transform: uppercase;
+    font-size: 11px;
 }
 
 .btn-group label:hover{
@@ -173,6 +181,17 @@ button[type="submit"].btn-default{
     background: #cd5e00;
     border-color: #cd5e00;
     box-shadow: rgba(0, 0, 0, 0.121569) 0px 3px 5px 0px inset;
+}
+
+.category_filter{
+    margin: 0;
+    padding: 12px;
+    border-bottom: 1px solid #2f2f2f;
+    border-top: 1px solid #444;
+}
+
+.category_filter > label{
+    text-shadow: 0 2px 0 #000;
 }
 
 /* Top Breadcrumbs */
@@ -236,38 +255,15 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
 
 
 
-/* No of matches */
-.no-of-matches{
-    cursor: pointer;
-    transition: all 1s ease;
-    display: inline-block;
-    text-align: center;
-    line-height: 30px;
-    margin-left: 40px;
-    background: #cd5e00;
-    font-size: 11px;
-    color: #fff;
-    height: 30px;
-    width: 30px;
-    border-radius: 20px;
-    margin-top: 10px;
-    overflow: hidden;
-}
-
-.no-of-matches:hover{
-    transition: all 1s ease;
-    width: 120px;
-}
-
-
 /* Preset Editor */
 #preset-editor{
     transition: all 1s ease;
     position: absolute;
     background: #222;
     color: #fff;
-    height: 560px;
-    overflow: scroll;
+    height: 620px;
+    overflow-y: auto;
+    overflow-x: hidden;
     border-bottom: 10px solid #000;
     width: 100%;
     z-index: 10000;
@@ -328,14 +324,14 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
 }
 
 .ui-slider-horizontal{
-    border: none;
-    background: #666;
+    border: none !important;
+    background: #666 !important;
     height:5px;
     border-radius: 0;
 }
 
 .ui-slider-range{
-    background: #cd5e00;
+    background: #cd5e00 !important;
     margin-left: 10px;
 }
 
@@ -441,43 +437,130 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
     background: #cd5e00;
 }
 
+/* Preset Selector */
+#presets{
+    background: #f18352;
+    padding: 12px;
+    box-shadow: 0 -5px 7px rgba(0,0,0,0.2) inset;
+    border-top: 1px solid rgba(255,255,255,0.4);
+    border-bottom: 1px solid rgba(0,0,0,0.6);
+}
+
+#presets span.glyphicon{
+    cursor: pointer;
+    float: right;
+    margin-right: 5px;
+    margin-top: 6px;
+}
+
+.preset_selector{
+    cursor: pointer;
+    width: 325px;
+}
+
+#presets .select2-choice{
+    background: #f18352;
+    color: #fff;
+    border-color: #cd5e00;
+}
+
+
+
+/* School list */
+#schools{
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#schools ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-indent: 0;
+    height: auto;
+}
+
+#schools ul li{
+    padding: 12px;
+    color: #f18352;
+    font: 18px 'Roboto Slab', 'Helvetica', 'Arial', sans-serif;
+    font-weight: 700;
+    margin: 0;
+    border-bottom: 1px solid #2f2f2f;
+    border-top: 1px solid #444;
+    cursor: pointer;
+}
+
+#schools ul li:hover{
+    box-shadow: 0 -5px 7px rgba(0,0,0,0.2) inset;
+}
+
+#schools ul li small{
+    display: block;
+    color: #fff;
+    font-weight: 200;
+    font-size: 13px;
+    margin-top: -3px;
+}
+
+#schools ul li span.glyphicon-map-marker{
+    float: right;
+    margin: 8px;
+}
+
+#schools ul li.not-on-map span.glyphicon-map-marker{
+    color: #2d2d2d;
+}
+
+/* No of matches */
+.no-of-matches{
+    background: #222;
+    color: #fff;
+    padding: 7px 12px;
+    font-size: 11px;
+}
+
+.no-of-matches small{
+    color: #ccc;
+    font-size: 11px;
+    float: right;
+}
 
 /* Popup */
 .popup{
     transition: all 1s ease;
-    position: fixed;
-    background: #222;
     color: #fff;
-    height: 150px;
-    overflow: scroll;
-    border-top: 10px solid #000;
     width: 100%;
-    z-index: 10000;
-    bottom: 0;
-    left: 0;
-    box-shadow: 0 0 10px #000;
-    overflow: hidden;
+    margin: 0;
+    padding: 0;
 }
 
 .popup h4{
-    color: #f18352;
+    padding: 12px;
+    background: #f18352;
+    border-top: 1px solid rgba(255,255,255,0.3);
+    border-bottom: 2px solid rgba(0,0,0,0.5);
+    color: #fff;
+    margin: 0;
     font: 20px 'Roboto Slab', 'Helvetica', 'Arial', sans-serif;
     font-weight: 700;
-    margin-bottom: 0;
+    cursor: pointer;
+    margin-bottom: 20px;
 }
 
-.close_popup{
-    float: right;
-    color: #fff;
-    margin-top: -20px;
-    font-size: 20px;
+.popup h4:hover{
+    background: #cd5e00;
 }
 
-.close_popup:hover{
-    color: #f18352;
+.popup span.glyphicon{
+    display: block;
+    float: left;
+    margin-top: 8px;
+    margin-right: 10px;
 }
 
 .popup h4 small{
+    display: block;
     color: #fff;
     font-size: 15px;
     font-weight: 100;
@@ -485,11 +568,19 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
 
 .popup h5{
     color: #f18352;
-    font-weight: 100;
+    font-weight: 300;
     text-transform: uppercase;
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 1px;
     text-align: center;
+    margin: 0;
+    margin-bottom: 6px;
+}
+
+.popup h5.question{
+    text-align: left;
+    padding-left: 12px;
+    margin-bottom: 3px;
 }
 
 .popup .circle_stat{
@@ -501,19 +592,43 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
     border: 2px solid #fff;
     border-radius: 25px;
     color: #fff;
-    font: 11px 'Roboto Slab', 'Helvetica', 'Arial', sans-serif;
-    font-weight: 200;
+    font: 15px 'Roboto Slab', 'Helvetica', 'Arial', sans-serif;
+    font-weight: 600;
     line-height: 48px;
 }
 
+.popup .blue{
+    border-color: #1f77b4;
+    color: #1f77b4;
+}
 
-.popup h5.question{
-    text-align: left;
-    margin-bottom: 0;
+.popup .pink{
+    border-color: #e377c2;
+    color: #e377c2;
+}
+
+.popup .green{
+    border-color: #2ca02c;
+    color: #2ca02c;
+}
+
+.popup .red{
+    border-color: #d62728;
+    color: #d62728;
 }
 
 .popup p.answer{
     color: #fff;
     font-weight: 200;
     margin: 0;
+    margin-left: 12px;
+    font: 16px 'Roboto Slab', 'Helvetica', 'Arial', sans-serif;
+}
+
+.popup p.answer small{
+    color: #ccc;
+}
+
+.right-shift > *{
+    text-align: right !important;
 }

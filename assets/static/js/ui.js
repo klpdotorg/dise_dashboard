@@ -2,18 +2,12 @@ var UI = {
 
     init: function(){
 
-        $("#presets li").click(function(){
-	        $("#presets li").removeClass("active");
-	        $(this).addClass("active");
-        });
-
         $(".reset_preset").tooltip();
-
         $(".reset_preset").click(function(e){
             if(!confirm("Are you sure? This action cannot be undone!")) return false;
         });
 
-        $("#presets li .glyphicon-cog").click(function(){
+        $("#presets .glyphicon-cog").click(function(){
             $("#preset-editor").toggleClass("activate");
         });
 
@@ -27,8 +21,10 @@ var UI = {
             var t = $("#control_toggle").find("span.text");
             var t_html = (t.html() === "Hide") ? "Show" : "Hide";
             t.html(t_html);
+            UI.resize();
         });
 
+        $(".preset_selector").select2();
 
         $(".close_popup").on("click", function() {
            $(".popup").hide();
@@ -43,8 +39,32 @@ var UI = {
 
         this.initICheck();
         this.initSliders();
+
+        UI.resize();
+        $(window).on("resize", function(){
+            UI.resize();
+        });
     },
 
+
+    resize: function(){
+        var mapRightMargin = $("#controls").hasClass("hidden_controls") ? 0 : $("#controls").width();
+
+        $("#map-holder").height(
+            $(window).height() - $(".navbar").height()
+        ).width(
+            $(window).width() - mapRightMargin
+        );
+
+        $("#controls").height(
+            $(window).height() - $(".navbar").height()
+        );
+
+        $("#schools").height(
+            $("#controls").height() - 285
+        );
+
+    },
 
     initICheck: function(){
         $('.check-list').iCheck({
@@ -70,7 +90,8 @@ var UI = {
 
     renderCrumbs: function(bs){
         var ol = $("ol.top-breadcrumbs");
-        ol.html('<li><a class="navbar-brand" href="javascript:void(0)">DISE</a></li>');
+        var logo = $("ol.top-breadcrumbs li").detach();
+        ol.html("").append(logo);
 
         for (var i in bs){
             var b = bs[i];

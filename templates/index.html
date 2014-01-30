@@ -1,108 +1,24 @@
 {% extends 'base.html' %}
+{% load static from staticfiles %}
+
+
+{% block head%}
+    <link rel="stylesheet" type="text/css" href="{% static 'lib/jquery-ui.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'lib/select2.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'lib/orange.css' %}">
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bounce.css' %}">
+
+    <script type="text/javascript" src="{% static 'js/ui.js' %}"></script>
+    <script type="text/javascript" src="{% static 'lib/select2.js' %}"></script>
+    <script type="text/javascript" src="{% static 'lib/icheck.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'lib/jquery.customSelect.min.js' %}"></script>
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
+    <script type="text/javascript" src="{% static 'js/dise.js' %}"></script>
+{% endblock %}
 
 {% block body %}
 <div id="map-holder"></div>
-
-<div id="popup-cluster" class="popup">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <h4 class='entity_name'></h4>
-
-        <a href="javascript:void(0)" class="close_popup">
-          <span class="glyphicon glyphicon-remove-circle"></span>
-        </a>
-      </div>
-
-      <div class="col-md-1">
-        <h5>Schools</h5>
-        <div class="circle_stat entity_school"></div>
-      </div>
-
-      <div class="col-md-1">
-        <h5>Students</h5>
-        <div class="circle_stat entity_student"></div>
-      </div>
-
-      <div class="col-md-1">
-        <h5>Teachers</h5>
-        <div class="circle_stat entity_teacher"></div>
-      </div>
-
-      <div class="col-md-1">
-        <h5>Libraries</h5>
-        <div class="circle_stat entity_library"></div>
-      </div>
-
-      <div class="col-md-1">
-        <h5>Electricity</h5>
-        <div class="circle_stat entity_electricity"></div>
-      </div>
-
-      <div class="col-md-1">
-        <h5>Toilets</h5>
-        <div class="circle_stat entity_toilet"></div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<div id="popup-school" class="popup">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <h4 class='name'></h4>
-
-        <a href="javascript:void(0)" class="close_popup">
-          <span class="glyphicon glyphicon-remove-circle"></span>
-        </a>
-      </div>
-
-      <div class="col-md-1">
-        <h5>Students</h5>
-        <div class="circle_stat total_student"></div>
-      </div>
-
-      <div class="col-md-1">
-        <h5>Teachers</h5>
-        <div class="circle_stat total_tch"></div>
-      </div>
-
-      <div class="col-md-2">
-        <h5 class="question">Medium of Instruction</h5>
-        <p class="answer medium_of_instruction"></p>
-
-        <h5 class="question">Category</h5>
-        <p class="answer sch_category"></p>
-      </div>
-
-      <div class="col-md-2">
-        <h5 class="question">Management</h5>
-        <p class="answer sch_management"></p>
-
-        <h5 class="question">Electricity</h5>
-        <p class="answer electricity"></p>
-      </div>
-
-      <div class="col-md-2">
-        <h5 class="question">Libary</h5>
-        <p class="answer library_yn"></p>
-
-        <h5 class="question">Number of books</h5>
-        <p class="answer books_in_library"></p>
-      </div>
-
-      <div class="col-md-2">
-        <h5 class="question">Address</h5>
-        <p class="answer address">
-
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-
 
 <!-- Preset Editor -->
 <div id="preset-editor">
@@ -258,94 +174,229 @@
 
   <div class="form-holder">
     <form action="" name="basic_filters">
-      <label>Academic Year</label><br>
-      <div class="btn-group" data-toggle="buttons">
-        <label class="btn btn-primary active">
-          <input type="radio" name="academic_year" value="10-11" checked="checked"> 2010-2011
-        </label>
-        <label class="btn btn-primary">
-          <input type="radio" name="academic_year" value="11-12"> 2011-2012
-        </label>
-        <label class="btn btn-primary">
-          <input type="radio" name="academic_year" value="12-13"> 2012-2013
-        </label>
+
+      <div class="category_filter">
+        <label>Year</label>
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-primary active">
+            <input type="radio" name="academic_year" value="10-11" checked="checked"> 2010-2011
+          </label>
+          <label class="btn btn-primary">
+            <input type="radio" name="academic_year" value="11-12"> 2011-2012
+          </label>
+          <label class="btn btn-primary">
+            <input type="radio" name="academic_year" value="12-13"> 2012-2013
+          </label>
+        </div>
       </div>
 
-      <br><br>
-
-      <label>Area</label><br>
-      <div class="btn-group" data-toggle="buttons">
-        <label class="btn btn-primary">
-          <input type="checkbox" name="area" value="rural"> Rural
-        </label>
-        <label class="btn btn-primary">
-          <input type="checkbox" name="area" value="urban"> Urban
-        </label>
+      <div class="category_filter">
+        <label>Area</label>
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-primary">
+            <input type="checkbox" name="area" value="rural"> Rural
+          </label>
+          <label class="btn btn-primary">
+            <input type="checkbox" name="area" value="urban"> Urban
+          </label>
+        </div>
       </div>
 
-      <br><br>
 
-      <label>Management</label><br>
-      <div class="btn-group" data-toggle="buttons">
-        <label class="btn btn-primary">
-          <input type="checkbox" name="management" value="private"> Private
-        </label>
-        <label class="btn btn-primary">
-          <input type="checkbox" name="management" value="govt"> Goverment
-        </label>
+      <div class="category_filter">
+        <label>Management</label>
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-primary">
+            <input type="checkbox" name="management" value="private"> Private
+          </label>
+          <label class="btn btn-primary">
+            <input type="checkbox" name="management" value="govt"> Goverment
+          </label>
+        </div>
       </div>
     </form>
-    <br><br>
   </div>
 
   <div id="presets">
+    <select class="preset_selector">
+      <option>Preset 1</option>
+      <option>Preset 2</option>
+      <option>Preset 3</option>
+      <option>Preset 4</option>
+      <option>Preset 5</option>
+      <option>Preset 6</option>
+    </select>
+    <span class="glyphicon glyphicon-refresh reset_preset" data-toggle="tooltip" title="Reset the changes in the preset"></span>
+    <span class="glyphicon glyphicon-cog"></span>
+  </div>
+
+  <div class="no-of-matches">
+    42 schools found <small>(37 on map)</small>
+  </div>
+
+  <div id="schools">
+    <div class="popup">
+      <h4>
+        <span class="glyphicon glyphicon-chevron-left"></span>
+        Delhi Public School
+        <small>Greater NOIDA</small>
+      </h4>
+
+
+      <div class="row">
+        <div class="col-md-4">
+          <h5>Students</h5>
+          <div class="circle_stat">
+            45
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <h5 class="blue">Boys</h5>
+          <div class="circle_stat blue">
+            12
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <h5 class="pink">Girls</h5>
+          <div class="circle_stat pink">
+            33
+          </div>
+        </div>
+      </div>
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-4">
+          <h5>Toilets</h5>
+          <div class="circle_stat">
+            45
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <h5 class="blue">for Boys</h5>
+          <div class="circle_stat blue">
+            12
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <h5 class="pink">for Girls</h5>
+          <div class="circle_stat pink">
+            33
+          </div>
+        </div>
+      </div>
+
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-4 col-md-push-2">
+          <h5>Classrooms</h5>
+          <div class="circle_stat">
+            33
+          </div>
+        </div>
+        <div class="col-md-4 col-md-push-2">
+          <h5 class="green">PTR Ratio</h5>
+          <div class="circle_stat green">
+            72
+          </div>
+        </div>
+      </div>
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-6 right-shift">
+          <h5 class="question">Medium of Instruction</h5>
+          <p class="answer medium_of_instruction">English</p>
+        </div>
+
+        <div class="col-md-6">
+          <h5 class="question">Category</h5>
+          <p class="answer sch_category">Second</p>
+        </div>
+      </div>
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-6 right-shift">
+          <h5 class="question">Management</h5>
+          <p class="answer sch_category">Private</p>
+        </div>
+
+        <div class="col-md-6">
+          <h5 class="question">Electricity</h5>
+          <p class="answer sch_category">Yes</p>
+        </div>
+      </div>
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-6 right-shift">
+          <h5 class="question">Library</h5>
+          <p class="answer sch_category">Yes<small>, 100 books</small></p>
+        </div>
+      </div>
+
+      <br>
+
+
+    </div>
+
+    <!--
     <ul>
       <li>
-        <a href="javascript:void(0)">Preset A</a>
-        <a href="javascript:void(0)" class="preset-edit">
-          <span class="glyphicon glyphicon-refresh reset_preset" data-toggle="tooltip" title="Reset the changes in the preset"></span>
-          <span class="glyphicon glyphicon-cog"></span>
-        </a>
-        <p>lorem impus dolor sit amet</p>
+        <span class="glyphicon glyphicon-map-marker"></span>
+        Delhi Public School
+        <small>Greater NOIDA</small>
       </li>
       <li>
-        <a href="javascript:void(0)">Preset A</a>
-        <a href="javascript:void(0)" class="preset-edit">
-          <span class="glyphicon glyphicon-refresh reset_preset" data-toggle="tooltip" title="Reset the changes in the preset"></span>
-          <span class="glyphicon glyphicon-cog"></span>
-        </a>
-
-        <p>lorem impus dolor sit amet</p>
+        <span class="glyphicon glyphicon-map-marker"></span>
+        Delhi Public School
+        <small>Greater NOIDA</small>
       </li>
-      <li class="active">
-        <a href="javascript:void(0)">Preset A</a>
-        <a href="javascript:void(0)" class="preset-edit">
-          <span class="glyphicon glyphicon-refresh reset_preset" data-toggle="tooltip" title="Reset the changes in the preset"></span>
-          <span class="glyphicon glyphicon-cog"></span>
-        </a>
-
-        <p>lorem impus dolor sit amet</p>
+      <li class="not-on-map">
+        <span class="glyphicon glyphicon-map-marker"></span>
+        Delhi Public School
+        <small>Greater NOIDA</small>
       </li>
       <li>
-        <a href="javascript:void(0)">Preset A</a>
-        <a href="javascript:void(0)" class="preset-edit">
-          <span class="glyphicon glyphicon-refresh reset_preset" data-toggle="tooltip" title="Reset the changes in the preset"></span>
-          <span class="glyphicon glyphicon-cog"></span>
-        </a>
-
-        <p>lorem impus dolor sit amet</p>
+        <span class="glyphicon glyphicon-map-marker"></span>
+        Delhi Public School
+        <small>Greater NOIDA</small>
       </li>
       <li>
-        <a href="javascript:void(0)">Preset A</a>
-        <a href="javascript:void(0)" class="preset-edit">
-          <span class="glyphicon glyphicon-refresh reset_preset" data-toggle="tooltip" title="Reset the changes in the preset"></span>
-          <span class="glyphicon glyphicon-cog"></span>
-        </a>
-
-        <p>lorem impus dolor sit amet</p>
+        <span class="glyphicon glyphicon-map-marker"></span>
+        Delhi Public School
+        <small>Greater NOIDA</small>
+      </li>
+      <li>
+        <span class="glyphicon glyphicon-map-marker"></span>
+        Delhi Public School
+        <small>Greater NOIDA</small>
+      </li>
+      <li class="not-on-map">
+        <span class="glyphicon glyphicon-map-marker"></span>
+        Delhi Public School
+        <small>Greater NOIDA</small>
+      </li>
+      <li>
+        <span class="glyphicon glyphicon-map-marker"></span>
+        Delhi Public School
+        <small>Greater NOIDA</small>
       </li>
     </ul>
+    -->
   </div>
+
 
 </div>
 {% endblock %}
@@ -353,4 +404,14 @@
 {% load static from staticfiles %}
 {% block endbody %}
   <script type="text/javascript" src="{% static 'js/map.js' %}"></script>
+{% endblock %}
+
+
+{% block navbar %}
+          <li>
+            <a href="javascript:void(0)" id="control_toggle">
+              <span class="text">Hide</span>
+              <span class="glyphicon glyphicon-chevron-right" id="control_toggle_icon"></span>
+            </a>
+          </li>
 {% endblock %}
