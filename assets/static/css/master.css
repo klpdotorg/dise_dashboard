@@ -437,10 +437,7 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
     background: #cd5e00;
 }
 
-
-
-
-/* customSelect */
+/* Preset Selector */
 #presets{
     background: #f18352;
     padding: 12px;
@@ -449,24 +446,24 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
     border-bottom: 1px solid rgba(0,0,0,0.6);
 }
 
-#presets:hover{
-    background: #cd5e00;
-}
-
 #presets span.glyphicon{
     cursor: pointer;
     float: right;
     margin-right: 5px;
+    margin-top: 6px;
 }
 
 .preset_selector{
     cursor: pointer;
+    width: 325px;
 }
 
-.customSelect{
-    width: 300px;
-    margin-right: 22px;
+#presets .select2-choice{
+    background: #f18352;
+    color: #fff;
+    border-color: #cd5e00;
 }
+
 
 
 /* School list */
