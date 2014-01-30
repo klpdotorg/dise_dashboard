@@ -60,8 +60,8 @@ class BaseEntity:
         }
         for field in self.only_fields:
             properties[field] = getattr(entity, field)
-            if hasattr(entity, "get_%s_display" % field):
-                properties[field + '_display'] = getattr(entity, "get_%s_display" % field)()
+            if hasattr(entity, "get_{}_display".format(field)):
+                properties[field + '_display'] = getattr(entity, "get_{}_display".format(field))()
 
         return Feature(
             geometry=Point(
@@ -85,6 +85,8 @@ class BaseEntity:
             filters[self.primary_key + '__iexact'] = primary_key
 
             if hasattr(self, 'secondary_key') and hasattr(self, 'param_name_for_secondary_key'):
+                # required in case of a composite key like scenario
+                # e.g. cluster_name is not unique. It needs block_name with it
                 if self.secondary_key and self.param_name_for_secondary_key and params.get(self.param_name_for_secondary_key):
                     secondary_key = params.get(
                         self.param_name_for_secondary_key)
