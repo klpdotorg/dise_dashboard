@@ -48,3 +48,6 @@ Vagrantfile
 .DS_Store
 *~
 *#
+
+#newrelic
+newrelic.ini

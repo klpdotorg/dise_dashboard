@@ -8,14 +8,9 @@
 # into your database.
 from __future__ import unicode_literals
 
-import re
+from common.models import search_choices, YESNO, AREA, SCHOOL_CATEGORY, SCHOOL_MANAGEMENT, SCHOOL_TYPES, MEDIUM, MDM_STATUS, KITCHENSHED_STATUS, BOUNDARY_WALL
 
 from django.contrib.gis.db import models
-from django.contrib.gis.geos import Polygon
-from django.utils import simplejson as json
-from django.core import serializers
-
-from geojson import Feature, FeatureCollection, Point, dumps as geojson_dumps
 
 
 class BaseModel(models.Model):
@@ -34,19 +29,19 @@ class BasicData(BaseModel):
     assembly_name = models.CharField(max_length=35, blank=True)
     parliament_name = models.CharField(max_length=35, blank=True)
     pincode = models.IntegerField(null=True, blank=True)
-    rural_urban = models.IntegerField(null=True, blank=True)
-    medium_of_instruction = models.IntegerField(null=True, blank=True)
+    rural_urban = models.IntegerField(choices=AREA, null=True, blank=True)
+    medium_of_instruction = models.IntegerField(choices=MEDIUM, null=True, blank=True)
     distance_brc = models.FloatField(null=True, blank=True)
     distance_crc = models.FloatField(null=True, blank=True)
     yeur_estd = models.IntegerField(null=True, blank=True)
     pre_pry_yn = models.IntegerField(null=True, blank=True)
     residential_sch_yn = models.IntegerField(null=True, blank=True)
-    sch_management = models.IntegerField(null=True, blank=True)
+    sch_management = models.IntegerField(choices=SCHOOL_MANAGEMENT, null=True, blank=True)
     lowest_class = models.IntegerField(null=True, blank=True)
     highest_class = models.IntegerField(null=True, blank=True)
-    sch_category = models.IntegerField(null=True, blank=True)
+    sch_category = models.IntegerField(choices=SCHOOL_CATEGORY, null=True, blank=True)
     pre_pry_students = models.IntegerField(null=True, blank=True)
-    school_type = models.IntegerField(null=True, blank=True)
+    school_type = models.IntegerField(choices=SCHOOL_TYPES, null=True, blank=True)
     shift_school_yn = models.IntegerField(null=True, blank=True)
     no_of_working_days = models.IntegerField(null=True, blank=True)
     no_of_acad_inspection = models.IntegerField(null=True, blank=True)
@@ -72,12 +67,12 @@ class BasicData(BaseModel):
     toilet_boys = models.IntegerField(null=True, blank=True)
     toilet_girls = models.IntegerField(null=True, blank=True)
     kitchen_devices_grant = models.IntegerField(null=True, blank=True)
-    status_of_mdm = models.IntegerField(null=True, blank=True)
+    status_of_mdm = models.IntegerField(choices=MDM_STATUS, null=True, blank=True)
     computer_aided_learnin_lab = models.IntegerField(null=True, blank=True)
     separate_room_for_headmaster = models.IntegerField(null=True, blank=True)
-    electricity = models.IntegerField(null=True, blank=True)
-    boundary_wall = models.IntegerField(null=True, blank=True)
-    library_yn = models.IntegerField(null=True, blank=True)
+    electricity = models.IntegerField(choices=YESNO, null=True, blank=True)
+    boundary_wall = models.IntegerField(choices=BOUNDARY_WALL, null=True, blank=True)
+    library_yn = models.IntegerField(choices=YESNO, null=True, blank=True)
     playground = models.IntegerField(null=True, blank=True)
     blackboard = models.IntegerField(null=True, blank=True)
     books_in_library = models.IntegerField(null=True, blank=True)
