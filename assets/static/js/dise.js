@@ -22,6 +22,13 @@
     };
 
     $.extend({
+        updateUrlParams: function(params) {
+            var existingParams = $.getUrlVars();
+            console.log(existingParams);
+            var params = $.mergeObj(existingParams, params);
+            var hash = decodeURIComponent($.param(params));
+            window.location.hash = hash;
+        },
         DiseAPI: function(options) {
             this.defaultOptions = {};
 
@@ -48,7 +55,41 @@
                 return result;
             }
 
+            this.search = function(entity, session, params, success) {
+                return this.call(entity + '.search', session, params, success);
+            }
+
+            this.info = function(entity, session, params, success) {
+                return this.call(entity + '.getInfo', session, params, success);
+            }
+
             return this;
+        },
+        mergeObj: function(obj1, obj2) {
+            var obj = {};
+            for (var attrname in obj1) {
+                obj[attrname] = obj1[attrname];
+            }
+            for (var attrname in obj2) {
+                obj[attrname] = obj2[attrname];
+            }
+            return obj;
+        },
+        getUrlVars: function() {
+            var vars = [],
+                hash;
+            if(window.location.href.indexOf('#') > 0){
+                var hashes = window.location.href.slice(window.location.href.indexOf('#') + 1).split('&');
+                for (var i = 0; i < hashes.length; i++) {
+                    hash = hashes[i].split('=');
+                    // vars.push(hash[0]);
+                    vars[hash[0]] = hash[1];
+                }
+            }
+            return vars;
+        },
+        getUrlVar: function(name) {
+            return $.getUrlVars()[name];
         }
     });
 })(jQuery);
@@ -93,7 +134,7 @@ $(function(){
         currentLayers.clearLayers();
         // Flip the filter switch to disable all usual map interactions.
         filtersEnabled = true;
-        var academic_year = $('input[name=academic_year]:checked').val();
+        var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
         if (e.object.type == 'school') {
             if(e.object.feature !== null && e.object.feature !== "{}"){
                 school = JSON.parse(e.object.feature);
@@ -230,6 +271,8 @@ $(function(){
         layer.on({
             click: function(e) {
                 console.log(e);
+                $('.marker-bounce').removeClass('marker-bounce');
+                $(e.target._icon).addClass('marker-bounce');
                 var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
                 if (feature.properties.entity_type == 'district') {
                     // Call district.getInfo and populate popup.
@@ -305,46 +348,29 @@ $(function(){
         );
     }
 
-    function loadEntityData(entity) {
+    function loadEntityData(entity, params) {
         bbox = map.getBounds().toBBoxString();
+        var extraParams = {};
         // Clear current layers.
         currentLayers.clearLayers();
-        DISE.call(entity + '.search', '10-11', {
-            bbox: bbox,
-        }, function(data) {
-            if (entity == 'Block') {
-                blockLayer = createLayer(data.blocks, blockIcon);
-                layerIDs.block = blockLayer._leaflet_id;
-                blockLayer.addTo(currentLayers);
-            } else if (entity == 'Cluster') {
-                clusterLayer = createLayer(data.clusters, clusterIcon);
-                layerIDs.cluster = clusterLayer._leaflet_id;
-                clusterLayer.addTo(currentLayers);
-            } else if (entity == 'District') {
-                districtLayer = createLayer(data.districts, districtIcon);
-                layerIDs.district = districtLayer._leaflet_id;
-                districtLayer.addTo(currentLayers);
-            } else {
-                schoolLayer = createLayer(data.schools, schoolIcon);
-                schoolLayer._leaflet_id = layerIDs.school;
-                schoolLayer.addTo(currentLayers);
-            }
-        });
+
+        var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
+        extraParams['do'] = entity + '.search';
+        extraParams['session'] = academic_year;
+
+        if(typeof params !== 'undefined' && typeof params === 'object'){
+            extraParams = $.mergeObj(extraParams, params);
+        }
+
+        extraParams['bbox'] = bbox;
+
+        $.updateUrlParams(extraParams);
     }
 
     function mapInit () {
         // Load the district data and plot.
-        bbox = map.getBounds().toBBoxString();
-        DISE.call('District.search', '10-11', {
-            bbox: bbox,
-        }, function(data) {
-            districtLayer = createLayer(data.districts, districtIcon);
-            layerIDs.district = districtLayer._leaflet_id;
-            districtLayer.addTo(currentLayers);
-        });
+        loadEntityData('District');
     }
-    // Invoke initial map layers.
-    mapInit();
 
     function updateLayers (zoom) {
         if (zoom <=8) {
@@ -387,6 +413,9 @@ $(function(){
       // If filters are enabled then don't load the usual layers.
       if (!filtersEnabled) {
         updateLayers(map.getZoom());
+      }else{
+        var bbox = map.getBounds().toBBoxString();
+        $.updateUrlParams({bbox: bbox});
       }
     })
 
@@ -396,6 +425,9 @@ $(function(){
         currentLayers.eachLayer(function(layer) {
           updateData(layer);
         });
+      }else{
+        var bbox = map.getBounds().toBBoxString();
+        $.updateUrlParams({bbox: bbox});
       }
     })
 
@@ -404,5 +436,68 @@ $(function(){
     function setLayerView (layer, zoom) {
         map.setView(layer.getLayers()[0].getLatLng(), zoom);
     }
+
+    function handleHashChange(e) {
+        if ($.getUrlVar('do') !== undefined) {
+            // Invoke initial map layers.
+            var params = $.getUrlVars();
+            var method = params.do;
+            if(method.split('.').length !== 2){
+                alert('invalid do parameter');
+            }else{
+                delete params.do;
+                var entity = method.split('.')[0];
+            }
+
+            var session = params.academic_year || $('input[name=academic_year]:checked').val() || '10-11';
+            delete params.academic_year;
+
+            // Clear current layers.
+            currentLayers.clearLayers();
+
+            var bbox = $.getUrlVar('bbox').split(',');
+            map.fitBounds([
+                [bbox[1], bbox[0]],
+                [bbox[3], bbox[2]]
+            ]);
+
+            DISE.call(method, session, params, function(data) {
+                if (entity == 'Block') {
+                    blockLayer = createLayer(data.blocks, blockIcon);
+                    layerIDs.block = blockLayer._leaflet_id;
+                    blockLayer.addTo(currentLayers);
+                } else if (entity == 'Cluster') {
+                    clusterLayer = createLayer(data.clusters, clusterIcon);
+                    layerIDs.cluster = clusterLayer._leaflet_id;
+                    clusterLayer.addTo(currentLayers);
+                } else if (entity == 'District') {
+                    districtLayer = createLayer(data.districts, districtIcon);
+                    layerIDs.district = districtLayer._leaflet_id;
+                    districtLayer.addTo(currentLayers);
+                } else if (entity == 'School'){
+                    schoolLayer = createLayer(data.schools, schoolIcon);
+                    schoolLayer._leaflet_id = layerIDs.school;
+                    schoolLayer.addTo(currentLayers);
+                }
+            });
+        }
+    }
+
+    if ("onhashchange" in window){
+        $(window).on('hashchange', handleHashChange);
+    }
+
+    if ($.getUrlVar('do') === undefined) {
+        // Invoke initial map layers.
+        console.log('initiating map');
+        mapInit();
+    } else {
+        // Invoke search mechanism
+        filtersEnabled = true;
+        console.log('do ' + $.getUrlVar('do'));
+
+        // query and show the results in hash
+        handleHashChange();
+    };
 
 });

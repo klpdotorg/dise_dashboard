@@ -1,0 +1,55 @@
+keyframes bounce{
+    0%{
+        margin-top: -45px;
+    }
+    45%{
+        margin-top: -45px;
+    }
+    100%{
+        margin-top: -40px;
+    }
+}
+
+@-webkit-keyframes bounce{
+    0%{
+        margin-top: -40px;
+    }
+    45%{
+        margin-top: -45px;
+    }
+    100%{
+        margin-top: -40px;
+    }
+}
+
+@-moz-keyframes bounce{
+    0%{
+        margin-top: -40px;
+    }
+    45%{
+        margin-top: -45px;
+    }
+    100%{
+        margin-top: -40px;
+    }
+}
+
+@-o-keyframes bounce{
+    0%{
+        margin-top: -40px;
+    }
+    45%{
+        margin-top: -45px;
+    }
+    100%{
+        margin-top: -40px;
+    }
+}
+
+.marker-bounce{
+    animation: bounce 1s infinite;
+    -webkit-animation: bounce 1s infinite;
+    -moz-animation: bounce 1s infinite;
+    -ms-animation: bounce 1s infinite;
+    -o-animation: bounce 1s infinite;
+}
