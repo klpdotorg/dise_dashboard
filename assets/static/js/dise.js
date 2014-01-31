@@ -78,11 +78,13 @@
         getUrlVars: function() {
             var vars = [],
                 hash;
-            var hashes = window.location.href.slice(window.location.href.indexOf('#') + 1).split('&');
-            for (var i = 0; i < hashes.length; i++) {
-                hash = hashes[i].split('=');
-                // vars.push(hash[0]);
-                vars[hash[0]] = hash[1];
+            if(window.location.href.indexOf('#') > 0){
+                var hashes = window.location.href.slice(window.location.href.indexOf('#') + 1).split('&');
+                for (var i = 0; i < hashes.length; i++) {
+                    hash = hashes[i].split('=');
+                    // vars.push(hash[0]);
+                    vars[hash[0]] = hash[1];
+                }
             }
             return vars;
         },
@@ -346,37 +348,21 @@ $(function(){
 
     function loadEntityData(entity, params) {
         bbox = map.getBounds().toBBoxString();
+        var extraParams = {};
         // Clear current layers.
         currentLayers.clearLayers();
 
-        var extraParams = {
-            bbox: bbox,
-        }
+        var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
+        extraParams['do'] = entity + '.search';
+        extraParams['session'] = academic_year;
 
         if(typeof params !== 'undefined' && typeof params === 'object'){
             extraParams = $.mergeObj(extraParams, params);
         }
 
-        var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
-        DISE.search(entity, academic_year, extraParams, function(data) {
-            if (entity == 'Block') {
-                blockLayer = createLayer(data.blocks, blockIcon);
-                layerIDs.block = blockLayer._leaflet_id;
-                blockLayer.addTo(currentLayers);
-            } else if (entity == 'Cluster') {
-                clusterLayer = createLayer(data.clusters, clusterIcon);
-                layerIDs.cluster = clusterLayer._leaflet_id;
-                clusterLayer.addTo(currentLayers);
-            } else if (entity == 'District') {
-                districtLayer = createLayer(data.districts, districtIcon);
-                layerIDs.district = districtLayer._leaflet_id;
-                districtLayer.addTo(currentLayers);
-            } else {
-                schoolLayer = createLayer(data.schools, schoolIcon);
-                schoolLayer._leaflet_id = layerIDs.school;
-                schoolLayer.addTo(currentLayers);
-            }
-        });
+        extraParams['bbox'] = bbox;
+
+        $.updateUrlParams(extraParams);
     }
 
     function mapInit () {
@@ -461,7 +447,7 @@ $(function(){
                 var entity = method.split('.')[0];
             }
 
-            var session = params.academic_year || '10-11';
+            var session = params.academic_year || $('input[name=academic_year]:checked').val() || '10-11';
             delete params.academic_year;
 
             // Clear current layers.
