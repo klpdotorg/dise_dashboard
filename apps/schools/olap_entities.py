@@ -114,7 +114,8 @@ class School(BaseEntity):
                    'total_boys', 'total_girls', 'male_tch', 'female_tch',
                    'medium_of_instruction', 'sch_management', 'sch_category',
                    'library_yn', 'books_in_library', 'no_of_computers',
-                   'electricity', 'drinking_water']
+                   'electricity', 'drinking_water', 'toilet_common', 'toilet_boys',
+                   'toilet_girls', 'tot_clrooms']
 
     # For methods that start with `School`
     def _search(self, params):
