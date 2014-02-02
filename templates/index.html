@@ -230,38 +230,38 @@
     <span class="glyphicon glyphicon-cog"></span>
   </div>
 
-  <div class="no-of-matches">
+  <div class="no-of-matches" style="display:none">
     42 schools found <small>(37 on map)</small>
   </div>
 
   <div id="schools">
-    <div class="popup">
+    <div class="popup" id='popup-school'>
       <h4>
-        <span class="glyphicon glyphicon-chevron-left"></span>
-        Delhi Public School
-        <small>Greater NOIDA</small>
+        <span class="glyphicon glyphicon-chevron-left" style="display:none"></span>
+        <span class="name"></span>
+        <small class="address"></small>
       </h4>
 
 
       <div class="row">
         <div class="col-md-4">
           <h5>Students</h5>
-          <div class="circle_stat">
-            45
+          <div class="circle_stat total_student">
+
           </div>
         </div>
 
         <div class="col-md-4">
           <h5 class="blue">Boys</h5>
-          <div class="circle_stat blue">
-            12
+          <div class="circle_stat blue total_boys">
+
           </div>
         </div>
 
         <div class="col-md-4">
           <h5 class="pink">Girls</h5>
-          <div class="circle_stat pink">
-            33
+          <div class="circle_stat pink total_girls">
+
           </div>
         </div>
       </div>
@@ -271,22 +271,22 @@
       <div class="row">
         <div class="col-md-4">
           <h5>Toilets</h5>
-          <div class="circle_stat">
-            45
+          <div class="circle_stat total_toilet">
+
           </div>
         </div>
 
         <div class="col-md-4">
           <h5 class="blue">for Boys</h5>
-          <div class="circle_stat blue">
-            12
+          <div class="circle_stat blue total_toilet_boys">
+
           </div>
         </div>
 
         <div class="col-md-4">
           <h5 class="pink">for Girls</h5>
-          <div class="circle_stat pink">
-            33
+          <div class="circle_stat pink total_toilet_girls">
+
           </div>
         </div>
       </div>
@@ -297,14 +297,14 @@
       <div class="row">
         <div class="col-md-4 col-md-push-2">
           <h5>Classrooms</h5>
-          <div class="circle_stat">
-            33
+          <div class="circle_stat total_classrooms">
+
           </div>
         </div>
         <div class="col-md-4 col-md-push-2">
           <h5 class="green">PTR Ratio</h5>
-          <div class="circle_stat green">
-            72
+          <div class="circle_stat green ptr">
+
           </div>
         </div>
       </div>
@@ -314,12 +314,12 @@
       <div class="row">
         <div class="col-md-6 right-shift">
           <h5 class="question">Medium of Instruction</h5>
-          <p class="answer medium_of_instruction">English</p>
+          <p class="answer medium_of_instruction"></p>
         </div>
 
         <div class="col-md-6">
           <h5 class="question">Category</h5>
-          <p class="answer sch_category">Second</p>
+          <p class="answer sch_category"></p>
         </div>
       </div>
 
@@ -328,12 +328,12 @@
       <div class="row">
         <div class="col-md-6 right-shift">
           <h5 class="question">Management</h5>
-          <p class="answer sch_category">Private</p>
+          <p class="answer sch_management"></p>
         </div>
 
         <div class="col-md-6">
           <h5 class="question">Electricity</h5>
-          <p class="answer sch_category">Yes</p>
+          <p class="answer electricity"></p>
         </div>
       </div>
 
@@ -342,7 +342,7 @@
       <div class="row">
         <div class="col-md-6 right-shift">
           <h5 class="question">Library</h5>
-          <p class="answer sch_category">Yes<small>, 100 books</small></p>
+          <p class="answer library">Yes<small>, 100 books</small></p>
         </div>
       </div>
 
