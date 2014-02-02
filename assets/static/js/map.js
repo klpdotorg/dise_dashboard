@@ -11,7 +11,7 @@ var bounds;
 var districtLayer, blockLayer, clusterLayer, schoolLayer;
 // Structure to hold auto-assigned layer IDs
 var layerIDs = {'district': '', 'block': '', 'cluster': '',
-              'school': ''};              
+              'school': ''};
 // Initialise the map object.
 map = L.map('map-holder', {zoomControl: true, attributionControl: false}).setView(karnataka, 8);
 
@@ -44,6 +44,3 @@ districtIcon = customIcon('district');
 blockIcon = customIcon('block');
 clusterIcon = customIcon('cluster');
 schoolIcon = customIcon('school');
-
-
-
