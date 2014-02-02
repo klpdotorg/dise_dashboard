@@ -135,13 +135,14 @@ $(function(){
         // Flip the filter switch to disable all usual map interactions.
         filtersEnabled = true;
         var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
-        if (entity == 'School') {
+        if (e.object.type == 'school') {
             if(e.object.feature !== null && e.object.feature !== "{}"){
                 school = JSON.parse(e.object.feature);
-                SchoolPane.fill(school.properties);
-                newLayer = createLayer(school, schoolIcon);
-                setLayerView(newLayer, 15);
-                newLayer.addTo(currentLayers);
+                $.updateUrlParams({
+                    'do': 'School.getInfo',
+                    session: academic_year,
+                    code: school.id
+                });
             } else {
                 alert("Sorry, this school doesn't have a location.");
             }
