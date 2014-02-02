@@ -135,7 +135,7 @@ $(function(){
         // Flip the filter switch to disable all usual map interactions.
         filtersEnabled = true;
         var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
-        if (e.object.type == 'school') {
+        if (entity == 'School') {
             if(e.object.feature !== null && e.object.feature !== "{}"){
                 school = JSON.parse(e.object.feature);
                 SchoolPane.fill(school.properties);
@@ -206,14 +206,25 @@ $(function(){
             this.hide();
 
             $('#'+this.divid).find('.name').html(school.school_name + ' <small> Estd. ' + school.yeur_estd + '</small>');
+            $('#'+this.divid).find('.total_boys').html(school.total_boys);
+            $('#'+this.divid).find('.total_girls').html(school.total_girls);
             $('#'+this.divid).find('.total_student').html(school.total_boys+school.total_girls);
-            $('#'+this.divid).find('.total_tch').html(school.male_tch+school.female_tch);
+
+            $('#'+this.divid).find('.total_toilet').html(
+                school.toilet_common + school.toilet_girls + school.toilet_boys
+            );
+            $('#'+this.divid).find('.total_toilet_girls').html(school.toilet_girls);
+            $('#'+this.divid).find('.total_toilet_boys').html(school.toilet_boys);
+
+            $('#'+this.divid).find('.total_classrooms').html(school.tot_clrooms);
+            $('#'+this.divid).find('.ptr').html(
+                (school.total_boys+school.total_girls)/(school.male_tch+school.female_tch)
+            );
             $('#'+this.divid).find('.medium_of_instruction').html(school.medium_of_instruction_display);
             $('#'+this.divid).find('.sch_category').html(school.sch_category_display);
             $('#'+this.divid).find('.sch_management').html(school.sch_management_display);
             $('#'+this.divid).find('.electricity').html(school.electricity_display);
-            $('#'+this.divid).find('.library_yn').html(school.library_yn_display);
-            $('#'+this.divid).find('.books_in_library').html(school.books_in_library);
+            $('#'+this.divid).find('.library').html(school.library_yn_display + ", " + school.books_in_library + " books.");
             $('#'+this.divid).find('.address').html([
                     school.cluster_name, school.block_name,
                     school.district, school.pincode
@@ -264,6 +275,14 @@ $(function(){
 
     SchoolPane.hide();
     OtherPane.hide();
+
+    function getPane(entity) {
+        if (['School', 'school'].indexOf(entity) > -1) {
+            return SchoolPane;
+        } else if (['cluster', 'block', 'district', 'pincode', 'Cluster', 'Block', 'District', 'Pincode'].indexOf(entity) > -1) {
+            return OtherPane;
+        }
+    }
 
     function onEachFeature(feature, layer) {
         // Bypass the usual click event and register based on
@@ -447,6 +466,13 @@ $(function(){
             }else{
                 delete params.do;
                 var entity = method.split('.')[0];
+                var entity_lower = entity.toLowerCase();
+                var action = method.split('.')[1];
+            }
+
+            if (['School', 'Cluster', 'Block', 'District', 'Pincode'].indexOf(entity) == -1) {
+                alert('Sorry, ' + entity + ' is an unknown entity.');
+                return;
             }
 
             var session = params.academic_year || $('input[name=academic_year]:checked').val() || '10-11';
@@ -455,31 +481,37 @@ $(function(){
             // Clear current layers.
             currentLayers.clearLayers();
 
-            var bbox = $.getUrlVar('bbox').split(',');
-            map.fitBounds([
-                [bbox[1], bbox[0]],
-                [bbox[3], bbox[2]]
-            ]);
+            if ($.getUrlVar('bbox') !== undefined){
+                var bbox = $.getUrlVar('bbox').split(',');
+                map.fitBounds([
+                    [bbox[1], bbox[0]],
+                    [bbox[3], bbox[2]]
+                ]);
+            }
 
-            DISE.call(method, session, params, function(data) {
-                if (entity == 'Block') {
-                    blockLayer = createLayer(data.blocks, blockIcon);
-                    layerIDs.block = blockLayer._leaflet_id;
-                    blockLayer.addTo(currentLayers);
-                } else if (entity == 'Cluster') {
-                    clusterLayer = createLayer(data.clusters, clusterIcon);
-                    layerIDs.cluster = clusterLayer._leaflet_id;
-                    clusterLayer.addTo(currentLayers);
-                } else if (entity == 'District') {
-                    districtLayer = createLayer(data.districts, districtIcon);
-                    layerIDs.district = districtLayer._leaflet_id;
-                    districtLayer.addTo(currentLayers);
-                } else if (entity == 'School'){
-                    schoolLayer = createLayer(data.schools, schoolIcon);
-                    schoolLayer._leaflet_id = layerIDs.school;
-                    schoolLayer.addTo(currentLayers);
-                }
-            });
+            if (action == 'getInfo'){
+                // just needs to place the marker and fill Pane
+                DISE.call(method, session, params, function(data) {
+                    if (data.error !== undefined) {
+                        alert(data.error);
+                        return;
+                    }
+
+                    pane = getPane(entity);
+                    pane.fill(data[entity_lower].properties);
+
+                    if (data[entity_lower].geometry.coordinates.length == 2) {
+                        newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
+                        setLayerView(newLayer, 15);
+                        newLayer.addTo(currentLayers);
+                    } else {
+                        alert('Sorry, no location available for this.');
+                    }
+                });
+            } else if (['search', 'getSchools', 'getClusters', 'getBlocks'].indexOf(action) > -1) {
+                // show all the markers
+                // if include_entity is set, fill the Pane
+            }
         }
     }
 
