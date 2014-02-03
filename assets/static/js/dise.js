@@ -236,7 +236,7 @@ $(function(){
     }
 
     var OtherPane = {
-        divid: 'popup-cluster',
+        divid: 'popup-others',
         show: function() {
             // shows the other entity pane
             $('#'+this.divid).show();
@@ -265,10 +265,23 @@ $(function(){
             $('#'+this.divid).find('.entity_name').html(entity[entity_name] + ' <small>' + entity.entity_type + '</small>');
             $('#'+this.divid).find('.entity_school').html(entity.sum_schools);
             $('#'+this.divid).find('.entity_student').html(entity.sum_boys+entity.sum_girls);
+            $('#'+this.divid).find('.sum_boys').html(entity.sum_boys);
+            $('#'+this.divid).find('.sum_girls').html(entity.sum_girls);
+
             $('#'+this.divid).find('.entity_teacher').html(entity.sum_male_tch+entity.sum_female_tch);
+            $('#'+this.divid).find('.sum_male_tch').html(entity.sum_male_tch);
+            $('#'+this.divid).find('.sum_female_tch').html(entity.sum_female_tch);
+
             $('#'+this.divid).find('.entity_library').html(entity.sum_has_library);
             $('#'+this.divid).find('.entity_electricity').html(entity.sum_has_electricity);
+
             $('#'+this.divid).find('.entity_toilet').html(entity.sum_toilet_common+entity.sum_toilet_boys+entity.sum_toilet_girls);
+            $('#'+this.divid).find('.sum_toilet_boys').html(entity.sum_toilet_boys);
+            $('#'+this.divid).find('.sum_toilet_girls').html(entity.sum_toilet_girls);
+
+            $('#'+this.divid).find('.entity_ptr').html(
+                Math.round((entity.sum_boys+entity.sum_girls) / (entity.sum_male_tch+entity.sum_female_tch))
+            );
 
             this.show();
         }
@@ -431,24 +444,15 @@ $(function(){
 // When the map is zoomed, load the necessary data
     map.on('zoomend', function(e) {
       // If filters are enabled then don't load the usual layers.
-      if (!filtersEnabled) {
-        updateLayers(map.getZoom());
-      }else{
         var bbox = map.getBounds().toBBoxString();
         $.updateUrlParams({bbox: bbox});
-      }
     })
 
 // When the map is panned, load the data in the new bounds.
     map.on('dragend', function(e) {
-      if (!filtersEnabled) {
-        currentLayers.eachLayer(function(layer) {
-          updateData(layer);
-        });
-      }else{
         var bbox = map.getBounds().toBBoxString();
         $.updateUrlParams({bbox: bbox});
-      }
+
     })
 
 // Function to set the map view to the layer when a filter/search
@@ -503,7 +507,7 @@ $(function(){
 
                     if (data[entity_lower].geometry.coordinates.length == 2) {
                         newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
-                        setLayerView(newLayer, 15);
+                        // setLayerView(newLayer, 15);
                         newLayer.addTo(currentLayers);
                     } else {
                         alert('Sorry, no location available for this.');
@@ -512,6 +516,26 @@ $(function(){
             } else if (['search', 'getSchools', 'getClusters', 'getBlocks'].indexOf(action) > -1) {
                 // show all the markers
                 // if include_entity is set, fill the Pane
+                DISE.call(method, session, params, function(data) {
+                    if (data.error !== undefined) {
+                        alert(data.error);
+                        return;
+                    }
+                    if (action == 'search') {
+                        icon = customIcon(entity_lower)
+                    }else if (action == 'getSchools') {
+                        icon = customIcon('school')
+                    }
+
+                    newLayer = createLayer(data.results, icon);
+                    // setLayerView(newLayer, 12);
+                    newLayer.addTo(currentLayers);
+
+                    if (params.include_entity !== undefined && params.include_entity == 'true') {
+                        pane = getPane(entity);
+                        pane.fill(data[entity_lower].properties);
+                    }
+                });
             }
         }
     }
