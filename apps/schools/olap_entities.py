@@ -92,7 +92,7 @@ class BaseEntity:
                         self.param_name_for_secondary_key)
                     filters[self.secondary_key + '__iexact'] = secondary_key
 
-            entity_obj = EntityModel.objects.only(*self.only_fields).get(**filters)
+            entity_obj = EntityModel.objects.get(**filters)
 
             result[self.entity_type] = self._get_geojson(entity_obj)
         except (EntityModel.DoesNotExist, Exception) as e:
@@ -153,7 +153,7 @@ class School(BaseEntity):
         temp_l = []
         for sch in schools:
             temp_l.append(self._get_geojson(sch))
-        result['schools'] = FeatureCollection(temp_l)
+        result['results'] = FeatureCollection(temp_l)
         return result
 
 
@@ -191,7 +191,7 @@ class Cluster(BaseEntity):
             )
             for sch in schools:
                 temp_l.append(school_api._get_geojson(sch))
-            result['schools'] = FeatureCollection(temp_l)
+            result['results'] = FeatureCollection(temp_l)
 
         except (SchoolModel.DoesNotExist, Exception) as e:
             result['error'] = str(e)
@@ -270,7 +270,7 @@ class Block(BaseEntity):
             )
             for sch in schools:
                 temp_l.append(school_api._get_geojson(sch))
-            result['schools'] = FeatureCollection(temp_l)
+            result['results'] = FeatureCollection(temp_l)
 
         except (SchoolModel.DoesNotExist, Exception) as e:
             result['error'] = str(e)
@@ -345,7 +345,7 @@ class District(BaseEntity):
             )
             for sch in schools:
                 temp_l.append(school_api._get_geojson(sch))
-            result['schools'] = FeatureCollection(temp_l)
+            result['results'] = FeatureCollection(temp_l)
 
         except (SchoolModel.DoesNotExist, Exception) as e:
             result['error'] = str(e)
@@ -422,7 +422,7 @@ class Pincode(BaseEntity):
             )
             for sch in schools:
                 temp_l.append(school_api._get_geojson(sch))
-            result['schools'] = FeatureCollection(temp_l)
+            result['results'] = FeatureCollection(temp_l)
 
         except (SchoolModel.DoesNotExist, Exception) as e:
             result['error'] = str(e)
