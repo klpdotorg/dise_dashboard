@@ -39,7 +39,8 @@ class BaseEntity:
         include_entity = params.get('include_entity', False)
         if include_entity:
             entity_info = obj._getinfo(params)
-            result[obj.entity_type] = entity_info[obj.entity_type]
+            if obj.entity_type in entity_info:
+                result[obj.entity_type] = entity_info[obj.entity_type]
 
         return cls.to_geojson_str(result)
 
@@ -74,7 +75,7 @@ class BaseEntity:
 
     def _getinfo(self, params):
         # gets the details of a school and returns a dictionary
-        primary_key = params.get(self.param_name_for_primary_key, -1)
+        primary_key = params.get(self.param_name_for_primary_key, -1).replace('+', ' ')
         result = dict()
         result['query'] = params
 
@@ -174,7 +175,7 @@ class Cluster(BaseEntity):
         # returns list of schools in a given cluster
         # if format = geo, returns FeatureCollection
         # if format = plain, returns a plain list
-        name = params.get('name')
+        name = params.get('name').replace('+', ' ')
         result = dict()
         result['query'] = params
 
@@ -189,6 +190,7 @@ class Cluster(BaseEntity):
                 # because there is no way to show them
                 centroid__isnull=False
             )
+
             for sch in schools:
                 temp_l.append(school_api._get_geojson(sch))
             result['results'] = FeatureCollection(temp_l)
@@ -232,7 +234,7 @@ class Cluster(BaseEntity):
         for clst in clusters:
             temp_l.append(self._get_geojson(clst))
 
-        result['clusters'] = FeatureCollection(temp_l)
+        result['results'] = FeatureCollection(temp_l)
         return result
 
 
@@ -307,7 +309,7 @@ class Block(BaseEntity):
         for blk in blocks:
             temp_l.append(self._get_geojson(blk))
 
-        result['blocks'] = FeatureCollection(temp_l)
+        result['results'] = FeatureCollection(temp_l)
         return result
 
 
@@ -384,7 +386,7 @@ class District(BaseEntity):
         for dist in districts:
             temp_l.append(self._get_geojson(dist))
 
-        result['districts'] = FeatureCollection(temp_l)
+        result['results'] = FeatureCollection(temp_l)
         return result
 
 
@@ -460,5 +462,5 @@ class Pincode(BaseEntity):
         temp_l = []
         for pin in pincodes:
             temp_l.append(self._get_geojson(pin))
-        result['pincodes'] = FeatureCollection(temp_l)
+        result['results'] = FeatureCollection(temp_l)
         return result
