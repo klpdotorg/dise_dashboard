@@ -126,10 +126,9 @@ $(function(){
         }
     }).on('select2-clearing', function(e) {
         // When you clear select2 with close button
-        filtersEnabled = false;
-        currentLayers.clearLayers();
-        map.setZoom(8);
+        mapInit();
     }).on("select2-selecting", function(e) {
+        console.log(e);
         // Clear the preloaded layers when the search has been used
         currentLayers.clearLayers();
         // Flip the filter switch to disable all usual map interactions.
@@ -147,44 +146,32 @@ $(function(){
                 alert("Sorry, this school doesn't have a location.");
             }
         } else if (e.object.type == 'cluster'){
-            DISE.call('Cluster.getSchools', academic_year, {
+            $.updateUrlParams({
+                'do': 'Cluster.getSchools',
+                session: academic_year,
                 name: e.object.id,
-                include_entity: 'True'
-            }, function(data) {
-                OtherPane.fill(data.cluster.properties);
-                newLayer = createLayer(data.schools, schoolIcon);
-                setLayerView(newLayer, 12);
-                newLayer.addTo(currentLayers);
+                include_entity: 'true'
             });
         } else if (e.object.type == 'block'){
-            DISE.call('Block.getSchools', academic_year, {
+            $.updateUrlParams({
+                'do': 'Block.getSchools',
+                session: academic_year,
                 name: e.object.id,
-                include_entity: 'True'
-            }, function(data) {
-                OtherPane.fill(data.block.properties);
-                newLayer = createLayer(data.schools, schoolIcon);
-                setLayerView(newLayer, 12);
-                newLayer.addTo(currentLayers);
+                include_entity: 'true'
             });
         } else if (e.object.type == 'district'){
-            DISE.call('District.getSchools', academic_year, {
+            $.updateUrlParams({
+                'do': 'District.getSchools',
+                session: academic_year,
                 name: e.object.id,
-                include_entity: 'True'
-            }, function(data) {
-                OtherPane.fill(data.district.properties);
-                newLayer = createLayer(data.schools, schoolIcon);
-                setLayerView(newLayer, 12);
-                newLayer.addTo(currentLayers);
+                include_entity: 'true'
             });
         } else if (e.object.type == 'pincode'){
-            DISE.call('Pincode.getSchools', academic_year, {
+            $.updateUrlParams({
+                'do': 'Pincode.getSchools',
+                session: academic_year,
                 pincode: e.object.id,
-                include_entity: 'True'
-            }, function(data) {
-                OtherPane.fill(data.pincode.properties);
-                newLayer = createLayer(data.schools, schoolIcon);
-                setLayerView(newLayer, 12);
-                newLayer.addTo(currentLayers);
+                include_entity: 'true'
             });
         } else {
             // do nothing
@@ -290,6 +277,11 @@ $(function(){
     SchoolPane.hide();
     OtherPane.hide();
 
+    /**
+     * Gets appropriate Pane for the given entity
+     * @param  {string} entity
+     * @return {object}
+     */
     function getPane(entity) {
         if (['School', 'school'].indexOf(entity) > -1) {
             return SchoolPane;
@@ -402,6 +394,7 @@ $(function(){
 
     function mapInit () {
         // Load the district data and plot.
+        filtersEnabled = false;
         loadEntityData('District');
     }
 
@@ -444,15 +437,17 @@ $(function(){
 // When the map is zoomed, load the necessary data
     map.on('zoomend', function(e) {
       // If filters are enabled then don't load the usual layers.
-        var bbox = map.getBounds().toBBoxString();
-        $.updateUrlParams({bbox: bbox});
+        //var bbox = map.getBounds().toBBoxString();
+
+        if (filtersEnabled !== true) {
+            updateLayers(map.getZoom());
+        }
     })
 
 // When the map is panned, load the data in the new bounds.
     map.on('dragend', function(e) {
         var bbox = map.getBounds().toBBoxString();
         $.updateUrlParams({bbox: bbox});
-
     })
 
 // Function to set the map view to the layer when a filter/search
@@ -496,6 +491,7 @@ $(function(){
 
             if (action == 'getInfo'){
                 // just needs to place the marker and fill Pane
+                filtersEnabled = true;
                 DISE.call(method, session, params, function(data) {
                     if (data.error !== undefined) {
                         alert(data.error);
@@ -507,33 +503,59 @@ $(function(){
 
                     if (data[entity_lower].geometry.coordinates.length == 2) {
                         newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
-                        // setLayerView(newLayer, 15);
+                        map.panTo([data[entity_lower].geometry.coordinates[1], data[entity_lower].geometry.coordinates[0]])
                         newLayer.addTo(currentLayers);
                     } else {
                         alert('Sorry, no location available for this.');
                     }
                 });
-            } else if (['search', 'getSchools', 'getClusters', 'getBlocks'].indexOf(action) > -1) {
+            } else if (['getSchools', 'getClusters', 'getBlocks'].indexOf(action) > -1) {
                 // show all the markers
                 // if include_entity is set, fill the Pane
+                filtersEnabled = true;
                 DISE.call(method, session, params, function(data) {
                     if (data.error !== undefined) {
                         alert(data.error);
                         return;
                     }
-                    if (action == 'search') {
-                        icon = customIcon(entity_lower)
-                    }else if (action == 'getSchools') {
-                        icon = customIcon('school')
+
+                    if (action == 'getSchools') {
+                        icon = customIcon('school');
                     }
 
                     newLayer = createLayer(data.results, icon);
-                    // setLayerView(newLayer, 12);
                     newLayer.addTo(currentLayers);
 
                     if (params.include_entity !== undefined && params.include_entity == 'true') {
                         pane = getPane(entity);
                         pane.fill(data[entity_lower].properties);
+                        var latlng = L.latLng(
+                            data[entity_lower].geometry.coordinates[1],
+                            data[entity_lower].geometry.coordinates[0]
+                        )
+
+                        map.panTo(latlng);
+                    }
+                });
+            } else if (['search'].indexOf(action) > -1) {
+                filtersEnabled = false;
+
+                DISE.call(method, session, params, function(data) {
+                    if (data.error !== undefined) {
+                        alert(data.error);
+                        return;
+                    }
+
+                    icon = customIcon(entity_lower);
+                    newLayer = createLayer(data.results, icon);
+                    newLayer.addTo(currentLayers);
+
+                    for (var i=0; i<=data.results.length; i++) {
+                        if(data.results[i].geometry.coordinates.length == 2 &&
+                           !map.getBounds().contains(L.LatLng(data.results[i].geometry.coordinates))) {
+                            map.panTo(data.results[0].geometry.coordinates);
+                            break;
+                        }
                     }
                 });
             }
