@@ -75,7 +75,10 @@ class BaseEntity:
 
     def _getinfo(self, params):
         # gets the details of a school and returns a dictionary
-        primary_key = params.get(self.param_name_for_primary_key, -1).replace('+', ' ')
+        primary_key = params.get(self.param_name_for_primary_key, -1)
+        if type(primary_key) == str:
+            primary_key = primary_key.replace('+', ' ')
+
         result = dict()
         result['query'] = params
 
