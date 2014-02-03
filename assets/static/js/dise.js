@@ -550,13 +550,6 @@ $(function(){
                     newLayer = createLayer(data.results, icon);
                     newLayer.addTo(currentLayers);
 
-                    for (var i=0; i<=data.results.length; i++) {
-                        if(data.results[i].geometry.coordinates.length == 2 &&
-                           !map.getBounds().contains(L.LatLng(data.results[i].geometry.coordinates))) {
-                            map.panTo(data.results[0].geometry.coordinates);
-                            break;
-                        }
-                    }
                 });
             }
         }
