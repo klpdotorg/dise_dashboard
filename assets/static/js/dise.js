@@ -298,6 +298,14 @@ $(function(){
         }
     }
 
+
+    function clearCrumbs(){
+        var ol = $("ol.top-breadcrumbs");
+        var logo = $("ol.top-breadcrumbs li")[0];
+        ol.html("");
+        $(logo).appendTo(ol);
+    }
+
     /**
      * Fills the breadcrumb with the parent entities
      * @param  {str} entity_type       school/cluster/block/district
@@ -305,6 +313,7 @@ $(function(){
      * @return {void}                   [description]
      */
     function fillCrumb(entity_type, entity_properties) {
+        clearCrumbs();
         if (['School', 'school'].indexOf(entity_type) > -1) {
             UI.renderCrumbs([
                 [entity_properties.district, "#"],
