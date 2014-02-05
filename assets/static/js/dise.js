@@ -186,6 +186,16 @@ $(function(){
         console.log(e);
     });
 
+    $("#presets .glyphicon-cog").click(function(){
+        var preset = $("select.preset_selector").val();
+
+        if (preset == ""){
+            alert('Please select a preset');
+        } else {
+            $("#preset-editor-" + preset).toggleClass("activate");
+        }
+    });
+
     var SchoolPane = {
         divid: 'popup-school',
         show: function() {

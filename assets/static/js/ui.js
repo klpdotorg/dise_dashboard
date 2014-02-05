@@ -7,12 +7,8 @@ var UI = {
             if(!confirm("Are you sure? This action cannot be undone!")) return false;
         });
 
-        $("#presets .glyphicon-cog").click(function(){
-            $("#preset-editor").toggleClass("activate");
-        });
-
         $(".action-row button, .action-row a").click(function(e){
-            $("#preset-editor").toggleClass("activate");
+            $(".preset-editor").toggleClass("activate");
         });
 
         $("#control_toggle").click(function(e){
