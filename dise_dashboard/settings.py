@@ -2,7 +2,7 @@ import os
 
 DEBUG = False
 
-PROJECT_ROOT = os.getcwd()
+PROJECT_ROOT = os.path.realpath(os.path.dirname(os.path.dirname(__file__)))
 
 TEMPLATE_DEBUG = DEBUG
 
