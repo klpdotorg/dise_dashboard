@@ -308,7 +308,6 @@ $(function(){
         }
     }
 
-
     function clearCrumbs(){
         $('li.crumb').remove();
     }
@@ -323,18 +322,18 @@ $(function(){
         clearCrumbs();
         if (['School', 'school'].indexOf(entity_type) > -1) {
             UI.renderCrumbs([
-                [entity_properties.district, "#"],
-                [entity_properties.block_name, "#"],
-                [entity_properties.cluster_name, "#"]
+                [entity_properties.district, "#", 'district'],
+                [entity_properties.block_name, "#", 'block'],
+                [entity_properties.cluster_name, "#", 'block']
             ]);
         } else if (['cluster', 'Cluster'].indexOf(entity_type) > -1) {
             UI.renderCrumbs([
-                [entity_properties.district, "#"],
-                [entity_properties.block_name, "#"]
+                [entity_properties.district, "#", 'district'],
+                [entity_properties.block_name, "#", 'block']
             ]);
         } else if (['block', 'Block'].indexOf(entity_type) > -1) {
             UI.renderCrumbs([
-                [entity_properties.district, "#"]
+                [entity_properties.district, "#", 'district']
             ]);
         }
     }
