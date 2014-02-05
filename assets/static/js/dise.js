@@ -310,10 +310,7 @@ $(function(){
 
 
     function clearCrumbs(){
-        var ol = $("ol.top-breadcrumbs");
-        var logo = $("ol.top-breadcrumbs li")[0];
-        ol.html("");
-        $(logo).appendTo(ol);
+        $('li.crumb').remove();
     }
 
     /**

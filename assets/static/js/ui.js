@@ -82,7 +82,7 @@ var UI = {
 
         for (var i in bs){
             var b = bs[i];
-            var li = $("<li>");
+            var li = $("<li class='crumb'>");
             var a = $("<a>").attr("href", b[1]).html(b[0]);
             ol.append(li.append(a));
         }
