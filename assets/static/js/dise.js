@@ -178,6 +178,14 @@ $(function(){
         }
     });
 
+
+    $(".preset_selector").select2({
+        placeholder: "Select a preset",
+        allowClear: true
+    }).on("select2-selecting", function(e) {
+        console.log(e);
+    });
+
     var SchoolPane = {
         divid: 'popup-school',
         show: function() {

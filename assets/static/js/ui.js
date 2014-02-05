@@ -24,8 +24,6 @@ var UI = {
             UI.resize();
         });
 
-        $(".preset_selector").select2();
-
         $(".close_popup").on("click", function() {
            $(".popup").hide();
         });
