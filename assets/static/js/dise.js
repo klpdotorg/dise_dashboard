@@ -556,6 +556,8 @@ $(function(){
                     if (params.include_entity !== undefined && params.include_entity == 'true') {
                         pane = getPane(entity);
                         pane.fill(data[entity_lower].properties);
+                        fillCrumb(entity_lower, data[entity_lower].properties);
+
                         var latlng = L.latLng(
                             data[entity_lower].geometry.coordinates[1],
                             data[entity_lower].geometry.coordinates[0]
