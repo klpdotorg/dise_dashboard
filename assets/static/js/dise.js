@@ -353,6 +353,7 @@ $(function(){
                             alert(data.error);
                         }else{
                             OtherPane.fill(data.block.properties);
+                            fillCrumb('block', data.block.properties);
                         }
                     });
                 }
@@ -366,6 +367,7 @@ $(function(){
                             alert(data.error);
                         }else{
                             OtherPane.fill(data.cluster.properties);
+                            fillCrumb('cluster', data.cluster.properties);
                         }
                     });
                 }
@@ -378,6 +380,7 @@ $(function(){
                             alert(data.error);
                         }else{
                             SchoolPane.fill(data.school.properties);
+                            fillCrumb('school', data.school.properties);
                         }
                     });
                 };
