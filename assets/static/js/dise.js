@@ -24,7 +24,7 @@
     $.extend({
         updateUrlParams: function(params) {
             var existingParams = $.getUrlVars();
-            console.log(existingParams);
+
             var params = $.mergeObj(existingParams, params);
             var hash = decodeURIComponent($.param(params));
             window.location.hash = hash;
@@ -290,6 +290,31 @@ $(function(){
         }
     }
 
+    /**
+     * Fills the breadcrumb with the parent entities
+     * @param  {str} entity_type       school/cluster/block/district
+     * @param  {obj} entity_properties property part of the geojson
+     * @return {void}                   [description]
+     */
+    function fillCrumb(entity_type, entity_properties) {
+        if (['School', 'school'].indexOf(entity_type) > -1) {
+            UI.renderCrumbs([
+                [entity_properties.district, "#"],
+                [entity_properties.block_name, "#"],
+                [entity_properties.cluster_name, "#"]
+            ]);
+        } else if (['cluster', 'Cluster'].indexOf(entity_type) > -1) {
+            UI.renderCrumbs([
+                [entity_properties.district, "#"],
+                [entity_properties.block_name, "#"]
+            ]);
+        } else if (['block', 'Block'].indexOf(entity_type) > -1) {
+            UI.renderCrumbs([
+                [entity_properties.district, "#"]
+            ]);
+        }
+    }
+
     function onEachFeature(feature, layer) {
         // Bypass the usual click event and register based on
         // the entity.
@@ -501,6 +526,8 @@ $(function(){
                     pane = getPane(entity);
                     pane.fill(data[entity_lower].properties);
 
+                    fillCrumb(entity_lower, data[entity_lower].properties);
+
                     if (data[entity_lower].geometry.coordinates.length == 2) {
                         newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
                         map.panTo([data[entity_lower].geometry.coordinates[1], data[entity_lower].geometry.coordinates[0]])
@@ -566,7 +593,6 @@ $(function(){
     } else {
         // Invoke search mechanism
         filtersEnabled = true;
-        console.log('do ' + $.getUrlVar('do'));
 
         // query and show the results in hash
         handleHashChange();

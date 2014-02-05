@@ -30,13 +30,6 @@ var UI = {
            $(".popup").hide();
         });
 
-
-        this.renderCrumbs([
-            ["Karnataka", "#"],
-            ["Bangalore", "#"],
-            ["HSR Layout", "#"]
-        ]);
-
         this.initICheck();
         this.initSliders();
 
