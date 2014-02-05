@@ -206,7 +206,7 @@ $(function(){
 
             $('#'+this.divid).find('.total_classrooms').html(school.tot_clrooms);
             $('#'+this.divid).find('.ptr').html(
-                (school.total_boys+school.total_girls)/(school.male_tch+school.female_tch)
+                Math.round((school.total_boys+school.total_girls)/(school.male_tch+school.female_tch))
             );
             $('#'+this.divid).find('.medium_of_instruction').html(school.medium_of_instruction_display);
             $('#'+this.divid).find('.sch_category').html(school.sch_category_display);
