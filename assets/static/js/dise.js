@@ -320,20 +320,47 @@ $(function(){
      */
     function fillCrumb(entity_type, entity_properties) {
         clearCrumbs();
+        var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
+
         if (['School', 'school'].indexOf(entity_type) > -1) {
             UI.renderCrumbs([
-                [entity_properties.district, "#", 'district'],
-                [entity_properties.block_name, "#", 'block'],
-                [entity_properties.cluster_name, "#", 'block']
+                [entity_properties.district, "#" + $.param({
+                    'do': 'District.getInfo',
+                    session: academic_year,
+                    name: entity_properties.district
+                }), 'district'],
+                [entity_properties.block_name, "#" + $.param({
+                    'do': 'Block.getInfo',
+                    session: academic_year,
+                    name: entity_properties.block_name
+                }), 'block'],
+                [entity_properties.cluster_name, "#" + $.param({
+                    'do': 'District.getInfo',
+                    session: academic_year,
+                    name: entity_properties.cluster_name,
+                    block: entity_properties.block_name
+                }), 'cluster']
             ]);
         } else if (['cluster', 'Cluster'].indexOf(entity_type) > -1) {
             UI.renderCrumbs([
-                [entity_properties.district, "#", 'district'],
-                [entity_properties.block_name, "#", 'block']
+                [entity_properties.district, "#" + $.param({
+                    'do': 'District.getInfo',
+                    session: academic_year,
+                    name: entity_properties.district
+                }), 'district'],
+                [entity_properties.block_name, "#" + $.param({
+                    'do': 'Block.getInfo',
+                    session: academic_year,
+                    name: entity_properties.block_name
+                }), 'block']
             ]);
         } else if (['block', 'Block'].indexOf(entity_type) > -1) {
             UI.renderCrumbs([
-                [entity_properties.district, "#", 'district']
+                [entity_properties.district, "#" + $.param({
+                    'do': 'District.getInfo',
+                    session: academic_year,
+                    name: entity_properties.district
+                }), 'district']
             ]);
         }
     }
