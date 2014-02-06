@@ -44,6 +44,36 @@ class BaseEntity:
 
         return cls.to_geojson_str(result)
 
+    @classmethod
+    def getBlocks(cls, params):
+        # this just parses the dictionary from _getschools() and returns JSON
+        obj = cls()
+        result = obj._getblocks(params)
+
+        # Check if we should send back the entity
+        include_entity = params.get('include_entity', False)
+        if include_entity:
+            entity_info = obj._getinfo(params)
+            if obj.entity_type in entity_info:
+                result[obj.entity_type] = entity_info[obj.entity_type]
+
+        return cls.to_geojson_str(result)
+
+    @classmethod
+    def getClusters(cls, params):
+        # this just parses the dictionary from _getschools() and returns JSON
+        obj = cls()
+        result = obj._getclusters(params)
+
+        # Check if we should send back the entity
+        include_entity = params.get('include_entity', False)
+        if include_entity:
+            entity_info = obj._getinfo(params)
+            if obj.entity_type in entity_info:
+                result[obj.entity_type] = entity_info[obj.entity_type]
+
+        return cls.to_geojson_str(result)
+
     def _get_geojson(self, entity):
         # returns a geojson feature for the given DiseFFTTBasicData object.
         # FFTT = sesstion from/to. for 2010-11: 1011
@@ -281,6 +311,31 @@ class Block(BaseEntity):
             result['error'] = str(e)
         return result
 
+    def _getclusters(self, params):
+        # returns list of clusters in a given district
+        name = params.get('name')
+        result = dict()
+        result['query'] = params
+
+        try:
+            ClusterModel = get_models(params.get('session', '10-11'), 'cluster')
+
+            temp_l = []
+            cluster_api = Cluster()
+            clusters = ClusterModel.objects.filter(
+                block_name__iexact=name,
+                # NOTE: Not sending clusters without centroid
+                # because there is no way to show them
+                centroid__isnull=False
+            )
+            for sch in clusters:
+                temp_l.append(cluster_api._get_geojson(sch))
+            result['results'] = FeatureCollection(temp_l)
+
+        except (ClusterModel.DoesNotExist, Exception) as e:
+            result['error'] = str(e)
+        return result
+
     def _search(self, params):
         # searches blocks and returns list
         result = dict()
@@ -331,8 +386,6 @@ class District(BaseEntity):
 
     def _getschools(self, params):
         # returns list of schools in a given district
-        # if format = geo, returns FeatureCollection
-        # if format = plain, returns a plain list
         name = params.get('name')
         result = dict()
         result['query'] = params
@@ -353,6 +406,56 @@ class District(BaseEntity):
             result['results'] = FeatureCollection(temp_l)
 
         except (SchoolModel.DoesNotExist, Exception) as e:
+            result['error'] = str(e)
+        return result
+
+    def _getclusters(self, params):
+        # returns list of clusters in a given district
+        name = params.get('name')
+        result = dict()
+        result['query'] = params
+
+        try:
+            ClusterModel = get_models(params.get('session', '10-11'), 'cluster')
+
+            temp_l = []
+            cluster_api = Cluster()
+            clusters = ClusterModel.objects.filter(
+                district__iexact=name,
+                # NOTE: Not sending clusters without centroid
+                # because there is no way to show them
+                centroid__isnull=False
+            )
+            for sch in clusters:
+                temp_l.append(cluster_api._get_geojson(sch))
+            result['results'] = FeatureCollection(temp_l)
+
+        except (ClusterModel.DoesNotExist, Exception) as e:
+            result['error'] = str(e)
+        return result
+
+    def _getblocks(self, params):
+        # returns list of blocks in a given district
+        name = params.get('name')
+        result = dict()
+        result['query'] = params
+
+        try:
+            BlockModel = get_models(params.get('session', '10-11'), 'block')
+
+            temp_l = []
+            block_api = Block()
+            blocks = BlockModel.objects.filter(
+                district__iexact=name,
+                # NOTE: Not sending blocks without centroid
+                # because there is no way to show them
+                centroid__isnull=False
+            )
+            for sch in blocks:
+                temp_l.append(block_api._get_geojson(sch))
+            result['results'] = FeatureCollection(temp_l)
+
+        except (BlockModel.DoesNotExist, Exception) as e:
             result['error'] = str(e)
         return result
 
