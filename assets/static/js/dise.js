@@ -150,28 +150,32 @@ $(function(){
                 'do': 'Cluster.getSchools',
                 session: academic_year,
                 name: e.object.id,
-                include_entity: 'true'
+                include_entity: 'true',
+                z: 13
             });
         } else if (e.object.type == 'block'){
             $.updateUrlParams({
                 'do': 'Block.getSchools',
                 session: academic_year,
                 name: e.object.id,
-                include_entity: 'true'
+                include_entity: 'true',
+                z: 12
             });
         } else if (e.object.type == 'district'){
             $.updateUrlParams({
                 'do': 'District.getSchools',
                 session: academic_year,
                 name: e.object.id,
-                include_entity: 'true'
+                include_entity: 'true',
+                z: 10
             });
         } else if (e.object.type == 'pincode'){
             $.updateUrlParams({
                 'do': 'Pincode.getSchools',
                 session: academic_year,
                 pincode: e.object.id,
-                include_entity: 'true'
+                include_entity: 'true',
+                z: 13
             });
         } else {
             // do nothing
@@ -193,6 +197,27 @@ $(function(){
             alert('Please select a preset');
         } else {
             $("#preset-editor-" + preset).toggleClass("activate");
+        }
+    });
+
+    /**
+     * This is fired when the Search button is hit on preset editors.
+     * @param  {obj} e    Event object
+     * @return {void}
+     */
+    $('body').on('click', '.filter-apply', function(e) {
+        var data_type = $(e.target).attr('data-type');
+
+        switch (data_type) {
+            case 'facilities':
+                var filters = UI.serializePreset()[data_type];
+
+                if (filters.length == 0) {
+                    return;
+                }
+
+                console.log(filters);
+                break;
         }
     });
 
@@ -254,9 +279,6 @@ $(function(){
             // fills the pane for other entities
             SchoolPane.hide();
             this.hide();
-
-            console.log('OtherPane.fill called');
-            console.log(entity);
 
             var entity_name = '';
             if(entity.entity_type == 'district') {
@@ -538,6 +560,8 @@ $(function(){
         if ($.getUrlVar('do') !== undefined) {
             // Invoke initial map layers.
             var params = $.getUrlVars();
+            console.log(params);
+
             var method = params.do;
             if(method.split('.').length !== 2){
                 alert('invalid do parameter');
@@ -565,6 +589,10 @@ $(function(){
                     [bbox[1], bbox[0]],
                     [bbox[3], bbox[2]]
                 ]);
+            }
+
+            if ($.getUrlVar('z') !== undefined){
+                map.setZoom(parseInt($.getUrlVar('z')));
             }
 
             if (action == 'getInfo'){
@@ -601,6 +629,10 @@ $(function(){
 
                     if (action == 'getSchools') {
                         icon = customIcon('school');
+                    } else if (action == 'getClusters') {
+                        icon = customIcon('cluster');
+                    } else if (action == 'getBlocks') {
+                        icon = customIcon('block');
                     }
 
                     newLayer = createLayer(data.results, icon);
@@ -611,12 +643,13 @@ $(function(){
                         pane.fill(data[entity_lower].properties);
                         fillCrumb(entity_lower, data[entity_lower].properties);
 
-                        var latlng = L.latLng(
-                            data[entity_lower].geometry.coordinates[1],
-                            data[entity_lower].geometry.coordinates[0]
-                        )
-
-                        map.panTo(latlng);
+                        if (data[entity_lower].geometry.coordinates.length == 2) {
+                            newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
+                            map.panTo([data[entity_lower].geometry.coordinates[1], data[entity_lower].geometry.coordinates[0]])
+                            newLayer.addTo(currentLayers);
+                        } else {
+                            alert('Sorry, no location available for this.');
+                        }
                     }
                 });
             } else if (['search'].indexOf(action) > -1) {
