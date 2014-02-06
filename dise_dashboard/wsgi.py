@@ -37,3 +37,6 @@ application = get_wsgi_application()
 # Apply WSGI middleware here.
 # from helloworld.wsgi import HelloWorldApplication
 # application = HelloWorldApplication(application)
+
+import dise_dashboard.monitor
+dise_dashboard.monitor.start(interval=1.0)
