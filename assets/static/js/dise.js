@@ -128,7 +128,6 @@ $(function(){
         // When you clear select2 with close button
         mapInit();
     }).on("select2-selecting", function(e) {
-        console.log(e);
         // Clear the preloaded layers when the search has been used
         currentLayers.clearLayers();
         // Flip the filter switch to disable all usual map interactions.
@@ -155,7 +154,7 @@ $(function(){
             });
         } else if (e.object.type == 'block'){
             $.updateUrlParams({
-                'do': 'Block.getSchools',
+                'do': 'Block.getClusters',
                 session: academic_year,
                 name: e.object.id,
                 include_entity: 'true',
@@ -163,7 +162,7 @@ $(function(){
             });
         } else if (e.object.type == 'district'){
             $.updateUrlParams({
-                'do': 'District.getSchools',
+                'do': 'District.getBlocks',
                 session: academic_year,
                 name: e.object.id,
                 include_entity: 'true',
@@ -194,7 +193,7 @@ $(function(){
         var preset = $("select.preset_selector").val();
 
         if (preset == ""){
-            alert('Please select a preset');
+            alert('Please select a preset first');
         } else {
             $("#preset-editor-" + preset).toggleClass("activate");
         }
