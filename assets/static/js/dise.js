@@ -239,20 +239,20 @@ $(function(){
 
         switch (data_type) {
             case 'facilities':
-                var type_prefix = 'fac_'
                 var filters = UI.serializePreset()[data_type];
 
                 if (filters.length == 0) {
                     return;
                 }
 
-                $.updateUrlParams({
+                $.setUrlParams({
                     do: 'School.search',
                     session: academic_year,
                     bbox: map.getBounds().toBBoxString(),
                     f: encodeURIComponent(JSON.stringify({
                         facilities: filters
-                    }))
+                    })),
+                    enbl: 'f'
                 })
                 console.log(filters);
                 break;
@@ -533,15 +533,19 @@ $(function(){
         $.updateUrlParams(extraParams);
     }
 
+    function is_filter_enabled(){
+        if (filtersEnabled) {
+            return filtersEnabled;
+        } else if($.getUrlVar('enbl') !== undefined && $.getUrlVar('enbl').indexOf('f') >= 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     function mapInit () {
         // Load the district data and plot.
-        filtersEnabled = false;
-        if($.getUrlVar('enbl') !== undefined) {
-            var enbl = JSON.parse(decodeURIComponent($.getUrlVar('enbl')));
-            if (enbl.indexOf('f') >= 0) {
-                filtersEnabled = true;
-            }
-        }
+        filtersEnabled = is_filter_enabled();
         loadEntityData('District');
     }
 
@@ -586,7 +590,8 @@ $(function(){
       // If filters are enabled then don't load the usual layers.
         //var bbox = map.getBounds().toBBoxString();
 
-        if (filtersEnabled !== true) {
+        if (!filtersEnabled) {
+            console.log('filters not enabled, updating map');
             updateLayers(map.getZoom());
         }
     })
@@ -624,10 +629,7 @@ $(function(){
                 return;
             }
 
-            if($.getUrlVar('enbl') !== undefined) {
-                var enbl = JSON.parse(decodeURIComponent($.getUrlVar('enbl')));
-                console.log(enbl);
-            }
+            filtersEnabled = is_filter_enabled();
 
             var session = params.academic_year || $('input[name=academic_year]:checked').val() || '10-11';
             delete params.academic_year;
@@ -705,8 +707,6 @@ $(function(){
                     }
                 });
             } else if (['search'].indexOf(action) > -1) {
-                filtersEnabled = false;
-
                 DISE.call(method, session, params, function(data) {
                     if (data.error !== undefined) {
                         alert(data.error);
