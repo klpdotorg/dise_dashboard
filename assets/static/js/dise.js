@@ -22,12 +22,16 @@
     };
 
     $.extend({
+        setUrlParams: function(params) {
+            var hash = decodeURIComponent($.param(params));
+            console.log(hash);
+            window.location.hash = hash;
+        },
         updateUrlParams: function(params) {
             var existingParams = $.getUrlVars();
 
             var params = $.mergeObj(existingParams, params);
-            var hash = decodeURIComponent($.param(params));
-            window.location.hash = hash;
+            $.setUrlParams(params);
         },
         DiseAPI: function(options) {
             this.defaultOptions = {};
@@ -98,10 +102,33 @@ $(function(){
 
     UI.init(); // Initialize UI elements
     filtersEnabled = false;
+    var filter_prefix = 'f_';
+
     // Initialize the API wrapper
     var DISE = $.DiseAPI({
         'base_url': window.location.protocol + '//' + window.location.host + '/api/v1/olap/'
     });
+
+    /**
+     * takes an object of url params and removes filters
+     */
+    function clear_filters_from_urlvars(url_vars) {
+        for (var i = 0; i < url_vars.length; i++) {
+            if (url_vars[i].startsWith(filter_prefix)) {
+                delete url_vars[i];
+            }
+        };
+        return url_vars;
+    }
+
+    /**
+     * removes filters from url and resets it
+     */
+    function clear_filters() {
+        var url_vars = $.getUrlVars();
+        url_vars = clear_filters_from_urlvars(url_vars);
+        $.setUrlParams(url_vars);
+    }
 
     $("#filter-select").select2({
         dropdownCssClass: "bigdrop",
@@ -181,7 +208,9 @@ $(function(){
         }
     });
 
-
+    /**
+     * This is the select2 handler for preset dropdown
+     */
     $(".preset_selector").select2({
         placeholder: "Select a preset",
         allowClear: true
@@ -206,15 +235,25 @@ $(function(){
      */
     $('body').on('click', '.filter-apply', function(e) {
         var data_type = $(e.target).attr('data-type');
+        var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
 
         switch (data_type) {
             case 'facilities':
+                var type_prefix = 'fac_'
                 var filters = UI.serializePreset()[data_type];
 
                 if (filters.length == 0) {
                     return;
                 }
 
+                $.updateUrlParams({
+                    do: 'School.search',
+                    session: academic_year,
+                    bbox: map.getBounds().toBBoxString(),
+                    f: encodeURIComponent(JSON.stringify({
+                        facilities: filters
+                    }))
+                })
                 console.log(filters);
                 break;
         }
@@ -329,6 +368,9 @@ $(function(){
         }
     }
 
+    /**
+     * Clears the breadcrumb area
+     */
     function clearCrumbs(){
         $('li.crumb').remove();
     }
@@ -356,7 +398,7 @@ $(function(){
                     name: entity_properties.block_name
                 }), 'block'],
                 [entity_properties.cluster_name, "#" + $.param({
-                    'do': 'District.getInfo',
+                    'do': 'Cluster.getInfo',
                     session: academic_year,
                     name: entity_properties.cluster_name,
                     block: entity_properties.block_name
@@ -494,6 +536,12 @@ $(function(){
     function mapInit () {
         // Load the district data and plot.
         filtersEnabled = false;
+        if($.getUrlVar('enbl') !== undefined) {
+            var enbl = JSON.parse(decodeURIComponent($.getUrlVar('enbl')));
+            if (enbl.indexOf('f') >= 0) {
+                filtersEnabled = true;
+            }
+        }
         loadEntityData('District');
     }
 
@@ -574,6 +622,11 @@ $(function(){
             if (['School', 'Cluster', 'Block', 'District', 'Pincode'].indexOf(entity) == -1) {
                 alert('Sorry, ' + entity + ' is an unknown entity.');
                 return;
+            }
+
+            if($.getUrlVar('enbl') !== undefined) {
+                var enbl = JSON.parse(decodeURIComponent($.getUrlVar('enbl')));
+                console.log(enbl);
             }
 
             var session = params.academic_year || $('input[name=academic_year]:checked').val() || '10-11';

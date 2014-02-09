@@ -1,10 +1,14 @@
 import re
+import urllib2
+try: import simplejson as json
+except ImportError: import json
 
-from django.utils import simplejson as json
 from django.contrib.gis.geos import Polygon
 from geojson import Feature, FeatureCollection, Point, dumps as geojson_dumps
 
 from schools.olap_models import get_models
+from common.models import search_choices, YESNO, AREA, SCHOOL_CATEGORY, \
+    SCHOOL_MANAGEMENT, SCHOOL_TYPES, MEDIUM, MDM_STATUS, KITCHENSHED_STATUS, BOUNDARY_WALL
 
 
 class BaseEntity:
@@ -182,6 +186,59 @@ class School(BaseEntity):
 
         if 'limit' in params and params.get('limit', 0):
             schools = schools[:params.get('limit')]
+
+        if 'f' in params and params.get('f', ''):
+            f = params.get('f')
+            f = json.loads(urllib2.unquote(f).decode('utf8'))
+
+            for filt in f.get('facilities', []):
+                if filt == 'repair':
+                    schools = schools.filter(
+                        classrooms_require_minor_repair=search_choices(YESNO, 'Yes'),
+                        classrooms_require_major_repair=search_choices(YESNO, 'Yes')
+                    )
+                elif filt == 'toilet':
+                    schools = schools.filter(
+                        toilet_common=0,
+                        toilet_boys=0,
+                        toilet_girls=0
+                    )
+                elif filt == 'toilet_for_girls':
+                    schools = schools.filter(
+                        toilet_girls=0
+                    )
+                elif filt == 'electricity':
+                    schools = schools.filter(
+                        electricity=search_choices(YESNO, 'No')
+                    )
+                elif filt == 'secure_wall':
+                    schools = schools.exclude(
+                        boundary_wall__in=[
+                            search_choices(BOUNDARY_WALL, "Pucca"),
+                            search_choices(BOUNDARY_WALL, "Barbed wire fencing"),
+                        ]
+                    )
+                elif filt == 'library':
+                    schools = schools.filter(
+                        library_yn=search_choices(YESNO, 'No')
+                    )
+                elif filt == 'ramp':
+                    schools = schools.filter(
+                        ramps=search_choices(YESNO, 'No')
+                    )
+                elif filt == 'blackboard':
+                    schools = schools.filter(
+                        blackboard=search_choices(YESNO, 'No')
+                    )
+                elif filt == 'playground':
+                    schools = schools.filter(
+                        playground=search_choices(YESNO, 'No')
+                    )
+                elif filt == 'drinking_water':
+                    schools = schools.filter(
+                        drinking_water=search_choices(YESNO, 'No')
+                    )
+
 
         print schools.query
         temp_l = []
