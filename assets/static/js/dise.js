@@ -240,9 +240,10 @@ $(function(){
         switch (data_type) {
             case 'facilities':
                 var filters = UI.serializePreset()[data_type];
+                console.log(filters);
 
                 if (filters.length == 0) {
-                    return;
+                    window.location = window.location.protocol + '//' + window.location.host;
                 }
 
                 $.setUrlParams({
@@ -253,8 +254,8 @@ $(function(){
                         facilities: filters
                     })),
                     enbl: 'f'
-                })
-                console.log(filters);
+                });
+
                 break;
         }
     });
