@@ -187,6 +187,21 @@ class School(BaseEntity):
         if 'limit' in params and params.get('limit', 0):
             schools = schools[:params.get('limit')]
 
+        if 'area' in params and params.get('area', ''):
+            schools = schools.filter(
+                rural_urban=search_choices(AREA, params.get('area').title())
+            )
+
+        if 'management' in params and params.get('management', ''):
+            if params.get('management') == 'govt':
+                schools = schools.filter(
+                    sch_management__in=[1, 7]
+                )
+            elif params.get('management') == 'pvt':
+                schools = schools.exclude(
+                    sch_management__in=[1, 7]
+                )
+
         if 'f' in params and params.get('f', ''):
             f = params.get('f')
             f = json.loads(urllib2.unquote(f).decode('utf8'))
