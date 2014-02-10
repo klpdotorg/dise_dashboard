@@ -584,17 +584,17 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
 }
 
 .popup .circle_stat{
-    height: 50px;
-    width: 50px;
+    height: 60px;
+    width: 60px;
     margin: 0 auto;
     padding: 0;
     text-align: center;
     border: 2px solid #fff;
-    border-radius: 25px;
+    border-radius: 30px;
     color: #fff;
-    font: 15px 'Roboto Slab', 'Helvetica', 'Arial', sans-serif;
+    font: 13px 'Roboto Slab', 'Helvetica', 'Arial', sans-serif;
     font-weight: 600;
-    line-height: 48px;
+    line-height: 58px;
 }
 
 .popup .blue{
