@@ -130,6 +130,28 @@ $(function(){
         $.setUrlParams(url_vars);
     }
 
+    $('body').on('change', "input[name='academic_year']", function(e) {
+        console.log(e);
+        var academic_year = e.target.value;
+        $.updateUrlParams({
+            session: academic_year
+        });
+    })
+    $('body').on('change', "input[name='area']", function(e) {
+        console.log(e);
+        var area = e.target.value;
+        $.updateUrlParams({
+            area: area
+        });
+    })
+    $('body').on('change', "input[name='management']", function(e) {
+        console.log(e);
+        var management = e.target.value;
+        $.updateUrlParams({
+            management: management
+        });
+    })
+
     $("#filter-select").select2({
         dropdownCssClass: "bigdrop",
         allowClear: true,
