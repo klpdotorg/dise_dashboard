@@ -104,6 +104,35 @@ $(function(){
     filtersEnabled = false;
     var filter_prefix = 'f_';
 
+    function searchView(results, entity_type) {
+        this.results = ko.observable(results);
+        this.search_entity = ko.observable(entity_type);
+
+        this.n_results = ko.computed(function() {
+            return this.results().length;
+        }, this);
+
+        this.n_results_map = ko.computed(function() {
+            var count = 0;
+            for (var i = 0; i < this.results().length; i++) {
+                if (this.results()[i].geometry.coordinates.length == 2){
+                    count++;
+                }
+            };
+            return count;
+        }, this);
+
+        this.show_search_count = ko.computed(function() {
+            if (this.results().length > 0) {
+                return true;
+            }
+            return false;
+        }, this);
+    }
+
+    var search_view = new searchView([], '');
+    ko.applyBindings(search_view);
+
     // Initialize the API wrapper
     var DISE = $.DiseAPI({
         'base_url': window.location.protocol + '//' + window.location.host + '/api/v1/olap/'
@@ -736,10 +765,26 @@ $(function(){
                         return;
                     }
 
+                    // Let's sanitize the geojson
+                    var sanitized_results = {
+                        type: "FeatureCollection",
+                        features: []
+                    }
+
+                    for (var i = 0; i < data.results.features.length; i++) {
+                        if (data.results.features[i].geometry.coordinates.length == 2) {
+                            sanitized_results.features.push(data.results.features[i]);
+                        }
+                    };
+
+                    // Let's plot the valid geojson now
                     icon = customIcon(entity_lower);
-                    newLayer = createLayer(data.results, icon);
+                    newLayer = createLayer(sanitized_results, icon);
                     newLayer.addTo(currentLayers);
 
+                    // updates the count pane
+                    search_view.results(data.results.features);
+                    search_view.search_entity(entity);
                 });
             }
         }

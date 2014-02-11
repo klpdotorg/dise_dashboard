@@ -12,6 +12,7 @@
     <script type="text/javascript" src="{% static 'js/ui.js' %}"></script>
     <script type="text/javascript" src="{% static 'lib/select2.js' %}"></script>
     <script type="text/javascript" src="{% static 'lib/icheck.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'lib/knockout-3.0.0.js' %}"></script>
     <!-- <script type="text/javascript" src="{% static 'lib/jquery.customSelect.min.js' %}"></script> -->
     <script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
     <script type="text/javascript" src="{% static 'js/dise.js' %}"></script>
@@ -232,8 +233,8 @@
     <span class="glyphicon glyphicon-cog"></span>
   </div>
 
-  <div class="no-of-matches" style="display:none">
-    42 schools found <small>(37 on map)</small>
+  <div class="no-of-matches" data-bind="visible: show_search_count">
+    <span data-bind="text: n_results"></span> <span data-bind="text: search_entity"></span>s found <small>(<span data-bind="text: n_results_map"></span> on map)</small>
   </div>
 
   <div id="schools">
