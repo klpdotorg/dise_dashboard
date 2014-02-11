@@ -22,12 +22,16 @@
     };
 
     $.extend({
+        setUrlParams: function(params) {
+            var hash = decodeURIComponent($.param(params));
+            console.log(hash);
+            window.location.hash = hash;
+        },
         updateUrlParams: function(params) {
             var existingParams = $.getUrlVars();
-            console.log(existingParams);
+
             var params = $.mergeObj(existingParams, params);
-            var hash = decodeURIComponent($.param(params));
-            window.location.hash = hash;
+            $.setUrlParams(params);
         },
         DiseAPI: function(options) {
             this.defaultOptions = {};
@@ -98,10 +102,84 @@ $(function(){
 
     UI.init(); // Initialize UI elements
     filtersEnabled = false;
+    var filter_prefix = 'f_';
+
+    function searchView(results, entity_type) {
+        this.results = ko.observable(results);
+        this.search_entity = ko.observable(entity_type);
+
+        this.n_results = ko.computed(function() {
+            return this.results().length;
+        }, this);
+
+        this.n_results_map = ko.computed(function() {
+            var count = 0;
+            for (var i = 0; i < this.results().length; i++) {
+                if (this.results()[i].geometry.coordinates.length == 2){
+                    count++;
+                }
+            };
+            return count;
+        }, this);
+
+        this.show_search_count = ko.computed(function() {
+            if (this.results().length > 0) {
+                return true;
+            }
+            return false;
+        }, this);
+    }
+
+    var search_view = new searchView([], '');
+    ko.applyBindings(search_view);
+
     // Initialize the API wrapper
     var DISE = $.DiseAPI({
         'base_url': window.location.protocol + '//' + window.location.host + '/api/v1/olap/'
     });
+
+    /**
+     * takes an object of url params and removes filters
+     */
+    function clear_filters_from_urlvars(url_vars) {
+        for (var i = 0; i < url_vars.length; i++) {
+            if (url_vars[i].startsWith(filter_prefix)) {
+                delete url_vars[i];
+            }
+        };
+        return url_vars;
+    }
+
+    /**
+     * removes filters from url and resets it
+     */
+    function clear_filters() {
+        var url_vars = $.getUrlVars();
+        url_vars = clear_filters_from_urlvars(url_vars);
+        $.setUrlParams(url_vars);
+    }
+
+    $('body').on('change', "input[name='academic_year']", function(e) {
+        console.log(e);
+        var academic_year = e.target.value;
+        $.updateUrlParams({
+            session: academic_year
+        });
+    })
+    $('body').on('change', "input[name='area']", function(e) {
+        console.log(e);
+        var area = e.target.value;
+        $.updateUrlParams({
+            area: area
+        });
+    })
+    $('body').on('change', "input[name='management']", function(e) {
+        console.log(e);
+        var management = e.target.value;
+        $.updateUrlParams({
+            management: management
+        });
+    })
 
     $("#filter-select").select2({
         dropdownCssClass: "bigdrop",
@@ -126,9 +204,7 @@ $(function(){
         }
     }).on('select2-clearing', function(e) {
         // When you clear select2 with close button
-        filtersEnabled = false;
-        currentLayers.clearLayers();
-        map.setZoom(8);
+        mapInit();
     }).on("select2-selecting", function(e) {
         // Clear the preloaded layers when the search has been used
         currentLayers.clearLayers();
@@ -138,55 +214,100 @@ $(function(){
         if (e.object.type == 'school') {
             if(e.object.feature !== null && e.object.feature !== "{}"){
                 school = JSON.parse(e.object.feature);
-                SchoolPane.fill(school.properties);
-                newLayer = createLayer(school, schoolIcon);
-                setLayerView(newLayer, 15);
-                newLayer.addTo(currentLayers);
+                $.updateUrlParams({
+                    'do': 'School.getInfo',
+                    session: academic_year,
+                    code: school.id
+                });
             } else {
                 alert("Sorry, this school doesn't have a location.");
             }
         } else if (e.object.type == 'cluster'){
-            DISE.call('Cluster.getSchools', academic_year, {
+            $.updateUrlParams({
+                'do': 'Cluster.getSchools',
+                session: academic_year,
                 name: e.object.id,
-                include_entity: 'True'
-            }, function(data) {
-                OtherPane.fill(data.cluster.properties);
-                newLayer = createLayer(data.schools, schoolIcon);
-                setLayerView(newLayer, 12);
-                newLayer.addTo(currentLayers);
+                include_entity: 'true',
+                z: 13
             });
         } else if (e.object.type == 'block'){
-            DISE.call('Block.getSchools', academic_year, {
+            $.updateUrlParams({
+                'do': 'Block.getClusters',
+                session: academic_year,
                 name: e.object.id,
-                include_entity: 'True'
-            }, function(data) {
-                OtherPane.fill(data.block.properties);
-                newLayer = createLayer(data.schools, schoolIcon);
-                setLayerView(newLayer, 12);
-                newLayer.addTo(currentLayers);
+                include_entity: 'true',
+                z: 12
             });
         } else if (e.object.type == 'district'){
-            DISE.call('District.getSchools', academic_year, {
+            $.updateUrlParams({
+                'do': 'District.getBlocks',
+                session: academic_year,
                 name: e.object.id,
-                include_entity: 'True'
-            }, function(data) {
-                OtherPane.fill(data.district.properties);
-                newLayer = createLayer(data.schools, schoolIcon);
-                setLayerView(newLayer, 12);
-                newLayer.addTo(currentLayers);
+                include_entity: 'true',
+                z: 10
             });
         } else if (e.object.type == 'pincode'){
-            DISE.call('Pincode.getSchools', academic_year, {
+            $.updateUrlParams({
+                'do': 'Pincode.getSchools',
+                session: academic_year,
                 pincode: e.object.id,
-                include_entity: 'True'
-            }, function(data) {
-                OtherPane.fill(data.pincode.properties);
-                newLayer = createLayer(data.schools, schoolIcon);
-                setLayerView(newLayer, 12);
-                newLayer.addTo(currentLayers);
+                include_entity: 'true',
+                z: 13
             });
         } else {
             // do nothing
+        }
+    });
+
+    /**
+     * This is the select2 handler for preset dropdown
+     */
+    $(".preset_selector").select2({
+        placeholder: "Select a preset",
+        allowClear: true
+    }).on("select2-selecting", function(e) {
+        console.log(e);
+    });
+
+    $("#presets .glyphicon-cog").click(function(){
+        var preset = $("select.preset_selector").val();
+
+        if (preset == ""){
+            alert('Please select a preset first');
+        } else {
+            $("#preset-editor-" + preset).toggleClass("activate");
+        }
+    });
+
+    /**
+     * This is fired when the Search button is hit on preset editors.
+     * @param  {obj} e    Event object
+     * @return {void}
+     */
+    $('body').on('click', '.filter-apply', function(e) {
+        var data_type = $(e.target).attr('data-type');
+        var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
+
+        switch (data_type) {
+            case 'facilities':
+                var filters = UI.serializePreset()[data_type];
+                console.log(filters);
+
+                if (filters.length == 0) {
+                    window.location = window.location.protocol + '//' + window.location.host;
+                }
+
+                $.setUrlParams({
+                    do: 'School.search',
+                    session: academic_year,
+                    bbox: map.getBounds().toBBoxString(),
+                    f: encodeURIComponent(JSON.stringify({
+                        facilities: filters
+                    })),
+                    enbl: 'f'
+                });
+
+                break;
         }
     });
 
@@ -206,14 +327,25 @@ $(function(){
             this.hide();
 
             $('#'+this.divid).find('.name').html(school.school_name + ' <small> Estd. ' + school.yeur_estd + '</small>');
+            $('#'+this.divid).find('.total_boys').html(school.total_boys);
+            $('#'+this.divid).find('.total_girls').html(school.total_girls);
             $('#'+this.divid).find('.total_student').html(school.total_boys+school.total_girls);
-            $('#'+this.divid).find('.total_tch').html(school.male_tch+school.female_tch);
+
+            $('#'+this.divid).find('.total_toilet').html(
+                school.toilet_common + school.toilet_girls + school.toilet_boys
+            );
+            $('#'+this.divid).find('.total_toilet_girls').html(school.toilet_girls);
+            $('#'+this.divid).find('.total_toilet_boys').html(school.toilet_boys);
+
+            $('#'+this.divid).find('.total_classrooms').html(school.tot_clrooms);
+            $('#'+this.divid).find('.ptr').html(
+                Math.round((school.total_boys+school.total_girls)/(school.male_tch+school.female_tch))
+            );
             $('#'+this.divid).find('.medium_of_instruction').html(school.medium_of_instruction_display);
             $('#'+this.divid).find('.sch_category').html(school.sch_category_display);
             $('#'+this.divid).find('.sch_management').html(school.sch_management_display);
             $('#'+this.divid).find('.electricity').html(school.electricity_display);
-            $('#'+this.divid).find('.library_yn').html(school.library_yn_display);
-            $('#'+this.divid).find('.books_in_library').html(school.books_in_library);
+            $('#'+this.divid).find('.library').html(school.library_yn_display + ", " + school.books_in_library + " books.");
             $('#'+this.divid).find('.address').html([
                     school.cluster_name, school.block_name,
                     school.district, school.pincode
@@ -224,7 +356,7 @@ $(function(){
     }
 
     var OtherPane = {
-        divid: 'popup-cluster',
+        divid: 'popup-others',
         show: function() {
             // shows the other entity pane
             $('#'+this.divid).show();
@@ -238,9 +370,6 @@ $(function(){
             SchoolPane.hide();
             this.hide();
 
-            console.log('OtherPane.fill called');
-            console.log(entity);
-
             var entity_name = '';
             if(entity.entity_type == 'district') {
                 entity_name = 'district';
@@ -253,10 +382,23 @@ $(function(){
             $('#'+this.divid).find('.entity_name').html(entity[entity_name] + ' <small>' + entity.entity_type + '</small>');
             $('#'+this.divid).find('.entity_school').html(entity.sum_schools);
             $('#'+this.divid).find('.entity_student').html(entity.sum_boys+entity.sum_girls);
+            $('#'+this.divid).find('.sum_boys').html(entity.sum_boys);
+            $('#'+this.divid).find('.sum_girls').html(entity.sum_girls);
+
             $('#'+this.divid).find('.entity_teacher').html(entity.sum_male_tch+entity.sum_female_tch);
+            $('#'+this.divid).find('.sum_male_tch').html(entity.sum_male_tch);
+            $('#'+this.divid).find('.sum_female_tch').html(entity.sum_female_tch);
+
             $('#'+this.divid).find('.entity_library').html(entity.sum_has_library);
             $('#'+this.divid).find('.entity_electricity').html(entity.sum_has_electricity);
+
             $('#'+this.divid).find('.entity_toilet').html(entity.sum_toilet_common+entity.sum_toilet_boys+entity.sum_toilet_girls);
+            $('#'+this.divid).find('.sum_toilet_boys').html(entity.sum_toilet_boys);
+            $('#'+this.divid).find('.sum_toilet_girls').html(entity.sum_toilet_girls);
+
+            $('#'+this.divid).find('.entity_ptr').html(
+                Math.round((entity.sum_boys+entity.sum_girls) / (entity.sum_male_tch+entity.sum_female_tch))
+            );
 
             this.show();
         }
@@ -264,6 +406,79 @@ $(function(){
 
     SchoolPane.hide();
     OtherPane.hide();
+
+    /**
+     * Gets appropriate Pane for the given entity
+     * @param  {string} entity
+     * @return {object}
+     */
+    function getPane(entity) {
+        if (['School', 'school'].indexOf(entity) > -1) {
+            return SchoolPane;
+        } else if (['cluster', 'block', 'district', 'pincode', 'Cluster', 'Block', 'District', 'Pincode'].indexOf(entity) > -1) {
+            return OtherPane;
+        }
+    }
+
+    /**
+     * Clears the breadcrumb area
+     */
+    function clearCrumbs(){
+        $('li.crumb').remove();
+    }
+
+    /**
+     * Fills the breadcrumb with the parent entities
+     * @param  {str} entity_type       school/cluster/block/district
+     * @param  {obj} entity_properties property part of the geojson
+     * @return {void}                   [description]
+     */
+    function fillCrumb(entity_type, entity_properties) {
+        clearCrumbs();
+        var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
+
+        if (['School', 'school'].indexOf(entity_type) > -1) {
+            UI.renderCrumbs([
+                [entity_properties.district, "#" + $.param({
+                    'do': 'District.getInfo',
+                    session: academic_year,
+                    name: entity_properties.district
+                }), 'district'],
+                [entity_properties.block_name, "#" + $.param({
+                    'do': 'Block.getInfo',
+                    session: academic_year,
+                    name: entity_properties.block_name
+                }), 'block'],
+                [entity_properties.cluster_name, "#" + $.param({
+                    'do': 'Cluster.getInfo',
+                    session: academic_year,
+                    name: entity_properties.cluster_name,
+                    block: entity_properties.block_name
+                }), 'cluster']
+            ]);
+        } else if (['cluster', 'Cluster'].indexOf(entity_type) > -1) {
+            UI.renderCrumbs([
+                [entity_properties.district, "#" + $.param({
+                    'do': 'District.getInfo',
+                    session: academic_year,
+                    name: entity_properties.district
+                }), 'district'],
+                [entity_properties.block_name, "#" + $.param({
+                    'do': 'Block.getInfo',
+                    session: academic_year,
+                    name: entity_properties.block_name
+                }), 'block']
+            ]);
+        } else if (['block', 'Block'].indexOf(entity_type) > -1) {
+            UI.renderCrumbs([
+                [entity_properties.district, "#" + $.param({
+                    'do': 'District.getInfo',
+                    session: academic_year,
+                    name: entity_properties.district
+                }), 'district']
+            ]);
+        }
+    }
 
     function onEachFeature(feature, layer) {
         // Bypass the usual click event and register based on
@@ -295,6 +510,7 @@ $(function(){
                             alert(data.error);
                         }else{
                             OtherPane.fill(data.block.properties);
+                            fillCrumb('block', data.block.properties);
                         }
                     });
                 }
@@ -308,6 +524,7 @@ $(function(){
                             alert(data.error);
                         }else{
                             OtherPane.fill(data.cluster.properties);
+                            fillCrumb('cluster', data.cluster.properties);
                         }
                     });
                 }
@@ -320,6 +537,7 @@ $(function(){
                             alert(data.error);
                         }else{
                             SchoolPane.fill(data.school.properties);
+                            fillCrumb('school', data.school.properties);
                         }
                     });
                 };
@@ -367,8 +585,19 @@ $(function(){
         $.updateUrlParams(extraParams);
     }
 
+    function is_filter_enabled(){
+        if (filtersEnabled) {
+            return filtersEnabled;
+        } else if($.getUrlVar('enbl') !== undefined && $.getUrlVar('enbl').indexOf('f') >= 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     function mapInit () {
         // Load the district data and plot.
+        filtersEnabled = is_filter_enabled();
         loadEntityData('District');
     }
 
@@ -411,24 +640,18 @@ $(function(){
 // When the map is zoomed, load the necessary data
     map.on('zoomend', function(e) {
       // If filters are enabled then don't load the usual layers.
-      if (!filtersEnabled) {
-        updateLayers(map.getZoom());
-      }else{
-        var bbox = map.getBounds().toBBoxString();
-        $.updateUrlParams({bbox: bbox});
-      }
+        //var bbox = map.getBounds().toBBoxString();
+
+        if (!filtersEnabled) {
+            console.log('filters not enabled, updating map');
+            updateLayers(map.getZoom());
+        }
     })
 
 // When the map is panned, load the data in the new bounds.
     map.on('dragend', function(e) {
-      if (!filtersEnabled) {
-        currentLayers.eachLayer(function(layer) {
-          updateData(layer);
-        });
-      }else{
         var bbox = map.getBounds().toBBoxString();
         $.updateUrlParams({bbox: bbox});
-      }
     })
 
 // Function to set the map view to the layer when a filter/search
@@ -441,13 +664,24 @@ $(function(){
         if ($.getUrlVar('do') !== undefined) {
             // Invoke initial map layers.
             var params = $.getUrlVars();
+            console.log(params);
+
             var method = params.do;
             if(method.split('.').length !== 2){
                 alert('invalid do parameter');
             }else{
                 delete params.do;
                 var entity = method.split('.')[0];
+                var entity_lower = entity.toLowerCase();
+                var action = method.split('.')[1];
             }
+
+            if (['School', 'Cluster', 'Block', 'District', 'Pincode'].indexOf(entity) == -1) {
+                alert('Sorry, ' + entity + ' is an unknown entity.');
+                return;
+            }
+
+            filtersEnabled = is_filter_enabled();
 
             var session = params.academic_year || $('input[name=academic_year]:checked').val() || '10-11';
             delete params.academic_year;
@@ -455,31 +689,104 @@ $(function(){
             // Clear current layers.
             currentLayers.clearLayers();
 
-            var bbox = $.getUrlVar('bbox').split(',');
-            map.fitBounds([
-                [bbox[1], bbox[0]],
-                [bbox[3], bbox[2]]
-            ]);
+            if ($.getUrlVar('bbox') !== undefined){
+                var bbox = $.getUrlVar('bbox').split(',');
+                map.fitBounds([
+                    [bbox[1], bbox[0]],
+                    [bbox[3], bbox[2]]
+                ]);
+            }
 
-            DISE.call(method, session, params, function(data) {
-                if (entity == 'Block') {
-                    blockLayer = createLayer(data.blocks, blockIcon);
-                    layerIDs.block = blockLayer._leaflet_id;
-                    blockLayer.addTo(currentLayers);
-                } else if (entity == 'Cluster') {
-                    clusterLayer = createLayer(data.clusters, clusterIcon);
-                    layerIDs.cluster = clusterLayer._leaflet_id;
-                    clusterLayer.addTo(currentLayers);
-                } else if (entity == 'District') {
-                    districtLayer = createLayer(data.districts, districtIcon);
-                    layerIDs.district = districtLayer._leaflet_id;
-                    districtLayer.addTo(currentLayers);
-                } else if (entity == 'School'){
-                    schoolLayer = createLayer(data.schools, schoolIcon);
-                    schoolLayer._leaflet_id = layerIDs.school;
-                    schoolLayer.addTo(currentLayers);
-                }
-            });
+            if ($.getUrlVar('z') !== undefined){
+                map.setZoom(parseInt($.getUrlVar('z')));
+            }
+
+            if (action == 'getInfo'){
+                // just needs to place the marker and fill Pane
+                filtersEnabled = true;
+                DISE.call(method, session, params, function(data) {
+                    if (data.error !== undefined) {
+                        alert(data.error);
+                        return;
+                    }
+
+                    pane = getPane(entity);
+                    pane.fill(data[entity_lower].properties);
+
+                    fillCrumb(entity_lower, data[entity_lower].properties);
+
+                    if (data[entity_lower].geometry.coordinates.length == 2) {
+                        newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
+                        map.panTo([data[entity_lower].geometry.coordinates[1], data[entity_lower].geometry.coordinates[0]])
+                        newLayer.addTo(currentLayers);
+                    } else {
+                        alert('Sorry, no location available for this.');
+                    }
+                });
+            } else if (['getSchools', 'getClusters', 'getBlocks'].indexOf(action) > -1) {
+                // show all the markers
+                // if include_entity is set, fill the Pane
+                filtersEnabled = true;
+                DISE.call(method, session, params, function(data) {
+                    if (data.error !== undefined) {
+                        alert(data.error);
+                        return;
+                    }
+
+                    if (action == 'getSchools') {
+                        icon = customIcon('school');
+                    } else if (action == 'getClusters') {
+                        icon = customIcon('cluster');
+                    } else if (action == 'getBlocks') {
+                        icon = customIcon('block');
+                    }
+
+                    newLayer = createLayer(data.results, icon);
+                    newLayer.addTo(currentLayers);
+
+                    if (params.include_entity !== undefined && params.include_entity == 'true') {
+                        pane = getPane(entity);
+                        pane.fill(data[entity_lower].properties);
+                        fillCrumb(entity_lower, data[entity_lower].properties);
+
+                        if (data[entity_lower].geometry.coordinates.length == 2) {
+                            newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
+                            map.panTo([data[entity_lower].geometry.coordinates[1], data[entity_lower].geometry.coordinates[0]])
+                            newLayer.addTo(currentLayers);
+                        } else {
+                            alert('Sorry, no location available for this.');
+                        }
+                    }
+                });
+            } else if (['search'].indexOf(action) > -1) {
+                DISE.call(method, session, params, function(data) {
+                    if (data.error !== undefined) {
+                        alert(data.error);
+                        return;
+                    }
+
+                    // Let's sanitize the geojson
+                    var sanitized_results = {
+                        type: "FeatureCollection",
+                        features: []
+                    }
+
+                    for (var i = 0; i < data.results.features.length; i++) {
+                        if (data.results.features[i].geometry.coordinates.length == 2) {
+                            sanitized_results.features.push(data.results.features[i]);
+                        }
+                    };
+
+                    // Let's plot the valid geojson now
+                    icon = customIcon(entity_lower);
+                    newLayer = createLayer(sanitized_results, icon);
+                    newLayer.addTo(currentLayers);
+
+                    // updates the count pane
+                    search_view.results(data.results.features);
+                    search_view.search_entity(entity);
+                });
+            }
         }
     }
 
@@ -494,7 +801,6 @@ $(function(){
     } else {
         // Invoke search mechanism
         filtersEnabled = true;
-        console.log('do ' + $.getUrlVar('do'));
 
         // query and show the results in hash
         handleHashChange();

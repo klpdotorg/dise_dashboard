@@ -51,3 +51,5 @@ Vagrantfile
 
 #newrelic
 newrelic.ini
+
+fabfile.py

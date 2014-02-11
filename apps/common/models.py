@@ -108,13 +108,13 @@ KITCHENSHED_STATUS = (
 )
 
 BOUNDARY_WALL = (
-    (0, "Not Applicable "),
+    (0, "Not Applicable"),
     (1, "Pucca"),
     (2, "Pucca but broken"),
-    (3, "barbed wire fencing"),
+    (3, "Barbed wire fencing"),
     (4, "Hedges"),
     (5, "No boundary wall"),
-    (6, "others"),
+    (6, "Others"),
     (7, "Partial"),
     (8, "Under Construction"),
 )

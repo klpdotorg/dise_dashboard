@@ -256,7 +256,7 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
 
 
 /* Preset Editor */
-#preset-editor{
+.preset-editor{
     transition: all 1s ease;
     position: absolute;
     background: #222;
@@ -271,29 +271,29 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
     left: 0;
 }
 
-#preset-editor.activate{
+.preset-editor.activate{
     transition: all 1s ease;
     top: 53px;
 }
 
-#preset-editor div.action-row{
+.preset-editor div.action-row{
     margin-top: 20px;
     padding-top: 10px;
     border-top: 1px solid #cd5e00;
 }
 
-#preset-editor .btn{
+.preset-editor .btn{
     background: #cd5e00;
     color: #fff;
     margin-right: 10px;
 }
 
-#preset-editor a{
+.preset-editor a{
     color: #cd5e00;
     margin-left: 10px;
 }
 
-#preset-editor h3{
+.preset-editor h3{
     margin: 0;
 
     padding: 10px;
@@ -304,7 +304,7 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
     margin-bottom: -20px;
 }
 
-#preset-editor h3 span.glyphicon{
+.preset-editor h3 span.glyphicon{
     font-size: 15px;
 }
 
@@ -344,20 +344,20 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
     top: -8px !important;
 }
 
-#preset-editor label.range{
+.preset-editor label.range{
     font-weight: 100;
     margin: 0;
     width: 300px;
     margin-bottom: 10px;
 }
 
-#preset-editor label.range > strong{
+.preset-editor label.range > strong{
     color: #cd5e00;
     font-weight: 100;
     font-size: 22px;
 }
 
-#preset-editor label.range > strong > input{
+.preset-editor label.range > strong > input{
     color: #cd5e00;
     border: none;
     background: transparent;

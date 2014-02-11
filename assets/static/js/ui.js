@@ -7,12 +7,8 @@ var UI = {
             if(!confirm("Are you sure? This action cannot be undone!")) return false;
         });
 
-        $("#presets .glyphicon-cog").click(function(){
-            $("#preset-editor").toggleClass("activate");
-        });
-
         $(".action-row button, .action-row a").click(function(e){
-            $("#preset-editor").toggleClass("activate");
+            $(".preset-editor").toggleClass("activate");
         });
 
         $("#control_toggle").click(function(e){
@@ -24,18 +20,9 @@ var UI = {
             UI.resize();
         });
 
-        $(".preset_selector").select2();
-
         $(".close_popup").on("click", function() {
            $(".popup").hide();
         });
-
-
-        this.renderCrumbs([
-            ["Karnataka", "#"],
-            ["Bangalore", "#"],
-            ["HSR Layout", "#"]
-        ]);
 
         this.initICheck();
         this.initSliders();
@@ -95,7 +82,7 @@ var UI = {
 
         for (var i in bs){
             var b = bs[i];
-            var li = $("<li>");
+            var li = $("<li class='crumb'>").attr('data-type', b[2]).attr('data-name', b[0]);
             var a = $("<a>").attr("href", b[1]).html(b[0]);
             ol.append(li.append(a));
         }

@@ -12,7 +12,8 @@
     <script type="text/javascript" src="{% static 'js/ui.js' %}"></script>
     <script type="text/javascript" src="{% static 'lib/select2.js' %}"></script>
     <script type="text/javascript" src="{% static 'lib/icheck.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'lib/jquery.customSelect.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'lib/knockout-3.0.0.js' %}"></script>
+    <!-- <script type="text/javascript" src="{% static 'lib/jquery.customSelect.min.js' %}"></script> -->
     <script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
     <script type="text/javascript" src="{% static 'js/dise.js' %}"></script>
 {% endblock %}
@@ -21,7 +22,7 @@
 <div id="map-holder"></div>
 
 <!-- Preset Editor -->
-<div id="preset-editor">
+<div id="preset-editor-facility" class="preset-editor" data-type="facilities">
   <div class="container">
     <div class="row">
       <div class="col-md-12">
@@ -37,16 +38,16 @@
           <label><input type="checkbox" name="facilities" value="toilet_for_girls"> Doesn't have Toilet for Girls</label><br>
           <label><input type="checkbox" name="facilities" value="electricity"> Doesn't have Electricity</label><br>
           <label><input type="checkbox" name="facilities" value="secure_wall"> Doesn't have Secure Wall</label><br>
-          <label><input type="checkbox" name="facilities" value="mid_day_meal"> Doesn't have Mid-day meal</label><br>
+          <!-- <label><input type="checkbox" name="facilities" value="mid_day_meal"> Doesn't have Mid-day meal</label><br> -->
           <label><input type="checkbox" name="facilities" value="library"> Doesn't have Library</label><br>
           <label><input type="checkbox" name="facilities" value="ramp"> Doesn't have Ramp</label><br>
           <label><input type="checkbox" name="facilities" value="blackboard"> Doesn't have Blackboard</label><br>
           <label><input type="checkbox" name="facilities" value="playground"> Doesn't have Playground</label><br>
-          <label><input type="checkbox" name="facilities" value="medical_checkup"> Doesn't have Medical Checkup</label><br>
+          <!-- <label><input type="checkbox" name="facilities" value="medical_checkup"> Doesn't have Medical Checkup</label><br> -->
           <label><input type="checkbox" name="facilities" value="drinking_water"> Doesn't have Drinking Water</label>
         </div>
       </div>
-
+<!--
       <div class="col-md-4">
         <h3><span class="glyphicon glyphicon-transfer"></span> RTE</h3>
         <div class="check-list">
@@ -147,12 +148,12 @@
 
 
         </div>
-      </div>
+      </div> -->
     </div>
 
     <div class="row action-row">
       <div class="col-md-push-9 col-md-3">
-        <button type="button" class="btn">Save</button>
+        <button type="button" class="btn filter-apply" data-type="facilities">Search</button>
         or
         <a href="javascript:void(0)">Cancel</a>
       </div>
@@ -193,11 +194,14 @@
       <div class="category_filter">
         <label>Area</label>
         <div class="btn-group" data-toggle="buttons">
-          <label class="btn btn-primary">
-            <input type="checkbox" name="area" value="rural"> Rural
+          <label class="btn btn-primary active">
+            <input type="radio" name="area" value=""> All
           </label>
           <label class="btn btn-primary">
-            <input type="checkbox" name="area" value="urban"> Urban
+            <input type="radio" name="area" value="rural"> Rural
+          </label>
+          <label class="btn btn-primary">
+            <input type="radio" name="area" value="urban"> Urban
           </label>
         </div>
       </div>
@@ -206,11 +210,14 @@
       <div class="category_filter">
         <label>Management</label>
         <div class="btn-group" data-toggle="buttons">
-          <label class="btn btn-primary">
-            <input type="checkbox" name="management" value="private"> Private
+          <label class="btn btn-primary active">
+            <input type="radio" name="management" value=""> All
           </label>
           <label class="btn btn-primary">
-            <input type="checkbox" name="management" value="govt"> Goverment
+            <input type="radio" name="management" value="pvt"> Private
+          </label>
+          <label class="btn btn-primary">
+            <input type="radio" name="management" value="govt"> Goverment
           </label>
         </div>
       </div>
@@ -219,49 +226,45 @@
 
   <div id="presets">
     <select class="preset_selector">
-      <option>Preset 1</option>
-      <option>Preset 2</option>
-      <option>Preset 3</option>
-      <option>Preset 4</option>
-      <option>Preset 5</option>
-      <option>Preset 6</option>
+      <option value="">Select a Preset</option>
+      <option value="facility">Facilities</option>
     </select>
     <span class="glyphicon glyphicon-refresh reset_preset" data-toggle="tooltip" title="Reset the changes in the preset"></span>
     <span class="glyphicon glyphicon-cog"></span>
   </div>
 
-  <div class="no-of-matches">
-    42 schools found <small>(37 on map)</small>
+  <div class="no-of-matches" data-bind="visible: show_search_count">
+    <span data-bind="text: n_results"></span> <span data-bind="text: search_entity"></span>s found <small>(<span data-bind="text: n_results_map"></span> on map)</small>
   </div>
 
   <div id="schools">
-    <div class="popup">
+    <div class="popup" id='popup-school'>
       <h4>
-        <span class="glyphicon glyphicon-chevron-left"></span>
-        Delhi Public School
-        <small>Greater NOIDA</small>
+        <span class="glyphicon glyphicon-chevron-left" style="display:none"></span>
+        <span class="name"></span>
+        <small class="address"></small>
       </h4>
 
 
       <div class="row">
         <div class="col-md-4">
           <h5>Students</h5>
-          <div class="circle_stat">
-            45
+          <div class="circle_stat total_student">
+
           </div>
         </div>
 
         <div class="col-md-4">
           <h5 class="blue">Boys</h5>
-          <div class="circle_stat blue">
-            12
+          <div class="circle_stat blue total_boys">
+
           </div>
         </div>
 
         <div class="col-md-4">
           <h5 class="pink">Girls</h5>
-          <div class="circle_stat pink">
-            33
+          <div class="circle_stat pink total_girls">
+
           </div>
         </div>
       </div>
@@ -271,22 +274,22 @@
       <div class="row">
         <div class="col-md-4">
           <h5>Toilets</h5>
-          <div class="circle_stat">
-            45
+          <div class="circle_stat total_toilet">
+
           </div>
         </div>
 
         <div class="col-md-4">
           <h5 class="blue">for Boys</h5>
-          <div class="circle_stat blue">
-            12
+          <div class="circle_stat blue total_toilet_boys">
+
           </div>
         </div>
 
         <div class="col-md-4">
           <h5 class="pink">for Girls</h5>
-          <div class="circle_stat pink">
-            33
+          <div class="circle_stat pink total_toilet_girls">
+
           </div>
         </div>
       </div>
@@ -297,14 +300,14 @@
       <div class="row">
         <div class="col-md-4 col-md-push-2">
           <h5>Classrooms</h5>
-          <div class="circle_stat">
-            33
+          <div class="circle_stat total_classrooms">
+
           </div>
         </div>
         <div class="col-md-4 col-md-push-2">
           <h5 class="green">PTR Ratio</h5>
-          <div class="circle_stat green">
-            72
+          <div class="circle_stat green ptr">
+
           </div>
         </div>
       </div>
@@ -314,12 +317,12 @@
       <div class="row">
         <div class="col-md-6 right-shift">
           <h5 class="question">Medium of Instruction</h5>
-          <p class="answer medium_of_instruction">English</p>
+          <p class="answer medium_of_instruction"></p>
         </div>
 
         <div class="col-md-6">
           <h5 class="question">Category</h5>
-          <p class="answer sch_category">Second</p>
+          <p class="answer sch_category"></p>
         </div>
       </div>
 
@@ -328,12 +331,12 @@
       <div class="row">
         <div class="col-md-6 right-shift">
           <h5 class="question">Management</h5>
-          <p class="answer sch_category">Private</p>
+          <p class="answer sch_management"></p>
         </div>
 
         <div class="col-md-6">
           <h5 class="question">Electricity</h5>
-          <p class="answer sch_category">Yes</p>
+          <p class="answer electricity"></p>
         </div>
       </div>
 
@@ -342,7 +345,160 @@
       <div class="row">
         <div class="col-md-6 right-shift">
           <h5 class="question">Library</h5>
-          <p class="answer sch_category">Yes<small>, 100 books</small></p>
+          <p class="answer library">Yes<small>, 100 books</small></p>
+        </div>
+      </div>
+
+      <br>
+
+
+    </div>
+
+    <!--
+    <ul>
+      <li>
+        <span class="glyphicon glyphicon-map-marker"></span>
+        Delhi Public School
+        <small>Greater NOIDA</small>
+      </li>
+      <li>
+        <span class="glyphicon glyphicon-map-marker"></span>
+        Delhi Public School
+        <small>Greater NOIDA</small>
+      </li>
+      <li class="not-on-map">
+        <span class="glyphicon glyphicon-map-marker"></span>
+        Delhi Public School
+        <small>Greater NOIDA</small>
+      </li>
+      <li>
+        <span class="glyphicon glyphicon-map-marker"></span>
+        Delhi Public School
+        <small>Greater NOIDA</small>
+      </li>
+      <li>
+        <span class="glyphicon glyphicon-map-marker"></span>
+        Delhi Public School
+        <small>Greater NOIDA</small>
+      </li>
+      <li>
+        <span class="glyphicon glyphicon-map-marker"></span>
+        Delhi Public School
+        <small>Greater NOIDA</small>
+      </li>
+      <li class="not-on-map">
+        <span class="glyphicon glyphicon-map-marker"></span>
+        Delhi Public School
+        <small>Greater NOIDA</small>
+      </li>
+      <li>
+        <span class="glyphicon glyphicon-map-marker"></span>
+        Delhi Public School
+        <small>Greater NOIDA</small>
+      </li>
+    </ul>
+    -->
+
+    <div class="popup" id='popup-others'>
+      <h4>
+        <span class="glyphicon glyphicon-chevron-left" style="display:none"></span>
+        <span class="entity_name"></span>
+      </h4>
+
+
+      <div class="row">
+        <div class="col-md-4">
+          <h5>Students</h5>
+          <div class="circle_stat entity_student">
+
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <h5 class="blue">Boys</h5>
+          <div class="circle_stat blue sum_boys">
+
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <h5 class="pink">Girls</h5>
+          <div class="circle_stat pink sum_girls">
+
+          </div>
+        </div>
+      </div>
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-4">
+          <h5>Toilets</h5>
+          <div class="circle_stat entity_toilet">
+
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <h5 class="blue">for Boys</h5>
+          <div class="circle_stat blue sum_toilet_boys">
+
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <h5 class="pink">for Girls</h5>
+          <div class="circle_stat pink sum_toilet_girls">
+
+          </div>
+        </div>
+      </div>
+
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-4">
+          <h5>Teachers</h5>
+          <div class="circle_stat entity_teacher">
+
+          </div>
+        </div>
+        <div class="col-md-4">
+          <h5 class="blue">Male</h5>
+          <div class="circle_stat blue sum_male_tch">
+
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <h5 class="pink">Female</h5>
+          <div class="circle_stat pink sum_female_tch">
+
+          </div>
+        </div>
+      </div>
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-6 right-shift">
+          <h5 class="question">Libraries</h5>
+          <p class="answer entity_library"></p>
+        </div>
+
+        <div class="col-md-6">
+          <h5 class="question">Has Electricity</h5>
+          <p class="answer entity_electricity"></p>
+        </div>
+      </div>
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-6 right-shift">
+          <h5 class="question">PTR</h5>
+          <p class="answer entity_ptr"></p>
         </div>
       </div>
 

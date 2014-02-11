@@ -1,10 +1,14 @@
 import re
+import urllib2
+try: import simplejson as json
+except ImportError: import json
 
-from django.utils import simplejson as json
 from django.contrib.gis.geos import Polygon
 from geojson import Feature, FeatureCollection, Point, dumps as geojson_dumps
 
 from schools.olap_models import get_models
+from common.models import search_choices, YESNO, AREA, SCHOOL_CATEGORY, \
+    SCHOOL_MANAGEMENT, SCHOOL_TYPES, MEDIUM, MDM_STATUS, KITCHENSHED_STATUS, BOUNDARY_WALL
 
 
 class BaseEntity:
@@ -39,7 +43,38 @@ class BaseEntity:
         include_entity = params.get('include_entity', False)
         if include_entity:
             entity_info = obj._getinfo(params)
-            result[obj.entity_type] = entity_info[obj.entity_type]
+            if obj.entity_type in entity_info:
+                result[obj.entity_type] = entity_info[obj.entity_type]
+
+        return cls.to_geojson_str(result)
+
+    @classmethod
+    def getBlocks(cls, params):
+        # this just parses the dictionary from _getschools() and returns JSON
+        obj = cls()
+        result = obj._getblocks(params)
+
+        # Check if we should send back the entity
+        include_entity = params.get('include_entity', False)
+        if include_entity:
+            entity_info = obj._getinfo(params)
+            if obj.entity_type in entity_info:
+                result[obj.entity_type] = entity_info[obj.entity_type]
+
+        return cls.to_geojson_str(result)
+
+    @classmethod
+    def getClusters(cls, params):
+        # this just parses the dictionary from _getschools() and returns JSON
+        obj = cls()
+        result = obj._getclusters(params)
+
+        # Check if we should send back the entity
+        include_entity = params.get('include_entity', False)
+        if include_entity:
+            entity_info = obj._getinfo(params)
+            if obj.entity_type in entity_info:
+                result[obj.entity_type] = entity_info[obj.entity_type]
 
         return cls.to_geojson_str(result)
 
@@ -75,6 +110,9 @@ class BaseEntity:
     def _getinfo(self, params):
         # gets the details of a school and returns a dictionary
         primary_key = params.get(self.param_name_for_primary_key, -1)
+        if type(primary_key) == str:
+            primary_key = primary_key.replace('+', ' ')
+
         result = dict()
         result['query'] = params
 
@@ -92,7 +130,7 @@ class BaseEntity:
                         self.param_name_for_secondary_key)
                     filters[self.secondary_key + '__iexact'] = secondary_key
 
-            entity_obj = EntityModel.objects.only(*self.only_fields).get(**filters)
+            entity_obj = EntityModel.objects.get(**filters)
 
             result[self.entity_type] = self._get_geojson(entity_obj)
         except (EntityModel.DoesNotExist, Exception) as e:
@@ -114,7 +152,8 @@ class School(BaseEntity):
                    'total_boys', 'total_girls', 'male_tch', 'female_tch',
                    'medium_of_instruction', 'sch_management', 'sch_category',
                    'library_yn', 'books_in_library', 'no_of_computers',
-                   'electricity', 'drinking_water']
+                   'electricity', 'drinking_water', 'toilet_common', 'toilet_boys',
+                   'toilet_girls', 'tot_clrooms']
 
     # For methods that start with `School`
     def _search(self, params):
@@ -125,7 +164,7 @@ class School(BaseEntity):
         SchoolModel = get_models(params.get('session', '10-11'), 'school')
 
         if len(params.keys()) > 1:
-            schools = SchoolModel.objects.only(*self.only_fields).filter(centroid__isnull=False)
+            schools = SchoolModel.objects.only(*self.only_fields)
 
         if 'name' in params and params.get('name', ''):
             schools = schools.filter(school_name__icontains=params.get('name'))
@@ -148,11 +187,79 @@ class School(BaseEntity):
         if 'limit' in params and params.get('limit', 0):
             schools = schools[:params.get('limit')]
 
+        if 'area' in params and params.get('area', ''):
+            schools = schools.filter(
+                rural_urban=search_choices(AREA, params.get('area').title())
+            )
+
+        if 'management' in params and params.get('management', ''):
+            if params.get('management') == 'govt':
+                schools = schools.filter(
+                    sch_management__in=[1, 7]
+                )
+            elif params.get('management') == 'pvt':
+                schools = schools.exclude(
+                    sch_management__in=[1, 7]
+                )
+
+        if 'f' in params and params.get('f', ''):
+            f = params.get('f')
+            f = json.loads(urllib2.unquote(f).decode('utf8'))
+
+            for filt in f.get('facilities', []):
+                if filt == 'repair':
+                    schools = schools.filter(
+                        classrooms_require_minor_repair=search_choices(YESNO, 'Yes'),
+                        classrooms_require_major_repair=search_choices(YESNO, 'Yes')
+                    )
+                elif filt == 'toilet':
+                    schools = schools.filter(
+                        toilet_common=0,
+                        toilet_boys=0,
+                        toilet_girls=0
+                    )
+                elif filt == 'toilet_for_girls':
+                    schools = schools.filter(
+                        toilet_girls=0
+                    )
+                elif filt == 'electricity':
+                    schools = schools.filter(
+                        electricity=search_choices(YESNO, 'No')
+                    )
+                elif filt == 'secure_wall':
+                    schools = schools.exclude(
+                        boundary_wall__in=[
+                            search_choices(BOUNDARY_WALL, "Pucca"),
+                            search_choices(BOUNDARY_WALL, "Barbed wire fencing"),
+                        ]
+                    )
+                elif filt == 'library':
+                    schools = schools.filter(
+                        library_yn=search_choices(YESNO, 'No')
+                    )
+                elif filt == 'ramp':
+                    schools = schools.filter(
+                        ramps=search_choices(YESNO, 'No')
+                    )
+                elif filt == 'blackboard':
+                    schools = schools.filter(
+                        blackboard=search_choices(YESNO, 'No')
+                    )
+                elif filt == 'playground':
+                    schools = schools.filter(
+                        playground=search_choices(YESNO, 'No')
+                    )
+                elif filt == 'drinking_water':
+                    schools = schools.filter(
+                        drinking_water=search_choices(YESNO, 'No')
+                    )
+
+
         print schools.query
         temp_l = []
         for sch in schools:
             temp_l.append(self._get_geojson(sch))
-        result['schools'] = FeatureCollection(temp_l)
+        result['results'] = FeatureCollection(temp_l)
         return result
 
 
@@ -173,7 +280,7 @@ class Cluster(BaseEntity):
         # returns list of schools in a given cluster
         # if format = geo, returns FeatureCollection
         # if format = plain, returns a plain list
-        name = params.get('name')
+        name = params.get('name').replace('+', ' ')
         result = dict()
         result['query'] = params
 
@@ -188,9 +295,10 @@ class Cluster(BaseEntity):
                 # because there is no way to show them
                 centroid__isnull=False
             )
+
             for sch in schools:
                 temp_l.append(school_api._get_geojson(sch))
-            result['schools'] = FeatureCollection(temp_l)
+            result['results'] = FeatureCollection(temp_l)
 
         except (SchoolModel.DoesNotExist, Exception) as e:
             result['error'] = str(e)
@@ -231,7 +339,7 @@ class Cluster(BaseEntity):
         for clst in clusters:
             temp_l.append(self._get_geojson(clst))
 
-        result['clusters'] = FeatureCollection(temp_l)
+        result['results'] = FeatureCollection(temp_l)
         return result
 
 
@@ -269,9 +377,34 @@ class Block(BaseEntity):
             )
             for sch in schools:
                 temp_l.append(school_api._get_geojson(sch))
-            result['schools'] = FeatureCollection(temp_l)
+            result['results'] = FeatureCollection(temp_l)
 
         except (SchoolModel.DoesNotExist, Exception) as e:
+            result['error'] = str(e)
+        return result
+
+    def _getclusters(self, params):
+        # returns list of clusters in a given district
+        name = params.get('name')
+        result = dict()
+        result['query'] = params
+
+        try:
+            ClusterModel = get_models(params.get('session', '10-11'), 'cluster')
+
+            temp_l = []
+            cluster_api = Cluster()
+            clusters = ClusterModel.objects.filter(
+                block_name__iexact=name,
+                # NOTE: Not sending clusters without centroid
+                # because there is no way to show them
+                centroid__isnull=False
+            )
+            for sch in clusters:
+                temp_l.append(cluster_api._get_geojson(sch))
+            result['results'] = FeatureCollection(temp_l)
+
+        except (ClusterModel.DoesNotExist, Exception) as e:
             result['error'] = str(e)
         return result
 
@@ -306,7 +439,7 @@ class Block(BaseEntity):
         for blk in blocks:
             temp_l.append(self._get_geojson(blk))
 
-        result['blocks'] = FeatureCollection(temp_l)
+        result['results'] = FeatureCollection(temp_l)
         return result
 
 
@@ -325,8 +458,6 @@ class District(BaseEntity):
 
     def _getschools(self, params):
         # returns list of schools in a given district
-        # if format = geo, returns FeatureCollection
-        # if format = plain, returns a plain list
         name = params.get('name')
         result = dict()
         result['query'] = params
@@ -344,9 +475,59 @@ class District(BaseEntity):
             )
             for sch in schools:
                 temp_l.append(school_api._get_geojson(sch))
-            result['schools'] = FeatureCollection(temp_l)
+            result['results'] = FeatureCollection(temp_l)
 
         except (SchoolModel.DoesNotExist, Exception) as e:
+            result['error'] = str(e)
+        return result
+
+    def _getclusters(self, params):
+        # returns list of clusters in a given district
+        name = params.get('name')
+        result = dict()
+        result['query'] = params
+
+        try:
+            ClusterModel = get_models(params.get('session', '10-11'), 'cluster')
+
+            temp_l = []
+            cluster_api = Cluster()
+            clusters = ClusterModel.objects.filter(
+                district__iexact=name,
+                # NOTE: Not sending clusters without centroid
+                # because there is no way to show them
+                centroid__isnull=False
+            )
+            for sch in clusters:
+                temp_l.append(cluster_api._get_geojson(sch))
+            result['results'] = FeatureCollection(temp_l)
+
+        except (ClusterModel.DoesNotExist, Exception) as e:
+            result['error'] = str(e)
+        return result
+
+    def _getblocks(self, params):
+        # returns list of blocks in a given district
+        name = params.get('name')
+        result = dict()
+        result['query'] = params
+
+        try:
+            BlockModel = get_models(params.get('session', '10-11'), 'block')
+
+            temp_l = []
+            block_api = Block()
+            blocks = BlockModel.objects.filter(
+                district__iexact=name,
+                # NOTE: Not sending blocks without centroid
+                # because there is no way to show them
+                centroid__isnull=False
+            )
+            for sch in blocks:
+                temp_l.append(block_api._get_geojson(sch))
+            result['results'] = FeatureCollection(temp_l)
+
+        except (BlockModel.DoesNotExist, Exception) as e:
             result['error'] = str(e)
         return result
 
@@ -383,7 +564,7 @@ class District(BaseEntity):
         for dist in districts:
             temp_l.append(self._get_geojson(dist))
 
-        result['districts'] = FeatureCollection(temp_l)
+        result['results'] = FeatureCollection(temp_l)
         return result
 
 
@@ -421,7 +602,7 @@ class Pincode(BaseEntity):
             )
             for sch in schools:
                 temp_l.append(school_api._get_geojson(sch))
-            result['schools'] = FeatureCollection(temp_l)
+            result['results'] = FeatureCollection(temp_l)
 
         except (SchoolModel.DoesNotExist, Exception) as e:
             result['error'] = str(e)
@@ -459,5 +640,5 @@ class Pincode(BaseEntity):
         temp_l = []
         for pin in pincodes:
             temp_l.append(self._get_geojson(pin))
-        result['pincodes'] = FeatureCollection(temp_l)
+        result['results'] = FeatureCollection(temp_l)
         return result

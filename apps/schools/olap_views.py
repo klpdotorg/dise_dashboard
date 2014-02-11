@@ -1,12 +1,13 @@
 from django.views.generic import View, FormView, TemplateView
 from django.db.models import Count, Min, Sum, Avg, F, Q
 from django.core.serializers.json import DjangoJSONEncoder
-from django.utils import simplejson as json
 from django.core import serializers
 from django.db import connection
 
 from geojson import Feature, Point, dumps as geojson_dumps
 import re
+try: import simplejson as json
+except ImportError: import json
 
 from common import SumCase
 from common.views import JSONResponseMixin
