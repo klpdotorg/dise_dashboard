@@ -164,7 +164,7 @@ class School(BaseEntity):
         SchoolModel = get_models(params.get('session', '10-11'), 'school')
 
         if len(params.keys()) > 1:
-            schools = SchoolModel.objects.only(*self.only_fields).filter(centroid__isnull=False)
+            schools = SchoolModel.objects.only(*self.only_fields)
 
         if 'name' in params and params.get('name', ''):
             schools = schools.filter(school_name__icontains=params.get('name'))
