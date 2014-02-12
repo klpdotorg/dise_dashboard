@@ -783,6 +783,7 @@ $(function(){
                 // updates the count pane
                 search_view.results(data.results.features);
                 search_view.search_entity(entity);
+                search_view.showPopupResultList(true);
 
                 if (params.include_entity !== undefined && params.include_entity == 'true') {
                     search_view.showPopupResultList(false);
@@ -835,6 +836,7 @@ $(function(){
                 // updates the count pane
                 search_view.results(data.results.features);
                 search_view.search_entity(entity);
+                search_view.showPopupResultList(true);
             });
         }
     }
