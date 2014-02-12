@@ -440,41 +440,53 @@ $(function(){
         if (['School', 'school'].indexOf(entity_type) > -1) {
             UI.renderCrumbs([
                 [entity_properties.district, "#" + $.param({
-                    'do': 'District.getInfo',
+                    'do': 'District.getBlocks',
                     session: academic_year,
-                    name: entity_properties.district
+                    name: entity_properties.district,
+                    include_entity: true,
+                    z: 10
                 }), 'district'],
                 [entity_properties.block_name, "#" + $.param({
-                    'do': 'Block.getInfo',
+                    'do': 'Block.getClusters',
                     session: academic_year,
-                    name: entity_properties.block_name
+                    name: entity_properties.block_name,
+                    include_entity: true,
+                    z: 12
                 }), 'block'],
                 [entity_properties.cluster_name, "#" + $.param({
-                    'do': 'Cluster.getInfo',
+                    'do': 'Cluster.getSchools',
                     session: academic_year,
                     name: entity_properties.cluster_name,
-                    block: entity_properties.block_name
+                    block: entity_properties.block_name,
+                    include_entity: true,
+                    z: 13
                 }), 'cluster']
             ]);
         } else if (['cluster', 'Cluster'].indexOf(entity_type) > -1) {
             UI.renderCrumbs([
                 [entity_properties.district, "#" + $.param({
-                    'do': 'District.getInfo',
+                    'do': 'District.getBlocks',
                     session: academic_year,
-                    name: entity_properties.district
+                    name: entity_properties.district,
+                    include_entity: true,
+                    z: 10
                 }), 'district'],
                 [entity_properties.block_name, "#" + $.param({
-                    'do': 'Block.getInfo',
+                    'do': 'Block.getClusters',
                     session: academic_year,
-                    name: entity_properties.block_name
+                    name: entity_properties.block_name,
+                    include_entity: true,
+                    z: 12
                 }), 'block']
             ]);
         } else if (['block', 'Block'].indexOf(entity_type) > -1) {
             UI.renderCrumbs([
                 [entity_properties.district, "#" + $.param({
-                    'do': 'District.getInfo',
+                    'do': 'District.getBlocks',
                     session: academic_year,
-                    name: entity_properties.district
+                    name: entity_properties.district,
+                    include_entity: true,
+                    z: 10
                 }), 'district']
             ]);
         }
@@ -622,25 +634,23 @@ $(function(){
 
 
     function updateData (layer) {
-      layerID = layer._leaflet_id;
-      if (layerID == layerIDs.district) {
-        loadEntityData('District');
-      }
-      else if (layerID == layerIDs.block) {
-        loadEntityData('Block');
-      }
-      else if (layerID == layerIDs.cluster) {
-        loadEntityData('Cluster');
-      }
-      else {
-        loadEntityData('School');
-      }
+        layerID = layer._leaflet_id;
+        if (layerID == layerIDs.district) {
+            loadEntityData('District');
+        } else if (layerID == layerIDs.block) {
+            loadEntityData('Block');
+        } else if (layerID == layerIDs.cluster) {
+            loadEntityData('Cluster');
+        } else {
+            loadEntityData('School');
+        }
     }
 
-// When the map is zoomed, load the necessary data
+    // When the map is zoomed, load the necessary data
     map.on('zoomend', function(e) {
       // If filters are enabled then don't load the usual layers.
         //var bbox = map.getBounds().toBBoxString();
+        console.log('zoooomed');
 
         if (!filtersEnabled) {
             console.log('filters not enabled, updating map');
@@ -648,145 +658,172 @@ $(function(){
         }
     })
 
-// When the map is panned, load the data in the new bounds.
+    // When the map is panned, load the data in the new bounds.
     map.on('dragend', function(e) {
-        var bbox = map.getBounds().toBBoxString();
-        $.updateUrlParams({bbox: bbox});
+        console.log('dragged');
+
+        if (!filtersEnabled) {
+            var bbox = map.getBounds().toBBoxString();
+            $.updateUrlParams({bbox: bbox});
+        }
     })
 
-// Function to set the map view to the layer when a filter/search
-// is triggered.
+    // Function to set the map view to the layer when a filter/search
+    // is triggered.
     function setLayerView (layer, zoom) {
         map.setView(layer.getLayers()[0].getLatLng(), zoom);
     }
 
     function handleHashChange(e) {
-        if ($.getUrlVar('do') !== undefined) {
-            // Invoke initial map layers.
-            var params = $.getUrlVars();
-            console.log(params);
+        if ($.getUrlVar('do') === undefined) {
+            return;
+        }
 
-            var method = params.do;
-            if(method.split('.').length !== 2){
-                alert('invalid do parameter');
-            }else{
-                delete params.do;
-                var entity = method.split('.')[0];
-                var entity_lower = entity.toLowerCase();
-                var action = method.split('.')[1];
-            }
+        // Invoke initial map layers.
+        var params = $.getUrlVars();
+        console.log(params);
 
-            if (['School', 'Cluster', 'Block', 'District', 'Pincode'].indexOf(entity) == -1) {
-                alert('Sorry, ' + entity + ' is an unknown entity.');
-                return;
-            }
+        var method = params.do;
+        if(method.split('.').length !== 2){
+            alert('invalid do parameter');
+        }else{
+            delete params.do;
+            var entity = method.split('.')[0];
+            var entity_lower = entity.toLowerCase();
+            var action = method.split('.')[1];
+        }
 
-            filtersEnabled = is_filter_enabled();
+        if (['School', 'Cluster', 'Block', 'District', 'Pincode'].indexOf(entity) == -1) {
+            alert('Sorry, ' + entity + ' is an unknown entity.');
+            return;
+        }
 
-            var session = params.academic_year || $('input[name=academic_year]:checked').val() || '10-11';
-            delete params.academic_year;
+        filtersEnabled = is_filter_enabled();
 
-            // Clear current layers.
-            currentLayers.clearLayers();
+        var session = params.academic_year || $('input[name=academic_year]:checked').val() || '10-11';
+        delete params.academic_year;
 
-            if ($.getUrlVar('bbox') !== undefined){
-                var bbox = $.getUrlVar('bbox').split(',');
-                map.fitBounds([
-                    [bbox[1], bbox[0]],
-                    [bbox[3], bbox[2]]
-                ]);
-            }
+        // Clear current layers.
+        currentLayers.clearLayers();
 
-            if ($.getUrlVar('z') !== undefined){
-                map.setZoom(parseInt($.getUrlVar('z')));
-            }
+        if ($.getUrlVar('bbox') !== undefined){
+            var bbox = $.getUrlVar('bbox').split(',');
+            map.fitBounds([
+                [bbox[1], bbox[0]],
+                [bbox[3], bbox[2]]
+            ]);
+        }
 
-            if (action == 'getInfo'){
-                // just needs to place the marker and fill Pane
-                filtersEnabled = true;
-                DISE.call(method, session, params, function(data) {
-                    if (data.error !== undefined) {
-                        alert(data.error);
-                        return;
-                    }
+        if ($.getUrlVar('z') !== undefined){
+            map.setZoom(parseInt($.getUrlVar('z')));
+        }
 
+        if (action == 'getInfo'){
+            // just needs to place the marker and fill Pane
+            filtersEnabled = true;
+            DISE.call(method, session, params, function(data) {
+                if (data.error !== undefined) {
+                    alert(data.error);
+                    return;
+                }
+
+                pane = getPane(entity);
+                pane.fill(data[entity_lower].properties);
+                search_view.show_search_count(false);
+
+                fillCrumb(entity_lower, data[entity_lower].properties);
+
+                if (data[entity_lower].geometry.coordinates.length == 2) {
+                    newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
+                    newLayer.addTo(currentLayers);
+
+                    $.updateUrlParams({
+                            bbox: [
+                                data[entity_lower].geometry.coordinates[0],
+                                data[entity_lower].geometry.coordinates[1],
+                                data[entity_lower].geometry.coordinates[0],
+                                data[entity_lower].geometry.coordinates[1]
+                            ].join(',')
+                        });
+                } else {
+                    alert('Sorry, no location available for this.');
+                }
+            });
+        } else if (['getSchools', 'getClusters', 'getBlocks'].indexOf(action) > -1) {
+            // show all the markers
+            // if include_entity is set, fill the Pane
+            filtersEnabled = true;
+            DISE.call(method, session, params, function(data) {
+                if (data.error !== undefined) {
+                    alert(data.error);
+                    return;
+                }
+
+                if (action == 'getSchools') {
+                    icon = customIcon('school');
+                } else if (action == 'getClusters') {
+                    icon = customIcon('cluster');
+                } else if (action == 'getBlocks') {
+                    icon = customIcon('block');
+                }
+
+                newLayer = createLayer(data.results, icon);
+                newLayer.addTo(currentLayers);
+
+                // updates the count pane
+                search_view.results(data.results.features);
+                search_view.search_entity(entity);
+
+                if (params.include_entity !== undefined && params.include_entity == 'true') {
                     pane = getPane(entity);
                     pane.fill(data[entity_lower].properties);
-
                     fillCrumb(entity_lower, data[entity_lower].properties);
 
                     if (data[entity_lower].geometry.coordinates.length == 2) {
                         newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
-                        map.panTo([data[entity_lower].geometry.coordinates[1], data[entity_lower].geometry.coordinates[0]])
                         newLayer.addTo(currentLayers);
+
+                        $.updateUrlParams({
+                            bbox: [
+                                data[entity_lower].geometry.coordinates[0],
+                                data[entity_lower].geometry.coordinates[1],
+                                data[entity_lower].geometry.coordinates[0],
+                                data[entity_lower].geometry.coordinates[1]
+                            ].join(',')
+                        });
                     } else {
                         alert('Sorry, no location available for this.');
                     }
-                });
-            } else if (['getSchools', 'getClusters', 'getBlocks'].indexOf(action) > -1) {
-                // show all the markers
-                // if include_entity is set, fill the Pane
-                filtersEnabled = true;
-                DISE.call(method, session, params, function(data) {
-                    if (data.error !== undefined) {
-                        alert(data.error);
-                        return;
+                }
+            });
+        } else if (['search'].indexOf(action) > -1) {
+            DISE.call(method, session, params, function(data) {
+                if (data.error !== undefined) {
+                    alert(data.error);
+                    return;
+                }
+
+                // Let's sanitize the geojson
+                var sanitized_results = {
+                    type: "FeatureCollection",
+                    features: []
+                }
+
+                for (var i = 0; i < data.results.features.length; i++) {
+                    if (data.results.features[i].geometry.coordinates.length == 2) {
+                        sanitized_results.features.push(data.results.features[i]);
                     }
+                };
 
-                    if (action == 'getSchools') {
-                        icon = customIcon('school');
-                    } else if (action == 'getClusters') {
-                        icon = customIcon('cluster');
-                    } else if (action == 'getBlocks') {
-                        icon = customIcon('block');
-                    }
+                // Let's plot the valid geojson now
+                icon = customIcon(entity_lower);
+                newLayer = createLayer(sanitized_results, icon);
+                newLayer.addTo(currentLayers);
 
-                    newLayer = createLayer(data.results, icon);
-                    newLayer.addTo(currentLayers);
-
-                    if (params.include_entity !== undefined && params.include_entity == 'true') {
-                        pane = getPane(entity);
-                        pane.fill(data[entity_lower].properties);
-                        fillCrumb(entity_lower, data[entity_lower].properties);
-
-                        if (data[entity_lower].geometry.coordinates.length == 2) {
-                            newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
-                            map.panTo([data[entity_lower].geometry.coordinates[1], data[entity_lower].geometry.coordinates[0]])
-                            newLayer.addTo(currentLayers);
-                        } else {
-                            alert('Sorry, no location available for this.');
-                        }
-                    }
-                });
-            } else if (['search'].indexOf(action) > -1) {
-                DISE.call(method, session, params, function(data) {
-                    if (data.error !== undefined) {
-                        alert(data.error);
-                        return;
-                    }
-
-                    // Let's sanitize the geojson
-                    var sanitized_results = {
-                        type: "FeatureCollection",
-                        features: []
-                    }
-
-                    for (var i = 0; i < data.results.features.length; i++) {
-                        if (data.results.features[i].geometry.coordinates.length == 2) {
-                            sanitized_results.features.push(data.results.features[i]);
-                        }
-                    };
-
-                    // Let's plot the valid geojson now
-                    icon = customIcon(entity_lower);
-                    newLayer = createLayer(sanitized_results, icon);
-                    newLayer.addTo(currentLayers);
-
-                    // updates the count pane
-                    search_view.results(data.results.features);
-                    search_view.search_entity(entity);
-                });
-            }
+                // updates the count pane
+                search_view.results(data.results.features);
+                search_view.search_entity(entity);
+            });
         }
     }
 
