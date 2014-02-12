@@ -128,6 +128,8 @@ $(function(){
             }
             return false;
         }, this);
+
+        this.showPopupResultList = ko.observable(false);
     }
 
     var search_view = new searchView([], '');
@@ -315,6 +317,7 @@ $(function(){
         divid: 'popup-school',
         show: function() {
             // shows the school pane
+            search_view.showPopupResultList(false);
             $('#'+this.divid).show();
         },
         hide: function() {
@@ -359,6 +362,7 @@ $(function(){
         divid: 'popup-others',
         show: function() {
             // shows the other entity pane
+            search_view.showPopupResultList(false);
             $('#'+this.divid).show();
         },
         hide: function() {
@@ -419,6 +423,12 @@ $(function(){
             return OtherPane;
         }
     }
+
+    $('body').on('click', '.glyphicon-chevron-left', function(e) {
+        OtherPane.hide();
+        SchoolPane.hide();
+        search_view.showPopupResultList(true);
+    });
 
     /**
      * Clears the breadcrumb area
@@ -775,6 +785,8 @@ $(function(){
                 search_view.search_entity(entity);
 
                 if (params.include_entity !== undefined && params.include_entity == 'true') {
+                    search_view.showPopupResultList(false);
+
                     pane = getPane(entity);
                     pane.fill(data[entity_lower].properties);
                     fillCrumb(entity_lower, data[entity_lower].properties);
