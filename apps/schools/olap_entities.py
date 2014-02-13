@@ -1,4 +1,5 @@
 import re
+import urllib
 import urllib2
 try: import simplejson as json
 except ImportError: import json
@@ -111,7 +112,7 @@ class BaseEntity:
         # gets the details of a school and returns a dictionary
         primary_key = params.get(self.param_name_for_primary_key, -1)
         if type(primary_key) == str:
-            primary_key = primary_key.replace('+', ' ')
+            primary_key = urllib.unquote_plus(primary_key)
 
         result = dict()
         result['query'] = params
@@ -280,7 +281,7 @@ class Cluster(BaseEntity):
         # returns list of schools in a given cluster
         # if format = geo, returns FeatureCollection
         # if format = plain, returns a plain list
-        name = params.get('name').replace('+', ' ')
+        name = urllib.unquote_plus(params.get('name'))
         result = dict()
         result['query'] = params
 
@@ -360,7 +361,7 @@ class Block(BaseEntity):
         # returns list of schools in a given block
         # if format = geo, returns FeatureCollection
         # if format = plain, returns a plain list
-        name = params.get('name')
+        name = urllib.unquote_plus(params.get('name'))
         result = dict()
         result['query'] = params
 
@@ -385,7 +386,7 @@ class Block(BaseEntity):
 
     def _getclusters(self, params):
         # returns list of clusters in a given district
-        name = params.get('name')
+        name = urllib.unquote_plus(params.get('name'))
         result = dict()
         result['query'] = params
 
@@ -458,7 +459,7 @@ class District(BaseEntity):
 
     def _getschools(self, params):
         # returns list of schools in a given district
-        name = params.get('name')
+        name = urllib.unquote_plus(params.get('name'))
         result = dict()
         result['query'] = params
 
@@ -483,7 +484,7 @@ class District(BaseEntity):
 
     def _getclusters(self, params):
         # returns list of clusters in a given district
-        name = params.get('name')
+        name = urllib.unquote_plus(params.get('name'))
         result = dict()
         result['query'] = params
 
@@ -508,7 +509,7 @@ class District(BaseEntity):
 
     def _getblocks(self, params):
         # returns list of blocks in a given district
-        name = params.get('name')
+        name = urllib.unquote_plus(params.get('name'))
         result = dict()
         result['query'] = params
 
