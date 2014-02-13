@@ -684,6 +684,18 @@ $(function(){
         map.setView(layer.getLayers()[0].getLatLng(), zoom);
     }
 
+    /**
+     * Pans the map to focus the feature collection
+     * @param  {[type]} sanitized_featurecollection Sanitized as in no Feature w/o coords
+     */
+    function panToFeatureCollection(sanitized_featurecollection) {
+        var latlngs = [];
+        for (var i = 0; i < sanitized_featurecollection.features.length; i++) {
+            latlngs.push(sanitized_featurecollection.features[i].geometry.coordinates)
+        };
+        map.fitBounds(L.GeoJSON.coordsToLatLngs(latlngs));
+    }
+
     function handleHashChange(e) {
         if ($.getUrlVar('do') === undefined) {
             return;
@@ -769,23 +781,31 @@ $(function(){
                     return;
                 }
 
-                if (action == 'getSchools') {
-                    icon = customIcon('school');
-                } else if (action == 'getClusters') {
-                    icon = customIcon('cluster');
-                } else if (action == 'getBlocks') {
-                    icon = customIcon('block');
+                // Let's sanitize the geojson
+                var sanitized_results = {
+                    type: "FeatureCollection",
+                    features: []
                 }
 
-                newLayer = createLayer(data.results, icon);
+                for (var i = 0; i < data.results.features.length; i++) {
+                    if (data.results.features[i].geometry.coordinates.length == 2) {
+                        sanitized_results.features.push(data.results.features[i]);
+                    }
+                };
+
+                // getSchools -> School
+                child_entity = action.substr(0, action.length-1).replace('get', '');
+                icon = customIcon(child_entity.toLowerCase());
+
+                newLayer = createLayer(sanitized_results, icon);
                 newLayer.addTo(currentLayers);
 
-                // updates the count pane
+                // updates the result pane
                 search_view.results(data.results.features);
-                search_view.search_entity(entity);
+                search_view.search_entity(child_entity);
                 search_view.showPopupResultList(true);
 
-                if (params.include_entity !== undefined && params.include_entity == 'true') {
+                if (params.include_entity !== undefined && params.include_entity == 'true' && data[entity_lower] !== undefined) {
                     search_view.showPopupResultList(false);
 
                     pane = getPane(entity);
@@ -807,6 +827,8 @@ $(function(){
                     } else {
                         alert('Sorry, no location available for this.');
                     }
+                } else {
+                    panToFeatureCollection(sanitized_results);
                 }
             });
         } else if (['search'].indexOf(action) > -1) {
