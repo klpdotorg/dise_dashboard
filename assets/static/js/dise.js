@@ -424,7 +424,7 @@ $(function(){
         }
     }
 
-    $('body').on('click', '.glyphicon-chevron-left', function(e) {
+    $('body').on('click', '.popup > h4', function(e) {
         OtherPane.hide();
         SchoolPane.hide();
         search_view.showPopupResultList(true);
