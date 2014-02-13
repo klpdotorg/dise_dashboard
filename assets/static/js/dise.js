@@ -384,7 +384,10 @@ $(function(){
             }
 
             $('#'+this.divid).find('.entity_name').html(entity[entity_name] + ' <small>' + entity.entity_type + '</small>');
-            $('#'+this.divid).find('.entity_school').html(entity.sum_schools);
+            $('#'+this.divid).find('.sum_schools').html(entity.sum_schools);
+            $('#'+this.divid).find('.sum_classrooms').html(
+                entity.sum_classrooms_in_good_condition + entity.sum_classrooms_require_minor_repair
+            );
             $('#'+this.divid).find('.entity_student').html(entity.sum_boys+entity.sum_girls);
             $('#'+this.divid).find('.sum_boys').html(entity.sum_boys);
             $('#'+this.divid).find('.sum_girls').html(entity.sum_girls);
