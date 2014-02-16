@@ -351,12 +351,11 @@
 
       <br>
 
-
     </div>
 
 
     <ul class="popup" id="popup-result-list" data-bind="foreach: results, visible: showPopupResultList">
-      <li>
+      <li data-bind="click: $parent.highlightEntity">
         <span class="glyphicon glyphicon-map-marker"></span>
         <span data-bind="text: properties.popupContent"></span>
         <small data-bind="text: properties.district"></small>
@@ -480,8 +479,6 @@
       </div>
 
       <br>
-
-
     </div>
 
     <!--
