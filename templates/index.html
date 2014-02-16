@@ -238,32 +238,40 @@
   </div>
 
   <div id="schools">
-    <div class="popup" id='popup-school'>
-      <h4>
+    <ul class="popup" id="popup-result-list" data-bind="foreach: results, visible: showPopupResultList">
+      <li data-bind="click: $parent.highlightEntity">
+        <span class="glyphicon glyphicon-map-marker"></span>
+        <span data-bind="text: properties.popupContent"></span>
+        <small data-bind="text: properties.district"></small>
+      </li>
+    </ul>
+
+    <div class="popup" id='popup-school' data-bind="with: highlightedSchool, visible: showPopupSchool">
+      <h4 data-bind="click: $parent.backToResultList">
         <span class="glyphicon glyphicon-chevron-left"></span>
-        <span class="name"></span>
-        <small class="address"></small>
+        <span data-bind="text: properties.school_name"></span>
+        <small class="address" data-bind="text: properties.address"></small>
       </h4>
 
 
       <div class="row">
         <div class="col-md-4">
           <h5>Students</h5>
-          <div class="circle_stat total_student">
+          <div class="circle_stat total_student" data-bind="text: properties.total_student">
 
           </div>
         </div>
 
         <div class="col-md-4">
           <h5 class="blue">Boys</h5>
-          <div class="circle_stat blue total_boys">
+          <div class="circle_stat blue total_boys" data-bind="text: properties.total_boys">
 
           </div>
         </div>
 
         <div class="col-md-4">
           <h5 class="pink">Girls</h5>
-          <div class="circle_stat pink total_girls">
+          <div class="circle_stat pink total_girls" data-bind="text: properties.total_girls">
 
           </div>
         </div>
@@ -274,21 +282,21 @@
       <div class="row">
         <div class="col-md-4">
           <h5>Toilets</h5>
-          <div class="circle_stat total_toilet">
+          <div class="circle_stat total_toilet" data-bind="text: properties.total_toilet">
 
           </div>
         </div>
 
         <div class="col-md-4">
           <h5 class="blue">for Boys</h5>
-          <div class="circle_stat blue total_toilet_boys">
+          <div class="circle_stat blue total_toilet_boys" data-bind="text: properties.toilet_boys">
 
           </div>
         </div>
 
         <div class="col-md-4">
           <h5 class="pink">for Girls</h5>
-          <div class="circle_stat pink total_toilet_girls">
+          <div class="circle_stat pink total_toilet_girls" data-bind="text: properties.toilet_girls">
 
           </div>
         </div>
@@ -300,13 +308,13 @@
       <div class="row">
         <div class="col-md-4 col-md-push-2">
           <h5>Classrooms</h5>
-          <div class="circle_stat total_classrooms">
+          <div class="circle_stat total_classrooms" data-bind="text: properties.tot_clrooms">
 
           </div>
         </div>
         <div class="col-md-4 col-md-push-2">
           <h5 class="green">PTR Ratio</h5>
-          <div class="circle_stat green ptr">
+          <div class="circle_stat green ptr" data-bind="text: properties.ptr">
 
           </div>
         </div>
@@ -317,12 +325,12 @@
       <div class="row">
         <div class="col-md-6 right-shift">
           <h5 class="question">Medium of Instruction</h5>
-          <p class="answer medium_of_instruction"></p>
+          <p class="answer medium_of_instruction" data-bind="text: properties.medium_of_instruction_display"></p>
         </div>
 
         <div class="col-md-6">
           <h5 class="question">Category</h5>
-          <p class="answer sch_category"></p>
+          <p class="answer sch_category" data-bind="text: properties.sch_category_display"></p>
         </div>
       </div>
 
@@ -331,12 +339,12 @@
       <div class="row">
         <div class="col-md-6 right-shift">
           <h5 class="question">Management</h5>
-          <p class="answer sch_management"></p>
+          <p class="answer sch_management" data-bind="text: properties.sch_management_display"></p>
         </div>
 
         <div class="col-md-6">
           <h5 class="question">Electricity</h5>
-          <p class="answer electricity"></p>
+          <p class="answer electricity" data-bind="text: properties.electricity_display"></p>
         </div>
       </div>
 
@@ -345,23 +353,13 @@
       <div class="row">
         <div class="col-md-6 right-shift">
           <h5 class="question">Library</h5>
-          <p class="answer library"></p>
+          <p class="answer library" data-bind="text: properties.library"></p>
         </div>
       </div>
 
       <br>
 
     </div>
-
-
-    <ul class="popup" id="popup-result-list" data-bind="foreach: results, visible: showPopupResultList">
-      <li data-bind="click: $parent.highlightEntity">
-        <span class="glyphicon glyphicon-map-marker"></span>
-        <span data-bind="text: properties.popupContent"></span>
-        <small data-bind="text: properties.district"></small>
-      </li>
-    </ul>
-
 
     <div class="popup" id='popup-others'>
       <h4>

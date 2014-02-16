@@ -106,50 +106,115 @@ $(function(){
 
     var School = function(feature) {
         if (feature === undefined) return this;
-        this.id = feature.id;
-        this.geometry = feature.geometry;
-        this.properties = feature.properties;
+        var self = this;
+
+        self.id = feature.id;
+        self.geometry = feature.geometry;
+        self.properties = feature.properties;
+
+        self.properties.address = ko.computed(function() {
+            return [
+                self.properties.cluster_name, self.properties.block_name,
+                self.properties.district, self.properties.pincode
+            ].join(', ').toString().toProperCase();
+        });
+
+        self.properties.total_student = ko.computed(function() {
+            return self.properties.total_boys + self.properties.total_girls;
+        });
+
+        self.properties.total_toilet = ko.computed(function() {
+            return self.properties.toilet_common + self.properties.toilet_girls + self.properties.toilet_boys
+        });
+
+        self.properties.ptr = ko.computed(function() {
+            return Math.round((self.properties.total_boys+self.properties.total_girls)/(self.properties.male_tch+self.properties.female_tch))
+        });
+
+        self.properties.library = ko.computed(function() {
+            return self.properties.library_yn_display + ", " + self.properties.books_in_library + " books";
+        })
     }
 
     var AggregatedEntity = function(feature) {
         if (feature === undefined) return;
-        this.id = feature.id;
-        this.geometry = feature.geometry;
-        this.properties = feature.properties;
+        var self = this;
+
+        self.id = feature.id;
+        self.geometry = feature.geometry;
+        self.properties = feature.properties;
+
+        self.properties.name = ko.computed(function() {
+            var entity_name = '';
+            if(self.properties.entity_type == 'district') {
+                entity_name = 'district';
+            }else if (self.properties.entity_type == 'pincode'){
+                entity_name = 'pincode'
+            }else{
+                entity_name = self.properties.entity_type + '_name';
+            }
+            return self.properties[entity_name] + ' <small>' + self.properties.entity_type + '</small>'
+        })
     }
 
     function SearchView(results, entity_type) {
-        this.results = ko.observableArray(results);
-        this.search_entity = ko.observable(entity_type);
+        var self = this;
 
-        this.n_results = ko.computed(function() {
-            return this.results().length;
+        self.results = ko.observableArray(results);
+        self.search_entity = ko.observable(entity_type);
+
+        self.n_results = ko.computed(function() {
+            return self.results().length;
         }, this);
 
-        this.n_results_map = ko.computed(function() {
+        self.n_results_map = ko.computed(function() {
             var count = 0;
-            for (var i = 0; i < this.results().length; i++) {
-                if (this.results()[i].geometry.coordinates.length == 2){
+            for (var i = 0; i < self.results().length; i++) {
+                if (self.results()[i].geometry.coordinates.length == 2){
                     count++;
                 }
             };
             return count;
         }, this);
 
-        this.show_search_count = ko.computed(function() {
-            if (this.results().length > 0) {
+        self.show_search_count = ko.computed(function() {
+            if (self.results().length > 0) {
                 return true;
             }
             return false;
         }, this);
 
-        this.showPopupResultList = ko.observable(false);
-        this.highlightedEntity = ko.observable({});
+        self.showPopupResultList = ko.observable(false);
+        self.showPopupSchool = ko.observable(false);
+        self.showPopupAggrEntity = ko.observable(false);
 
-        this.highlightEntity = function(feature) {
+        self.highlightedSchool = ko.observable();
+        self.highlightedEntity = ko.observable();
+
+        self.highlightEntity = function(feature) {
             console.log('should highlight entity on sidebar');
-            this.highlightedEntity = feature;
-            fillPane(this.highlightedEntity);
+
+            if (feature.properties.entity_type == 'school') {
+                console.log('showing school');
+                self.highlightedSchool(new School(feature));
+
+                self.showPopupResultList(false);
+                self.showPopupAggrEntity(false);
+                self.showPopupSchool(true);
+            } else {
+                console.log('showing other entity');
+                self.highlightedEntity(new AggregatedEntity(feature));
+
+                self.showPopupResultList(false);
+                self.showPopupSchool(false);
+                self.showPopupAggrEntity(true);
+            }
+        }
+
+        self.backToResultList = function() {
+            self.showPopupResultList(true);
+            self.showPopupSchool(false);
+            self.showPopupAggrEntity(false);
         }
     }
 
@@ -448,11 +513,11 @@ $(function(){
         }
     }
 
-    $('body').on('click', '.popup > h4', function(e) {
-        OtherPane.hide();
-        SchoolPane.hide();
-        search_view.showPopupResultList(true);
-    });
+    // $('body').on('click', '.popup > h4', function(e) {
+    //     OtherPane.hide();
+    //     SchoolPane.hide();
+    //     search_view.showPopupResultList(true);
+    // });
 
     /**
      * Clears the breadcrumb area
@@ -576,7 +641,7 @@ $(function(){
                 if(data.error !== undefined){
                     alert(data.error);
                 }else{
-                    SchoolPane.fill(data.school.properties);
+                    search_view.highlightEntity(data.school);
                     fillCrumb('school', data.school.properties);
                 }
             });
