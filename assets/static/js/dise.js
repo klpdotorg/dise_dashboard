@@ -154,7 +154,28 @@ $(function(){
                 entity_name = self.properties.entity_type + '_name';
             }
             return self.properties[entity_name] + ' <small>' + self.properties.entity_type + '</small>'
-        })
+        });
+
+        self.properties.sum_usable_classrooms = ko.computed(function() {
+            return self.properties.sum_classrooms_in_good_condition + self.properties.sum_classrooms_require_minor_repair;
+        });
+
+        self.properties.sum_students = ko.computed(function() {
+            return self.properties.sum_boys + self.properties.sum_girls;
+        });
+
+        self.properties.sum_total_toilet = ko.computed(function() {
+            return self.properties.sum_toilet_common + self.properties.sum_toilet_boys + self.properties.sum_toilet_girls;
+        });
+
+        self.properties.sum_teachers = ko.computed(function() {
+            return self.properties.sum_male_tch + self.properties.sum_female_tch;
+        });
+
+        self.properties.ptr = ko.computed(function() {
+            return Math.round(self.properties.sum_students() / self.properties.sum_teachers());
+        });
+
     }
 
     function SearchView(results, entity_type) {
@@ -215,6 +236,7 @@ $(function(){
             self.showPopupResultList(true);
             self.showPopupSchool(false);
             self.showPopupAggrEntity(false);
+            clearCrumbs();
         }
     }
 
@@ -399,126 +421,6 @@ $(function(){
         }
     });
 
-    var SchoolPane = {
-        divid: 'popup-school',
-        show: function() {
-            // shows the school pane
-            search_view.showPopupResultList(false);
-            $('#'+this.divid).show();
-        },
-        hide: function() {
-            // hides the school pane
-            $('#'+this.divid).hide();
-        },
-        fill: function(school) {
-            // fills the pane for Schools
-            OtherPane.hide();
-            this.hide();
-
-            $('#'+this.divid).find('.name').html(school.school_name + ' <small> Estd. ' + school.yeur_estd + '</small>');
-            $('#'+this.divid).find('.total_boys').html(school.total_boys);
-            $('#'+this.divid).find('.total_girls').html(school.total_girls);
-            $('#'+this.divid).find('.total_student').html(school.total_boys+school.total_girls);
-
-            $('#'+this.divid).find('.total_toilet').html(
-                school.toilet_common + school.toilet_girls + school.toilet_boys
-            );
-            $('#'+this.divid).find('.total_toilet_girls').html(school.toilet_girls);
-            $('#'+this.divid).find('.total_toilet_boys').html(school.toilet_boys);
-
-            $('#'+this.divid).find('.total_classrooms').html(school.tot_clrooms);
-            $('#'+this.divid).find('.ptr').html(
-                Math.round((school.total_boys+school.total_girls)/(school.male_tch+school.female_tch))
-            );
-            $('#'+this.divid).find('.medium_of_instruction').html(school.medium_of_instruction_display);
-            $('#'+this.divid).find('.sch_category').html(school.sch_category_display);
-            $('#'+this.divid).find('.sch_management').html(school.sch_management_display);
-            $('#'+this.divid).find('.electricity').html(school.electricity_display);
-            $('#'+this.divid).find('.library').html(school.library_yn_display + ", " + school.books_in_library + " books.");
-            $('#'+this.divid).find('.address').html([
-                    school.cluster_name, school.block_name,
-                    school.district, school.pincode
-                ].join(', ').toString().toProperCase());
-
-            this.show();
-        }
-    }
-
-    var OtherPane = {
-        divid: 'popup-others',
-        show: function() {
-            // shows the other entity pane
-            search_view.showPopupResultList(false);
-            $('#'+this.divid).show();
-        },
-        hide: function() {
-            // hides the other entity pane
-            $('#'+this.divid).hide();
-        },
-        fill: function(entity) {
-            // fills the pane for other entities
-            SchoolPane.hide();
-            this.hide();
-
-            var entity_name = '';
-            if(entity.entity_type == 'district') {
-                entity_name = 'district';
-            }else if (entity.entity_type == 'pincode'){
-                entity_name = 'pincode'
-            }else{
-                entity_name = entity.entity_type + '_name';
-            }
-
-            $('#'+this.divid).find('.entity_name').html(entity[entity_name] + ' <small>' + entity.entity_type + '</small>');
-            $('#'+this.divid).find('.sum_schools').html(entity.sum_schools);
-            $('#'+this.divid).find('.sum_classrooms').html(
-                entity.sum_classrooms_in_good_condition + entity.sum_classrooms_require_minor_repair
-            );
-            $('#'+this.divid).find('.entity_student').html(entity.sum_boys+entity.sum_girls);
-            $('#'+this.divid).find('.sum_boys').html(entity.sum_boys);
-            $('#'+this.divid).find('.sum_girls').html(entity.sum_girls);
-
-            $('#'+this.divid).find('.entity_teacher').html(entity.sum_male_tch+entity.sum_female_tch);
-            $('#'+this.divid).find('.sum_male_tch').html(entity.sum_male_tch);
-            $('#'+this.divid).find('.sum_female_tch').html(entity.sum_female_tch);
-
-            $('#'+this.divid).find('.entity_library').html(entity.sum_has_library);
-            $('#'+this.divid).find('.entity_electricity').html(entity.sum_has_electricity);
-
-            $('#'+this.divid).find('.entity_toilet').html(entity.sum_toilet_common+entity.sum_toilet_boys+entity.sum_toilet_girls);
-            $('#'+this.divid).find('.sum_toilet_boys').html(entity.sum_toilet_boys);
-            $('#'+this.divid).find('.sum_toilet_girls').html(entity.sum_toilet_girls);
-
-            $('#'+this.divid).find('.entity_ptr').html(
-                Math.round((entity.sum_boys+entity.sum_girls) / (entity.sum_male_tch+entity.sum_female_tch))
-            );
-
-            this.show();
-        }
-    }
-
-    SchoolPane.hide();
-    OtherPane.hide();
-
-    /**
-     * Gets appropriate Pane for the given entity
-     * @param  {string} entity
-     * @return {object}
-     */
-    function getPane(entity) {
-        if (['School', 'school'].indexOf(entity) > -1) {
-            return SchoolPane;
-        } else if (['cluster', 'block', 'district', 'pincode', 'Cluster', 'Block', 'District', 'Pincode'].indexOf(entity) > -1) {
-            return OtherPane;
-        }
-    }
-
-    // $('body').on('click', '.popup > h4', function(e) {
-    //     OtherPane.hide();
-    //     SchoolPane.hide();
-    //     search_view.showPopupResultList(true);
-    // });
-
     /**
      * Clears the breadcrumb area
      */
@@ -602,7 +504,7 @@ $(function(){
                 if(data.error !== undefined){
                     alert(data.error);
                 }else{
-                    OtherPane.fill(data.district.properties);
+                    search_view.highlightEntity(data.district);
                 }
             });
         }
@@ -614,7 +516,7 @@ $(function(){
                 if(data.error !== undefined){
                     alert(data.error);
                 }else{
-                    OtherPane.fill(data.block.properties);
+                    search_view.highlightEntity(data.block);
                     fillCrumb('block', data.block.properties);
                 }
             });
@@ -628,7 +530,7 @@ $(function(){
                 if(data.error !== undefined){
                     alert(data.error);
                 }else{
-                    OtherPane.fill(data.cluster.properties);
+                    search_view.highlightEntity(data.cluster);
                     fillCrumb('cluster', data.cluster.properties);
                 }
             });
@@ -715,6 +617,7 @@ $(function(){
     function mapInit () {
         // Load the district data and plot.
         filtersEnabled = is_filter_enabled();
+        console.log('filter enabled: ' + filtersEnabled);
         loadEntityData('District');
     }
 
@@ -844,8 +747,7 @@ $(function(){
                     return;
                 }
 
-                pane = getPane(entity);
-                pane.fill(data[entity_lower].properties);
+                search_view.highlightEntity(data[entity_lower]);
                 search_view.show_search_count(false);
 
                 fillCrumb(entity_lower, data[entity_lower].properties);
@@ -903,8 +805,7 @@ $(function(){
                 if (params.include_entity !== undefined && params.include_entity == 'true' && data[entity_lower] !== undefined) {
                     search_view.showPopupResultList(false);
 
-                    pane = getPane(entity);
-                    pane.fill(data[entity_lower].properties);
+                    search_view.highlightEntity(data[entity_lower]);
                     fillCrumb(entity_lower, data[entity_lower].properties);
 
                     if (data[entity_lower].geometry.coordinates.length == 2) {

@@ -60,9 +60,7 @@
         <h3><span class="glyphicon glyphicon-certificate"></span> Compound Indicators</h3>
         <div class="check-list">
           <label><input type="checkbox" id="wgltb"> With Girls <strong>&lt;</strong> Boys</label><br><br>
-
-
-          <label class="range">
+<label class="range">
             With enrollment from:&nbsp;&nbsp;
             <strong>
               <input type="text" id="wef-low" value="0" disabled>
@@ -361,20 +359,20 @@
 
     </div>
 
-    <div class="popup" id='popup-others'>
-      <h4>
+    <div class="popup" id='popup-others' data-bind="with: highlightedEntity, visible: showPopupAggrEntity">
+      <h4 data-bind="click: $parent.backToResultList">
         <span class="glyphicon glyphicon-chevron-left"></span>
-        <span class="entity_name"></span>
+        <span class="entity_name" data-bind="html: properties.name"></span>
       </h4>
 
       <div class="row">
         <div class="col-md-6">
           <h5>Total Schools</h5>
-          <div class="circle_stat sum_schools"></div>
+          <div class="circle_stat sum_schools" data-bind="text: properties.sum_schools"></div>
         </div>
         <div class="col-md-6">
           <h5>Total Classrooms</h5>
-          <div class="circle_stat sum_classrooms"></div>
+          <div class="circle_stat sum_classrooms" data-bind="text: properties.sum_usable_classrooms"></div>
           </div>
       </div>
 
@@ -383,23 +381,17 @@
       <div class="row">
         <div class="col-md-4">
           <h5>Students</h5>
-          <div class="circle_stat entity_student">
-
-          </div>
+          <div class="circle_stat entity_student" data-bind="text: properties.sum_students"></div>
         </div>
 
         <div class="col-md-4">
           <h5 class="blue">Boys</h5>
-          <div class="circle_stat blue sum_boys">
-
-          </div>
+          <div class="circle_stat blue sum_boys" data-bind="text: properties.sum_boys"></div>
         </div>
 
         <div class="col-md-4">
           <h5 class="pink">Girls</h5>
-          <div class="circle_stat pink sum_girls">
-
-          </div>
+          <div class="circle_stat pink sum_girls" data-bind="text: properties.sum_girls"></div>
         </div>
       </div>
 
@@ -408,23 +400,17 @@
       <div class="row">
         <div class="col-md-4">
           <h5>Toilets</h5>
-          <div class="circle_stat entity_toilet">
-
-          </div>
+          <div class="circle_stat entity_toilet" data-bind="text: properties.sum_total_toilet"></div>
         </div>
 
         <div class="col-md-4">
           <h5 class="blue">for Boys</h5>
-          <div class="circle_stat blue sum_toilet_boys">
-
-          </div>
+          <div class="circle_stat blue sum_toilet_boys" data-bind="text: properties.sum_toilet_boys"></div>
         </div>
 
         <div class="col-md-4">
           <h5 class="pink">for Girls</h5>
-          <div class="circle_stat pink sum_toilet_girls">
-
-          </div>
+          <div class="circle_stat pink sum_toilet_girls" data-bind="text: properties.sum_toilet_girls"></div>
         </div>
       </div>
 
@@ -434,22 +420,16 @@
       <div class="row">
         <div class="col-md-4">
           <h5>Teachers</h5>
-          <div class="circle_stat entity_teacher">
-
-          </div>
+          <div class="circle_stat entity_teacher" data-bind="text: properties.sum_teachers"></div>
         </div>
         <div class="col-md-4">
           <h5 class="blue">Male</h5>
-          <div class="circle_stat blue sum_male_tch">
-
-          </div>
+          <div class="circle_stat blue sum_male_tch" data-bind="text: properties.sum_male_tch"></div>
         </div>
 
         <div class="col-md-4">
           <h5 class="pink">Female</h5>
-          <div class="circle_stat pink sum_female_tch">
-
-          </div>
+          <div class="circle_stat pink sum_female_tch" data-bind="text: properties.sum_female_tch"></div>
         </div>
       </div>
 
@@ -458,12 +438,12 @@
       <div class="row">
         <div class="col-md-6 right-shift">
           <h5 class="question">Libraries</h5>
-          <p class="answer entity_library"></p>
+          <p class="answer entity_library" data-bind="text: properties.sum_has_library"></p>
         </div>
 
         <div class="col-md-6">
           <h5 class="question">Has Electricity</h5>
-          <p class="answer entity_electricity"></p>
+          <p class="answer entity_electricity" data-bind="text: properties.sum_has_electricity"></p>
         </div>
       </div>
 
@@ -472,7 +452,7 @@
       <div class="row">
         <div class="col-md-6 right-shift">
           <h5 class="question">PTR</h5>
-          <p class="answer entity_ptr"></p>
+          <p class="answer entity_ptr" data-bind="text: properties.ptr"></p>
         </div>
       </div>
 
