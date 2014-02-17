@@ -1,4 +1,5 @@
 import re
+import urllib
 import urllib2
 try: import simplejson as json
 except ImportError: import json
@@ -111,7 +112,7 @@ class BaseEntity:
         # gets the details of a school and returns a dictionary
         primary_key = params.get(self.param_name_for_primary_key, -1)
         if type(primary_key) == str:
-            primary_key = primary_key.replace('+', ' ')
+            primary_key = urllib.unquote_plus(primary_key)
 
         result = dict()
         result['query'] = params
@@ -273,14 +274,16 @@ class Cluster(BaseEntity):
 
     only_fields = [
         'cluster_name', 'block_name', 'district', 'sum_boys', 'sum_girls', 'sum_schools', 'sum_male_tch',
-        'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common', 'sum_toilet_boys', 'sum_toilet_girls']
+        'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common', 'sum_toilet_boys',
+        'sum_toilet_girls', 'sum_tot_clrooms', 'sum_classrooms_in_good_condition', 'sum_classrooms_require_minor_repair',
+        'sum_classrooms_require_major_repair']
 
     # For all methods that start with Cluster
     def _getschools(self, params):
         # returns list of schools in a given cluster
         # if format = geo, returns FeatureCollection
         # if format = plain, returns a plain list
-        name = params.get('name').replace('+', ' ')
+        name = urllib.unquote_plus(params.get('name'))
         result = dict()
         result['query'] = params
 
@@ -354,13 +357,15 @@ class Block(BaseEntity):
 
     only_fields = [
         'block_name', 'district', 'sum_boys', 'sum_girls', 'sum_schools', 'sum_male_tch',
-        'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common', 'sum_toilet_boys', 'sum_toilet_girls']
+        'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common',
+        'sum_toilet_boys', 'sum_toilet_girls', 'sum_tot_clrooms', 'sum_classrooms_in_good_condition',
+        'sum_classrooms_require_minor_repair', 'sum_classrooms_require_major_repair']
 
     def _getschools(self, params):
         # returns list of schools in a given block
         # if format = geo, returns FeatureCollection
         # if format = plain, returns a plain list
-        name = params.get('name')
+        name = urllib.unquote_plus(params.get('name'))
         result = dict()
         result['query'] = params
 
@@ -385,7 +390,7 @@ class Block(BaseEntity):
 
     def _getclusters(self, params):
         # returns list of clusters in a given district
-        name = params.get('name')
+        name = urllib.unquote_plus(params.get('name'))
         result = dict()
         result['query'] = params
 
@@ -454,11 +459,13 @@ class District(BaseEntity):
 
     only_fields = [
         'district', 'sum_boys', 'sum_girls', 'sum_schools', 'sum_male_tch',
-        'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common', 'sum_toilet_boys', 'sum_toilet_girls']
+        'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common',
+        'sum_toilet_boys', 'sum_toilet_girls', 'sum_tot_clrooms', 'sum_classrooms_in_good_condition',
+        'sum_classrooms_require_minor_repair', 'sum_classrooms_require_major_repair']
 
     def _getschools(self, params):
         # returns list of schools in a given district
-        name = params.get('name')
+        name = urllib.unquote_plus(params.get('name'))
         result = dict()
         result['query'] = params
 
@@ -483,7 +490,7 @@ class District(BaseEntity):
 
     def _getclusters(self, params):
         # returns list of clusters in a given district
-        name = params.get('name')
+        name = urllib.unquote_plus(params.get('name'))
         result = dict()
         result['query'] = params
 
@@ -508,7 +515,7 @@ class District(BaseEntity):
 
     def _getblocks(self, params):
         # returns list of blocks in a given district
-        name = params.get('name')
+        name = urllib.unquote_plus(params.get('name'))
         result = dict()
         result['query'] = params
 
@@ -579,7 +586,9 @@ class Pincode(BaseEntity):
 
     only_fields = [
         'pincode', 'sum_boys', 'sum_girls', 'sum_schools', 'sum_male_tch',
-        'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common', 'sum_toilet_boys', 'sum_toilet_girls']
+        'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common',
+        'sum_toilet_boys', 'sum_toilet_girls' 'sum_tot_clrooms', 'sum_classrooms_in_good_condition',
+        'sum_classrooms_require_minor_repair', 'sum_classrooms_require_major_repair']
 
     def _getschools(self, params):
         # returns list of schools in a given pincode
