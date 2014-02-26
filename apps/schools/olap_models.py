@@ -28,7 +28,7 @@ class BasicData(BaseModel):
     village_name = models.CharField(max_length=50, blank=True)
     assembly_name = models.CharField(max_length=35, blank=True)
     parliament_name = models.CharField(max_length=35, blank=True)
-    pincode = models.IntegerField(null=True, blank=True)
+    pincode = models.IntegerField(null=True, blank=True, db_column="new_pincode")
     rural_urban = models.IntegerField(choices=AREA, null=True, blank=True)
     medium_of_instruction = models.IntegerField(choices=MEDIUM, null=True, blank=True)
     distance_brc = models.FloatField(null=True, blank=True)
@@ -242,7 +242,7 @@ class ClusterAggregations(BaseModel, AggregationBase):
 
 class ParliamentAggregations(BaseModel, AggregationBase):
     parliament_name = models.CharField(max_length=35, primary_key=True)
-
+    centroid = models.GeometryField(blank=True, null=True)
 
     objects = models.GeoManager()
 
@@ -398,4 +398,13 @@ def get_models(session='10-11', what='all'):
     if what == 'pincode':
         return pincode_model
 
-    return [school_model, cluster_model, block_model, district_model, pincode_model]
+    assembly_model = globals().get('Dise{}AssemblyAggregations'.format(session))
+    if what == 'assembly':
+        return assembly_model
+
+    parliament_model = globals().get('Dise{}ParliamentAggregations'.format(session))
+    if what == 'parliament':
+        return parliament_model
+
+    return [school_model, cluster_model, block_model, district_model,
+        pincode_model, assembly_model, parliament_model]
