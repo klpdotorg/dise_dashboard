@@ -14,7 +14,7 @@ BEGIN
         EXECUTE 'DROP TABLE IF EXISTS ' || table_name;
 
         EXECUTE 'CREATE TABLE ' || table_name || ' AS
-        SELECT assembly_name,
+        SELECT assembly_name, district,
             Count(school_code) AS sum_schools,
             Sum(CASE WHEN rural_urban = 1 THEN 1 ELSE 0 END) AS sum_rural_schools,
 
@@ -150,8 +150,31 @@ BEGIN
             Avg(total_girls) as avg_girls
 
         FROM ' || basic_table_name || '
-        GROUP BY assembly_name
+        WHERE assembly_name IS NOT NULL
+        GROUP BY assembly_name, district
         ORDER BY assembly_name';
+
+        EXECUTE 'ALTER TABLE ' || table_name || '
+            ADD COLUMN centroid geometry';
+
+        EXECUTE 'ALTER TABLE ' || table_name || '
+            ADD CONSTRAINT enforce_dims_centroid CHECK (st_ndims(centroid) = 2)';
+        EXECUTE 'ALTER TABLE ' || table_name || '
+            ADD CONSTRAINT enforce_geotype_centroid CHECK (geometrytype(centroid) = ''POINT''::text OR centroid IS NULL)';
+        EXECUTE 'ALTER TABLE ' || table_name || '
+            ADD CONSTRAINT enforce_srid_centroid CHECK (st_srid(centroid) = 4326)';
+
+        EXECUTE 'UPDATE ' || table_name || '
+            SET centroid=mla_centroid.centroid
+            FROM (SELECT t1.assembly_name, t1.district, ST_Centroid(ST_Collect(t2.centroid)) as centroid
+                    FROM ' || table_name || ' AS t1,
+                    ' || basic_table_name || ' AS t2
+                WHERE t2.assembly_name=t1.assembly_name and
+                    t2.district=t1.district
+                GROUP BY t1.assembly_name, t1.district
+                ORDER BY t1.assembly_name, t1.district) as mla_centroid
+            WHERE ' || table_name || '.assembly_name=mla_centroid.assembly_name
+                AND ' || table_name || '.district=mla_centroid.district';
 
     END LOOP;
     RETURN;
