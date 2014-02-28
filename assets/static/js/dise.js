@@ -131,6 +131,11 @@ $(function(){
             return Math.round((self.properties.total_boys+self.properties.total_girls)/(self.properties.male_tch+self.properties.female_tch))
         });
 
+        self.properties.ptr_color = ko.computed(function() {
+            var color = self.properties.ptr() <= 30 ? 'circle_stat green' : 'circle_stat red';
+            return color;
+        });
+
         self.properties.library = ko.computed(function() {
             return self.properties.library_yn_display + ", " + self.properties.books_in_library + " books";
         })
@@ -799,6 +804,7 @@ $(function(){
 
                 // updates the result pane
                 search_view.results(data.results.features);
+                search_view.n_results(data.total_count);
                 search_view.search_entity(child_entity);
                 search_view.showPopupResultList(true);
 
