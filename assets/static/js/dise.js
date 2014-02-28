@@ -608,7 +608,7 @@ $(function(){
     }
 
     function is_filter_enabled(){
-        if (filtersEnabled) {
+        if (filtersEnabled !== undefined) {
             return filtersEnabled;
         } else if($.getUrlVar('enbl') !== undefined && $.getUrlVar('enbl').indexOf('f') >= 0) {
             return true;
@@ -722,6 +722,7 @@ $(function(){
         }
 
         filtersEnabled = is_filter_enabled();
+        console.log('filter', filtersEnabled);
 
         var session = params.academic_year || $('input[name=academic_year]:checked').val() || '10-11';
         delete params.academic_year;
@@ -873,9 +874,6 @@ $(function(){
         console.log('initiating map');
         mapInit();
     } else {
-        // Invoke search mechanism
-        filtersEnabled = true;
-
         // query and show the results in hash
         handleHashChange();
     };
