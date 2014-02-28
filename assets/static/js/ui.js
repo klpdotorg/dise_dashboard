@@ -48,7 +48,8 @@ var UI = {
         );
 
         $("#schools").height(
-            $("#controls").height() - 285
+            // Strange!
+            $("#controls").height() - 238
         );
 
     },
