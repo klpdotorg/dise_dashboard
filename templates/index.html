@@ -278,6 +278,23 @@
       <br><br>
 
       <div class="row">
+        <div class="col-md-4 col-md-push-2">
+          <h5>Classrooms</h5>
+          <div class="circle_stat total_classrooms" data-bind="text: properties.tot_clrooms">
+
+          </div>
+        </div>
+        <div class="col-md-4 col-md-push-2">
+          <h5>PTR Ratio</h5>
+          <div class="circle_stat" data-bind="text: properties.ptr, attr: {class: properties.ptr_color}">
+
+          </div>
+        </div>
+      </div>
+
+      <br><br>
+
+      <div class="row">
         <div class="col-md-4">
           <h5>Toilets</h5>
           <div class="circle_stat total_toilet" data-bind="text: properties.total_toilet">
@@ -295,24 +312,6 @@
         <div class="col-md-4">
           <h5 class="pink">for Girls</h5>
           <div class="circle_stat pink total_toilet_girls" data-bind="text: properties.toilet_girls">
-
-          </div>
-        </div>
-      </div>
-
-
-      <br><br>
-
-      <div class="row">
-        <div class="col-md-4 col-md-push-2">
-          <h5>Classrooms</h5>
-          <div class="circle_stat total_classrooms" data-bind="text: properties.tot_clrooms">
-
-          </div>
-        </div>
-        <div class="col-md-4 col-md-push-2">
-          <h5>PTR Ratio</h5>
-          <div class="circle_stat" data-bind="text: properties.ptr, attr: {class: properties.ptr_color}">
 
           </div>
         </div>
@@ -399,6 +398,24 @@
 
       <div class="row">
         <div class="col-md-4">
+          <h5>Teachers</h5>
+          <div class="circle_stat entity_teacher" data-bind="text: properties.sum_teachers"></div>
+        </div>
+        <div class="col-md-4">
+          <h5 class="blue">Male</h5>
+          <div class="circle_stat blue sum_male_tch" data-bind="text: properties.sum_male_tch"></div>
+        </div>
+
+        <div class="col-md-4">
+          <h5 class="pink">Female</h5>
+          <div class="circle_stat pink sum_female_tch" data-bind="text: properties.sum_female_tch"></div>
+        </div>
+      </div>
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-4">
           <h5>Toilets</h5>
           <div class="circle_stat entity_toilet" data-bind="text: properties.sum_total_toilet"></div>
         </div>
@@ -411,25 +428,6 @@
         <div class="col-md-4">
           <h5 class="pink">for Girls</h5>
           <div class="circle_stat pink sum_toilet_girls" data-bind="text: properties.sum_toilet_girls"></div>
-        </div>
-      </div>
-
-
-      <br><br>
-
-      <div class="row">
-        <div class="col-md-4">
-          <h5>Teachers</h5>
-          <div class="circle_stat entity_teacher" data-bind="text: properties.sum_teachers"></div>
-        </div>
-        <div class="col-md-4">
-          <h5 class="blue">Male</h5>
-          <div class="circle_stat blue sum_male_tch" data-bind="text: properties.sum_male_tch"></div>
-        </div>
-
-        <div class="col-md-4">
-          <h5 class="pink">Female</h5>
-          <div class="circle_stat pink sum_female_tch" data-bind="text: properties.sum_female_tch"></div>
         </div>
       </div>
 
