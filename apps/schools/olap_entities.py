@@ -174,17 +174,6 @@ class School(BaseEntity):
             schools = schools.filter(
                 cluster_name__icontains=params.get('cluster'))
 
-        if 'bbox' in params and params.get('bbox', ''):
-            # &bbox="75.73974609375,12.5223906020692,79.4476318359375,13.424352095715332"
-            # southwest_lng,southwest_lat,northeast_lng,northeast_lat
-            # xmin,ymin,xmax,ymax
-            coords_match = re.match(
-                r"([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)", params.get('bbox'))
-            if coords_match and len(coords_match.groups()) == 4:
-                bbox = map(lambda x: float(x), coords_match.groups())
-                geom = Polygon.from_bbox(bbox)
-                schools = schools.filter(centroid__contained=geom)
-
         if 'limit' in params and params.get('limit', 0):
             schools = schools[:params.get('limit')]
 
@@ -255,6 +244,18 @@ class School(BaseEntity):
                         drinking_water=search_choices(YESNO, 'No')
                     )
 
+        result['total_count'] = schools.count()
+
+        if 'bbox' in params and params.get('bbox', ''):
+            # &bbox="75.73974609375,12.5223906020692,79.4476318359375,13.424352095715332"
+            # southwest_lng,southwest_lat,northeast_lng,northeast_lat
+            # xmin,ymin,xmax,ymax
+            coords_match = re.match(
+                r"([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)", params.get('bbox'))
+            if coords_match and len(coords_match.groups()) == 4:
+                bbox = map(lambda x: float(x), coords_match.groups())
+                geom = Polygon.from_bbox(bbox)
+                schools = schools.filter(centroid__contained=geom)
 
         print schools.query
         temp_l = []
