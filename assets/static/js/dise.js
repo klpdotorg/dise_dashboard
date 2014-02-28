@@ -189,9 +189,7 @@ $(function(){
         self.results = ko.observableArray(results);
         self.search_entity = ko.observable(entity_type);
 
-        self.n_results = ko.computed(function() {
-            return self.results().length;
-        }, this);
+        self.n_results = ko.observable(0);
 
         self.n_results_map = ko.computed(function() {
             var count = 0;
@@ -859,6 +857,7 @@ $(function(){
 
                 // updates the count pane
                 search_view.results(data.results.features);
+                search_view.n_results(data.total_count);
                 search_view.search_entity(entity);
                 search_view.showPopupResultList(true);
             });

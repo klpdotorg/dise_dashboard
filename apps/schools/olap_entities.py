@@ -324,6 +324,8 @@ class Cluster(BaseEntity):
             clusters = clusters.filter(
                 block_name__icontains=params.get('block'))
 
+        result['total_count'] = clusters.count()
+
         if 'bbox' in params and params.get('bbox', ''):
             # &bbox="75.73974609375,12.5223906020692,79.4476318359375,13.424352095715332"
             # southwest_lng,southwest_lat,northeast_lng,northeast_lat
@@ -425,6 +427,8 @@ class Block(BaseEntity):
 
         if 'name' in params and params.get('name', ''):
             blocks = blocks.filter(block_name__icontains=params.get('name'))
+
+        result['total_count'] = blocks.count()
 
         if 'bbox' in params and params.get('bbox', ''):
             # &bbox="75.73974609375,12.3906020692,79.447631375,13.4243520332"
@@ -553,6 +557,8 @@ class District(BaseEntity):
                 district__icontains=params.get('name')
             )
 
+        result['total_count'] = districts.count()
+
         if 'bbox' in params and params.get('bbox', ''):
             # &bbox="75.73909375,12.52220692,79.447659375,13.424352095"
             # southwest_lng,southwest_lat,northeast_lng,northeast_lat
@@ -632,6 +638,8 @@ class Pincode(BaseEntity):
                 pincode__icontains=params.get('pincode')
             )
 
+        result['total_count'] = pincodes.count()
+
         if 'bbox' in params and params.get('bbox', ''):
             # &bbox="75.73909375,12.52220692,79.447659375,13.424352095"
             # southwest_lng,southwest_lat,northeast_lng,northeast_lat
@@ -710,6 +718,8 @@ class Assembly(BaseEntity):
                 assembly_name__icontains=params.get('assembly')
             )
 
+        result['total_count'] = assemblies.count()
+
         if 'bbox' in params and params.get('bbox', ''):
             # &bbox="75.73909375,12.52220692,79.447659375,13.424352095"
             # southwest_lng,southwest_lat,northeast_lng,northeast_lat
@@ -784,9 +794,11 @@ class Parliament(BaseEntity):
             parliaments = ParliamentModel.objects.filter(centroid__isnull=False)
 
         if 'parliament' in params and params.get('parliament', ''):
-            pincodes = pincodes.filter(
+            parliaments = parliaments.filter(
                 parliament_name__icontains=params.get('parliament')
             )
+
+        result['total_count'] = parliaments.count()
 
         if 'bbox' in params and params.get('bbox', ''):
             # &bbox="75.73909375,12.52220692,79.447659375,13.424352095"
