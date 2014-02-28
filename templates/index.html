@@ -222,14 +222,14 @@
     </form>
   </div>
 
-  <div id="presets">
+  <!-- <div id="presets">
     <select class="preset_selector">
       <option value="">Select a Preset</option>
       <option value="facility">Facilities</option>
     </select>
     <span class="glyphicon glyphicon-refresh reset_preset" data-toggle="tooltip" title="Reset the changes in the preset"></span>
     <span class="glyphicon glyphicon-cog"></span>
-  </div>
+  </div> -->
 
   <div class="no-of-matches" data-bind="visible: show_search_count">
     <span data-bind="text: n_results"></span> <span data-bind="text: search_entity"></span>s found <small>(<span data-bind="text: n_results_map"></span> on map)</small>
@@ -311,8 +311,8 @@
           </div>
         </div>
         <div class="col-md-4 col-md-push-2">
-          <h5 class="green">PTR Ratio</h5>
-          <div class="circle_stat green ptr" data-bind="text: properties.ptr">
+          <h5>PTR Ratio</h5>
+          <div class="circle_stat" data-bind="text: properties.ptr, attr: {class: properties.ptr_color}">
 
           </div>
         </div>
