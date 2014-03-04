@@ -702,6 +702,9 @@ $(function(){
             return;
         }
 
+        $('#share').popover('hide')
+        console.log('should hide now :(');
+
         // Invoke initial map layers.
         var params = $.getUrlVars();
         console.log(params);
