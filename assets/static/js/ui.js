@@ -29,7 +29,7 @@ var UI = {
             content: "<input type='text' class='form-control' style='width: 200px' id='input-share' value='Getting URL ..'/>"
         }).on('show.bs.popover', function(e) {
             console.log(e);
-            $.getJSON('https://api-ssl.bitly.com/v3/shorten?login=bibhasatklp&apiKey=R_9e527fdbc5a74a308978b90139884efc&longurl=' + window.location.toString(), function(data) {
+            $.getJSON('https://api-ssl.bitly.com/v3/shorten?login=bibhasatklp&apiKey=R_9e527fdbc5a74a308978b90139884efc&longurl=' + encodeURIComponent(window.location.toString()), function(data) {
                 if(data.status_txt == 'OK') {
                     $('#input-share').val(data.data.url).focus().select();
                 }
