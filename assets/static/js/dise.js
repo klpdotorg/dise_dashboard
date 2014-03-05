@@ -743,6 +743,12 @@ $(function(){
 
         var session = params.session || $('input[name=academic_year]:checked').val() || '10-11';
         delete params.session;
+        $('input[name=academic_year]').each(function(i) {
+            if ($(this).val() == session) {
+                $(this).parent('label').siblings('label').removeClass('active');
+                $(this).parent('label').addClass('active');
+            }
+        });
 
         // Clear current layers.
         currentLayers.clearLayers();
