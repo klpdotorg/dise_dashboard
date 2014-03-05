@@ -278,21 +278,35 @@ $(function(){
         $.updateUrlParams({
             session: academic_year
         });
-    })
+    });
     $('body').on('change', "input[name='area']", function(e) {
         console.log(e);
         var area = e.target.value;
         $.updateUrlParams({
             area: area
         });
-    })
+    });
     $('body').on('change', "input[name='management']", function(e) {
         console.log(e);
         var management = e.target.value;
         $.updateUrlParams({
             management: management
         });
-    })
+    });
+
+    $('#share').popover({
+        html: true,
+        content: "<input type='text' class='form-control' style='width: 200px' id='input-share' value='Getting URL ..'/>"
+    }).on('show.bs.popover', function(e) {
+        console.log(e);
+        $.getJSON('https://api-ssl.bitly.com/v3/shorten?login=bibhasatklp&apiKey=R_9e527fdbc5a74a308978b90139884efc&longurl=' + encodeURIComponent(window.location.toString()), function(data) {
+            if(data.status_txt == 'OK') {
+                $('#input-share').val(data.data.url).focus().select();
+            }
+        })
+    }).on('hidden.bs.popover', function(e) {
+        $('#input-share').val('Getting URL ..')
+    });
 
     $("#filter-select").select2({
         dropdownCssClass: "bigdrop",
@@ -727,8 +741,8 @@ $(function(){
         filtersEnabled = is_filter_enabled();
         console.log('filter', filtersEnabled);
 
-        var session = params.academic_year || $('input[name=academic_year]:checked').val() || '10-11';
-        delete params.academic_year;
+        var session = params.session || $('input[name=academic_year]:checked').val() || '10-11';
+        delete params.session;
 
         // Clear current layers.
         currentLayers.clearLayers();
