@@ -104,35 +104,146 @@ $(function(){
     filtersEnabled = false;
     var filter_prefix = 'f_';
 
-    function searchView(results, entity_type) {
-        this.results = ko.observable(results);
-        this.search_entity = ko.observable(entity_type);
+    var School = function(feature) {
+        if (feature === undefined) return this;
+        var self = this;
 
-        this.n_results = ko.computed(function() {
-            return this.results().length;
-        }, this);
+        self.id = feature.id;
+        self.geometry = feature.geometry;
+        self.properties = feature.properties;
 
-        this.n_results_map = ko.computed(function() {
+        self.properties.address = ko.computed(function() {
+            return [
+                self.properties.cluster_name, self.properties.block_name,
+                self.properties.district, self.properties.pincode
+            ].join(', ').toString().toProperCase();
+        });
+
+        self.properties.total_student = ko.computed(function() {
+            return self.properties.total_boys + self.properties.total_girls;
+        });
+
+        self.properties.total_toilet = ko.computed(function() {
+            return self.properties.toilet_common + self.properties.toilet_girls + self.properties.toilet_boys
+        });
+
+        self.properties.ptr = ko.computed(function() {
+            return Math.round((self.properties.total_boys+self.properties.total_girls)/(self.properties.male_tch+self.properties.female_tch))
+        });
+
+        self.properties.ptr_color = ko.computed(function() {
+            var color = self.properties.ptr() <= 30 ? 'circle_stat green' : 'circle_stat red';
+            return color;
+        });
+
+        self.properties.library = ko.computed(function() {
+            return self.properties.library_yn_display + ", " + self.properties.books_in_library + " books";
+        })
+    }
+
+    var AggregatedEntity = function(feature) {
+        if (feature === undefined) return;
+        var self = this;
+
+        self.id = feature.id;
+        self.geometry = feature.geometry;
+        self.properties = feature.properties;
+
+        self.properties.name = ko.computed(function() {
+            var entity_name = '';
+            if(self.properties.entity_type == 'district') {
+                entity_name = 'district';
+            }else if (self.properties.entity_type == 'pincode'){
+                entity_name = 'pincode'
+            }else{
+                entity_name = self.properties.entity_type + '_name';
+            }
+            return self.properties[entity_name] + ' <small>' + self.properties.entity_type + '</small>'
+        });
+
+        self.properties.sum_usable_classrooms = ko.computed(function() {
+            return self.properties.sum_classrooms_in_good_condition + self.properties.sum_classrooms_require_minor_repair;
+        });
+
+        self.properties.sum_students = ko.computed(function() {
+            return self.properties.sum_boys + self.properties.sum_girls;
+        });
+
+        self.properties.sum_total_toilet = ko.computed(function() {
+            return self.properties.sum_toilet_common + self.properties.sum_toilet_boys + self.properties.sum_toilet_girls;
+        });
+
+        self.properties.sum_teachers = ko.computed(function() {
+            return self.properties.sum_male_tch + self.properties.sum_female_tch;
+        });
+
+        self.properties.ptr = ko.computed(function() {
+            return Math.round(self.properties.sum_students() / self.properties.sum_teachers());
+        });
+
+    }
+
+    function SearchView(results, entity_type) {
+        var self = this;
+
+        self.results = ko.observableArray(results);
+        self.search_entity = ko.observable(entity_type);
+
+        self.n_results = ko.observable(0);
+
+        self.n_results_map = ko.computed(function() {
             var count = 0;
-            for (var i = 0; i < this.results().length; i++) {
-                if (this.results()[i].geometry.coordinates.length == 2){
+            for (var i = 0; i < self.results().length; i++) {
+                if (self.results()[i].geometry.coordinates.length == 2){
                     count++;
                 }
             };
             return count;
         }, this);
 
-        this.show_search_count = ko.computed(function() {
-            if (this.results().length > 0) {
+        self.show_search_count = ko.computed(function() {
+            if (self.results().length > 0) {
                 return true;
             }
             return false;
         }, this);
 
-        this.showPopupResultList = ko.observable(false);
+        self.showPopupResultList = ko.observable(false);
+        self.showPopupSchool = ko.observable(false);
+        self.showPopupAggrEntity = ko.observable(false);
+
+        self.highlightedSchool = ko.observable();
+        self.highlightedEntity = ko.observable();
+
+        self.highlightEntity = function(feature) {
+            console.log('should highlight entity on sidebar');
+
+            if (feature.properties.entity_type == 'school') {
+                console.log('showing school');
+                self.highlightedSchool(new School(feature));
+
+                self.showPopupResultList(false);
+                self.showPopupAggrEntity(false);
+                self.showPopupSchool(true);
+            } else {
+                console.log('showing other entity');
+                self.highlightedEntity(new AggregatedEntity(feature));
+
+                self.showPopupResultList(false);
+                self.showPopupSchool(false);
+                self.showPopupAggrEntity(true);
+            }
+        }
+
+        self.backToResultList = function() {
+            self.showPopupResultList(true);
+            self.showPopupSchool(false);
+            self.showPopupAggrEntity(false);
+            clearCrumbs();
+        }
     }
 
-    var search_view = new searchView([], '');
+    var search_view = new SearchView([], '');
     ko.applyBindings(search_view);
 
     // Initialize the API wrapper
@@ -167,21 +278,35 @@ $(function(){
         $.updateUrlParams({
             session: academic_year
         });
-    })
+    });
     $('body').on('change', "input[name='area']", function(e) {
         console.log(e);
         var area = e.target.value;
         $.updateUrlParams({
             area: area
         });
-    })
+    });
     $('body').on('change', "input[name='management']", function(e) {
         console.log(e);
         var management = e.target.value;
         $.updateUrlParams({
             management: management
         });
-    })
+    });
+
+    $('#share').popover({
+        html: true,
+        content: "<input type='text' class='form-control' style='width: 200px' id='input-share' value='Getting URL ..'/>"
+    }).on('show.bs.popover', function(e) {
+        console.log(e);
+        $.getJSON('https://api-ssl.bitly.com/v3/shorten?login=bibhasatklp&apiKey=R_9e527fdbc5a74a308978b90139884efc&longurl=' + encodeURIComponent(window.location.toString()), function(data) {
+            if(data.status_txt == 'OK') {
+                $('#input-share').val(data.data.url).focus().select();
+            }
+        })
+    }).on('hidden.bs.popover', function(e) {
+        $('#input-share').val('Getting URL ..')
+    });
 
     $("#filter-select").select2({
         dropdownCssClass: "bigdrop",
@@ -313,126 +438,6 @@ $(function(){
         }
     });
 
-    var SchoolPane = {
-        divid: 'popup-school',
-        show: function() {
-            // shows the school pane
-            search_view.showPopupResultList(false);
-            $('#'+this.divid).show();
-        },
-        hide: function() {
-            // hides the school pane
-            $('#'+this.divid).hide();
-        },
-        fill: function(school) {
-            // fills the pane for Schools
-            OtherPane.hide();
-            this.hide();
-
-            $('#'+this.divid).find('.name').html(school.school_name + ' <small> Estd. ' + school.yeur_estd + '</small>');
-            $('#'+this.divid).find('.total_boys').html(school.total_boys);
-            $('#'+this.divid).find('.total_girls').html(school.total_girls);
-            $('#'+this.divid).find('.total_student').html(school.total_boys+school.total_girls);
-
-            $('#'+this.divid).find('.total_toilet').html(
-                school.toilet_common + school.toilet_girls + school.toilet_boys
-            );
-            $('#'+this.divid).find('.total_toilet_girls').html(school.toilet_girls);
-            $('#'+this.divid).find('.total_toilet_boys').html(school.toilet_boys);
-
-            $('#'+this.divid).find('.total_classrooms').html(school.tot_clrooms);
-            $('#'+this.divid).find('.ptr').html(
-                Math.round((school.total_boys+school.total_girls)/(school.male_tch+school.female_tch))
-            );
-            $('#'+this.divid).find('.medium_of_instruction').html(school.medium_of_instruction_display);
-            $('#'+this.divid).find('.sch_category').html(school.sch_category_display);
-            $('#'+this.divid).find('.sch_management').html(school.sch_management_display);
-            $('#'+this.divid).find('.electricity').html(school.electricity_display);
-            $('#'+this.divid).find('.library').html(school.library_yn_display + ", " + school.books_in_library + " books.");
-            $('#'+this.divid).find('.address').html([
-                    school.cluster_name, school.block_name,
-                    school.district, school.pincode
-                ].join(', ').toString().toProperCase());
-
-            this.show();
-        }
-    }
-
-    var OtherPane = {
-        divid: 'popup-others',
-        show: function() {
-            // shows the other entity pane
-            search_view.showPopupResultList(false);
-            $('#'+this.divid).show();
-        },
-        hide: function() {
-            // hides the other entity pane
-            $('#'+this.divid).hide();
-        },
-        fill: function(entity) {
-            // fills the pane for other entities
-            SchoolPane.hide();
-            this.hide();
-
-            var entity_name = '';
-            if(entity.entity_type == 'district') {
-                entity_name = 'district';
-            }else if (entity.entity_type == 'pincode'){
-                entity_name = 'pincode'
-            }else{
-                entity_name = entity.entity_type + '_name';
-            }
-
-            $('#'+this.divid).find('.entity_name').html(entity[entity_name] + ' <small>' + entity.entity_type + '</small>');
-            $('#'+this.divid).find('.sum_schools').html(entity.sum_schools);
-            $('#'+this.divid).find('.sum_classrooms').html(
-                entity.sum_classrooms_in_good_condition + entity.sum_classrooms_require_minor_repair
-            );
-            $('#'+this.divid).find('.entity_student').html(entity.sum_boys+entity.sum_girls);
-            $('#'+this.divid).find('.sum_boys').html(entity.sum_boys);
-            $('#'+this.divid).find('.sum_girls').html(entity.sum_girls);
-
-            $('#'+this.divid).find('.entity_teacher').html(entity.sum_male_tch+entity.sum_female_tch);
-            $('#'+this.divid).find('.sum_male_tch').html(entity.sum_male_tch);
-            $('#'+this.divid).find('.sum_female_tch').html(entity.sum_female_tch);
-
-            $('#'+this.divid).find('.entity_library').html(entity.sum_has_library);
-            $('#'+this.divid).find('.entity_electricity').html(entity.sum_has_electricity);
-
-            $('#'+this.divid).find('.entity_toilet').html(entity.sum_toilet_common+entity.sum_toilet_boys+entity.sum_toilet_girls);
-            $('#'+this.divid).find('.sum_toilet_boys').html(entity.sum_toilet_boys);
-            $('#'+this.divid).find('.sum_toilet_girls').html(entity.sum_toilet_girls);
-
-            $('#'+this.divid).find('.entity_ptr').html(
-                Math.round((entity.sum_boys+entity.sum_girls) / (entity.sum_male_tch+entity.sum_female_tch))
-            );
-
-            this.show();
-        }
-    }
-
-    SchoolPane.hide();
-    OtherPane.hide();
-
-    /**
-     * Gets appropriate Pane for the given entity
-     * @param  {string} entity
-     * @return {object}
-     */
-    function getPane(entity) {
-        if (['School', 'school'].indexOf(entity) > -1) {
-            return SchoolPane;
-        } else if (['cluster', 'block', 'district', 'pincode', 'Cluster', 'Block', 'District', 'Pincode'].indexOf(entity) > -1) {
-            return OtherPane;
-        }
-    }
-
-    $('body').on('click', '.popup > h4', function(e) {
-        OtherPane.hide();
-        SchoolPane.hide();
-        search_view.showPopupResultList(true);
-    });
-
     /**
      * Clears the breadcrumb area
      */
@@ -505,6 +510,63 @@ $(function(){
         }
     }
 
+    function fillPane(feature) {
+        var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
+
+        if (feature.properties.entity_type == 'district') {
+            // Call district.getInfo and populate popup.
+            DISE.call('District.getInfo', academic_year, {
+                'name': feature.properties.district
+            }, function (data) {
+                if(data.error !== undefined){
+                    alert(data.error);
+                }else{
+                    search_view.highlightEntity(data.district);
+                }
+            });
+        }
+        else if (feature.properties.entity_type == 'block') {
+            // Call block.getInfo and populate popup.
+            DISE.call('Block.getInfo', academic_year, {
+                'name': feature.properties.block_name
+            }, function (data) {
+                if(data.error !== undefined){
+                    alert(data.error);
+                }else{
+                    search_view.highlightEntity(data.block);
+                    fillCrumb('block', data.block.properties);
+                }
+            });
+        }
+        else if (feature.properties.entity_type == 'cluster') {
+          // Call cluster.getInfo and populate popup.
+            DISE.call('Cluster.getInfo', academic_year, {
+                'name': feature.properties.cluster_name,
+                'block': feature.properties.block_name
+            }, function (data) {
+                if(data.error !== undefined){
+                    alert(data.error);
+                }else{
+                    search_view.highlightEntity(data.cluster);
+                    fillCrumb('cluster', data.cluster.properties);
+                }
+            });
+        }
+        else if (feature.properties.entity_type == 'school') {
+          // Call school.getInfo and populate popup.
+            DISE.call('School.getInfo', academic_year, {
+                'code': feature.id
+            }, function (data) {
+                if(data.error !== undefined){
+                    alert(data.error);
+                }else{
+                    search_view.highlightEntity(data.school);
+                    fillCrumb('school', data.school.properties);
+                }
+            });
+        };
+    }
+
     function onEachFeature(feature, layer) {
         // Bypass the usual click event and register based on
         // the entity.
@@ -513,59 +575,8 @@ $(function(){
                 console.log(e);
                 $('.marker-bounce').removeClass('marker-bounce');
                 $(e.target._icon).addClass('marker-bounce');
-                var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
-                if (feature.properties.entity_type == 'district') {
-                    // Call district.getInfo and populate popup.
-                    DISE.call('District.getInfo', academic_year, {
-                        'name': feature.properties.district
-                    }, function (data) {
-                        if(data.error !== undefined){
-                            alert(data.error);
-                        }else{
-                            OtherPane.fill(data.district.properties);
-                        }
-                    });
-                }
-                else if (feature.properties.entity_type == 'block') {
-                    // Call block.getInfo and populate popup.
-                    DISE.call('Block.getInfo', academic_year, {
-                        'name': feature.properties.block_name
-                    }, function (data) {
-                        if(data.error !== undefined){
-                            alert(data.error);
-                        }else{
-                            OtherPane.fill(data.block.properties);
-                            fillCrumb('block', data.block.properties);
-                        }
-                    });
-                }
-                else if (feature.properties.entity_type == 'cluster') {
-                  // Call cluster.getInfo and populate popup.
-                    DISE.call('Cluster.getInfo', academic_year, {
-                        'name': feature.properties.cluster_name,
-                        'block': feature.properties.block_name
-                    }, function (data) {
-                        if(data.error !== undefined){
-                            alert(data.error);
-                        }else{
-                            OtherPane.fill(data.cluster.properties);
-                            fillCrumb('cluster', data.cluster.properties);
-                        }
-                    });
-                }
-                else if (feature.properties.entity_type == 'school') {
-                  // Call school.getInfo and populate popup.
-                    DISE.call('School.getInfo', academic_year, {
-                        'code': feature.id
-                    }, function (data) {
-                        if(data.error !== undefined){
-                            alert(data.error);
-                        }else{
-                            SchoolPane.fill(data.school.properties);
-                            fillCrumb('school', data.school.properties);
-                        }
-                    });
-                };
+
+                fillPane(feature);
             }
         });
     }
@@ -611,7 +622,7 @@ $(function(){
     }
 
     function is_filter_enabled(){
-        if (filtersEnabled) {
+        if (filtersEnabled !== undefined) {
             return filtersEnabled;
         } else if($.getUrlVar('enbl') !== undefined && $.getUrlVar('enbl').indexOf('f') >= 0) {
             return true;
@@ -623,6 +634,7 @@ $(function(){
     function mapInit () {
         // Load the district data and plot.
         filtersEnabled = is_filter_enabled();
+        console.log('filter enabled: ' + filtersEnabled);
         loadEntityData('District');
     }
 
@@ -704,6 +716,9 @@ $(function(){
             return;
         }
 
+        $('#share').popover('hide')
+        console.log('should hide now :(');
+
         // Invoke initial map layers.
         var params = $.getUrlVars();
         console.log(params);
@@ -724,9 +739,16 @@ $(function(){
         }
 
         filtersEnabled = is_filter_enabled();
+        console.log('filter', filtersEnabled);
 
-        var session = params.academic_year || $('input[name=academic_year]:checked').val() || '10-11';
-        delete params.academic_year;
+        var session = params.session || $('input[name=academic_year]:checked').val() || '10-11';
+        delete params.session;
+        $('input[name=academic_year]').each(function(i) {
+            if ($(this).val() == session) {
+                $(this).parent('label').siblings('label').removeClass('active');
+                $(this).parent('label').addClass('active');
+            }
+        });
 
         // Clear current layers.
         currentLayers.clearLayers();
@@ -752,8 +774,7 @@ $(function(){
                     return;
                 }
 
-                pane = getPane(entity);
-                pane.fill(data[entity_lower].properties);
+                search_view.highlightEntity(data[entity_lower]);
                 search_view.show_search_count(false);
 
                 fillCrumb(entity_lower, data[entity_lower].properties);
@@ -805,14 +826,14 @@ $(function(){
 
                 // updates the result pane
                 search_view.results(data.results.features);
+                search_view.n_results(data.total_count);
                 search_view.search_entity(child_entity);
                 search_view.showPopupResultList(true);
 
                 if (params.include_entity !== undefined && params.include_entity == 'true' && data[entity_lower] !== undefined) {
                     search_view.showPopupResultList(false);
 
-                    pane = getPane(entity);
-                    pane.fill(data[entity_lower].properties);
+                    search_view.highlightEntity(data[entity_lower]);
                     fillCrumb(entity_lower, data[entity_lower].properties);
 
                     if (data[entity_lower].geometry.coordinates.length == 2) {
@@ -860,6 +881,7 @@ $(function(){
 
                 // updates the count pane
                 search_view.results(data.results.features);
+                search_view.n_results(data.total_count);
                 search_view.search_entity(entity);
                 search_view.showPopupResultList(true);
             });
@@ -875,9 +897,6 @@ $(function(){
         console.log('initiating map');
         mapInit();
     } else {
-        // Invoke search mechanism
-        filtersEnabled = true;
-
         // query and show the results in hash
         handleHashChange();
     };

@@ -150,6 +150,7 @@ BEGIN
             Avg(total_girls) as avg_girls
 
         FROM ' || basic_table_name || '
+        WHERE parliament_name IS NOT NULL
         GROUP BY parliament_name
         ORDER BY parliament_name';
 

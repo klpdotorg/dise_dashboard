@@ -174,17 +174,6 @@ class School(BaseEntity):
             schools = schools.filter(
                 cluster_name__icontains=params.get('cluster'))
 
-        if 'bbox' in params and params.get('bbox', ''):
-            # &bbox="75.73974609375,12.5223906020692,79.4476318359375,13.424352095715332"
-            # southwest_lng,southwest_lat,northeast_lng,northeast_lat
-            # xmin,ymin,xmax,ymax
-            coords_match = re.match(
-                r"([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)", params.get('bbox'))
-            if coords_match and len(coords_match.groups()) == 4:
-                bbox = map(lambda x: float(x), coords_match.groups())
-                geom = Polygon.from_bbox(bbox)
-                schools = schools.filter(centroid__contained=geom)
-
         if 'limit' in params and params.get('limit', 0):
             schools = schools[:params.get('limit')]
 
@@ -255,6 +244,18 @@ class School(BaseEntity):
                         drinking_water=search_choices(YESNO, 'No')
                     )
 
+        result['total_count'] = schools.count()
+
+        if 'bbox' in params and params.get('bbox', ''):
+            # &bbox="75.73974609375,12.5223906020692,79.4476318359375,13.424352095715332"
+            # southwest_lng,southwest_lat,northeast_lng,northeast_lat
+            # xmin,ymin,xmax,ymax
+            coords_match = re.match(
+                r"([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)", params.get('bbox'))
+            if coords_match and len(coords_match.groups()) == 4:
+                bbox = map(lambda x: float(x), coords_match.groups())
+                geom = Polygon.from_bbox(bbox)
+                schools = schools.filter(centroid__contained=geom)
 
         print schools.query
         temp_l = []
@@ -322,6 +323,8 @@ class Cluster(BaseEntity):
         if 'block' in params and params.get('block', ''):
             clusters = clusters.filter(
                 block_name__icontains=params.get('block'))
+
+        result['total_count'] = clusters.count()
 
         if 'bbox' in params and params.get('bbox', ''):
             # &bbox="75.73974609375,12.5223906020692,79.4476318359375,13.424352095715332"
@@ -424,6 +427,8 @@ class Block(BaseEntity):
 
         if 'name' in params and params.get('name', ''):
             blocks = blocks.filter(block_name__icontains=params.get('name'))
+
+        result['total_count'] = blocks.count()
 
         if 'bbox' in params and params.get('bbox', ''):
             # &bbox="75.73974609375,12.3906020692,79.447631375,13.4243520332"
@@ -552,6 +557,8 @@ class District(BaseEntity):
                 district__icontains=params.get('name')
             )
 
+        result['total_count'] = districts.count()
+
         if 'bbox' in params and params.get('bbox', ''):
             # &bbox="75.73909375,12.52220692,79.447659375,13.424352095"
             # southwest_lng,southwest_lat,northeast_lng,northeast_lat
@@ -631,6 +638,8 @@ class Pincode(BaseEntity):
                 pincode__icontains=params.get('pincode')
             )
 
+        result['total_count'] = pincodes.count()
+
         if 'bbox' in params and params.get('bbox', ''):
             # &bbox="75.73909375,12.52220692,79.447659375,13.424352095"
             # southwest_lng,southwest_lat,northeast_lng,northeast_lat
@@ -649,5 +658,165 @@ class Pincode(BaseEntity):
         temp_l = []
         for pin in pincodes:
             temp_l.append(self._get_geojson(pin))
+        result['results'] = FeatureCollection(temp_l)
+        return result
+
+
+class Assembly(BaseEntity):
+    # For all methods that start with Pincode
+    entity_type = 'assembly_name'
+
+    primary_key = 'assembly_name'
+    param_name_for_primary_key = 'mla'
+    secondary_key = ''
+    param_name_for_secondary_key = ''
+
+    only_fields = [
+        'assembly_name', 'sum_boys', 'sum_girls', 'sum_schools', 'sum_male_tch',
+        'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common',
+        'sum_toilet_boys', 'sum_toilet_girls' 'sum_tot_clrooms', 'sum_classrooms_in_good_condition',
+        'sum_classrooms_require_minor_repair', 'sum_classrooms_require_major_repair']
+
+    def _getschools(self, params):
+        # returns list of schools in a given assembly_name
+        # if format = geo, returns FeatureCollection
+        # if format = plain, returns a plain list
+        assembly_name = params.get(self.param_name_for_primary_key)
+        result = dict()
+        result['query'] = params
+
+        try:
+            SchoolModel = get_models(params.get('session', '10-11'), 'school')
+
+            temp_l = []
+            school_api = School()
+            schools = SchoolModel.objects.filter(
+                assembly_name__iexact=assembly_name,
+                # NOTE: Not sending schools without centroid
+                # because there is no way to show them
+                centroid__isnull=False
+            )
+            for sch in schools:
+                temp_l.append(school_api._get_geojson(sch))
+            result['results'] = FeatureCollection(temp_l)
+
+        except (SchoolModel.DoesNotExist, Exception) as e:
+            result['error'] = str(e)
+        return result
+
+    def _search(self, params):
+        # searches pincodes and returns list
+        result = dict()
+        result['query'] = params
+        AssemblyModel = get_models(params.get('session', '10-11'), 'assembly')
+
+        if len(params.keys()) > 1:
+            assemblies = AssemblyModel.objects.filter(centroid__isnull=False)
+
+        if 'assembly' in params and params.get('assembly', ''):
+            assemblies = assemblies.filter(
+                assembly_name__icontains=params.get('assembly')
+            )
+
+        result['total_count'] = assemblies.count()
+
+        if 'bbox' in params and params.get('bbox', ''):
+            # &bbox="75.73909375,12.52220692,79.447659375,13.424352095"
+            # southwest_lng,southwest_lat,northeast_lng,northeast_lat
+            # xmin,ymin,xmax,ymax
+            coords_match = re.match(
+                r"([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)", params.get('bbox'))
+            if coords_match and len(coords_match.groups()) == 4:
+                bbox = map(lambda x: float(x), coords_match.groups())
+                geom = Polygon.from_bbox(bbox)
+                assemblies = assemblies.filter(centroid__contained=geom)
+
+        if 'limit' in params and params.get('limit', 0):
+            assemblies = assemblies[:params.get('limit')]
+
+        # print assemblies.query
+        temp_l = []
+        for mla in assemblies:
+            temp_l.append(self._get_geojson(mla))
+        result['results'] = FeatureCollection(temp_l)
+        return result
+
+
+class Parliament(BaseEntity):
+    # For all methods that start with Pincode
+    entity_type = 'parliament'
+
+    primary_key = 'parliament_name'
+    param_name_for_primary_key = 'mp'
+    secondary_key = ''
+    param_name_for_secondary_key = ''
+
+    only_fields = [
+        'parliament_name', 'sum_boys', 'sum_girls', 'sum_schools', 'sum_male_tch',
+        'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common',
+        'sum_toilet_boys', 'sum_toilet_girls' 'sum_tot_clrooms', 'sum_classrooms_in_good_condition',
+        'sum_classrooms_require_minor_repair', 'sum_classrooms_require_major_repair']
+
+    def _getschools(self, params):
+        # returns list of schools in a given parliament
+        # if format = geo, returns FeatureCollection
+        # if format = plain, returns a plain list
+        parliament = params.get(self.param_name_for_primary_key)
+        result = dict()
+        result['query'] = params
+
+        try:
+            SchoolModel = get_models(params.get('session', '10-11'), 'school')
+
+            temp_l = []
+            school_api = School()
+            schools = SchoolModel.objects.filter(
+                parliament_name__iexact=parliament,
+                # NOTE: Not sending schools without centroid
+                # because there is no way to show them
+                centroid__isnull=False
+            )
+            for sch in schools:
+                temp_l.append(school_api._get_geojson(sch))
+            result['results'] = FeatureCollection(temp_l)
+
+        except (SchoolModel.DoesNotExist, Exception) as e:
+            result['error'] = str(e)
+        return result
+
+    def _search(self, params):
+        # searches pincodes and returns list
+        result = dict()
+        result['query'] = params
+        ParliamentModel = get_models(params.get('session', '10-11'), 'parliament')
+
+        if len(params.keys()) > 1:
+            parliaments = ParliamentModel.objects.filter(centroid__isnull=False)
+
+        if 'parliament' in params and params.get('parliament', ''):
+            parliaments = parliaments.filter(
+                parliament_name__icontains=params.get('parliament')
+            )
+
+        result['total_count'] = parliaments.count()
+
+        if 'bbox' in params and params.get('bbox', ''):
+            # &bbox="75.73909375,12.52220692,79.447659375,13.424352095"
+            # southwest_lng,southwest_lat,northeast_lng,northeast_lat
+            # xmin,ymin,xmax,ymax
+            coords_match = re.match(
+                r"([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)", params.get('bbox'))
+            if coords_match and len(coords_match.groups()) == 4:
+                bbox = map(lambda x: float(x), coords_match.groups())
+                geom = Polygon.from_bbox(bbox)
+                parliaments = parliaments.filter(centroid__contained=geom)
+
+        if 'limit' in params and params.get('limit', 0):
+            parliaments = parliaments[:params.get('limit')]
+
+        # print parliaments.query
+        temp_l = []
+        for mp in parliaments:
+            temp_l.append(self._get_geojson(mp))
         result['results'] = FeatureCollection(temp_l)
         return result
