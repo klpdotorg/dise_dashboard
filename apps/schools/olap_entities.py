@@ -664,10 +664,10 @@ class Pincode(BaseEntity):
 
 class Assembly(BaseEntity):
     # For all methods that start with Pincode
-    entity_type = 'assembly_name'
+    entity_type = 'assembly'
 
     primary_key = 'assembly_name'
-    param_name_for_primary_key = 'mla'
+    param_name_for_primary_key = 'name'
     secondary_key = ''
     param_name_for_secondary_key = ''
 
@@ -685,23 +685,20 @@ class Assembly(BaseEntity):
         result = dict()
         result['query'] = params
 
-        try:
-            SchoolModel = get_models(params.get('session', '10-11'), 'school')
+        SchoolModel = get_models(params.get('session', '10-11'), 'school')
 
-            temp_l = []
-            school_api = School()
-            schools = SchoolModel.objects.filter(
-                assembly_name__iexact=assembly_name,
-                # NOTE: Not sending schools without centroid
-                # because there is no way to show them
-                centroid__isnull=False
-            )
-            for sch in schools:
-                temp_l.append(school_api._get_geojson(sch))
-            result['results'] = FeatureCollection(temp_l)
+        temp_l = []
+        school_api = School()
+        schools = SchoolModel.objects.filter(
+            assembly_name__iexact=assembly_name,
+            # NOTE: Not sending schools without centroid
+            # because there is no way to show them
+            centroid__isnull=False
+        )
+        for sch in schools:
+            temp_l.append(school_api._get_geojson(sch))
+        result['results'] = FeatureCollection(temp_l)
 
-        except (SchoolModel.DoesNotExist, Exception) as e:
-            result['error'] = str(e)
         return result
 
     def _search(self, params):
@@ -747,7 +744,7 @@ class Parliament(BaseEntity):
     entity_type = 'parliament'
 
     primary_key = 'parliament_name'
-    param_name_for_primary_key = 'mp'
+    param_name_for_primary_key = 'name'
     secondary_key = ''
     param_name_for_secondary_key = ''
 

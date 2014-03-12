@@ -109,33 +109,33 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
                 })
             results.append(temp_d)
 
-        # assemblies = AssemblyModel.objects.filter(assembly_name__icontains=query).order_by('assembly_name')[:3]
-        # if assemblies.count() > 0:
-        #     temp_d = {
-        #         'text': 'Assemblies',
-        #         'children': []
-        #     }
-        #     for assembly in assemblies:
-        #         temp_d['children'].append({
-        #             'type': 'assembly',
-        #             'id': assembly.assembly_name,
-        #             'text': str(assembly.assembly_name),
-        #         })
-        #     results.append(temp_d)
+        assemblies = AssemblyModel.objects.filter(assembly_name__icontains=query).order_by('assembly_name')[:3]
+        if assemblies.count() > 0:
+            temp_d = {
+                'text': 'Assemblies',
+                'children': []
+            }
+            for assembly in assemblies:
+                temp_d['children'].append({
+                    'type': 'assembly',
+                    'id': assembly.assembly_name,
+                    'text': str(assembly.assembly_name),
+                })
+            results.append(temp_d)
 
-        # parliaments = ParliamentModel.objects.filter(parliament_name__icontains=query).order_by('parliament_name')[:3]
-        # if parliaments.count() > 0:
-        #     temp_d = {
-        #         'text': 'Parliaments',
-        #         'children': []
-        #     }
-        #     for parliament in parliaments:
-        #         temp_d['children'].append({
-        #             'type': 'parliament',
-        #             'id': parliament.parliament_name,
-        #             'text': str(parliament.parliament_name),
-        #         })
-        #     results.append(temp_d)
+        parliaments = ParliamentModel.objects.filter(parliament_name__icontains=query).order_by('parliament_name')[:3]
+        if parliaments.count() > 0:
+            temp_d = {
+                'text': 'Parliaments',
+                'children': []
+            }
+            for parliament in parliaments:
+                temp_d['children'].append({
+                    'type': 'parliament',
+                    'id': parliament.parliament_name,
+                    'text': str(parliament.parliament_name),
+                })
+            results.append(temp_d)
 
         json_results = json.dumps(results)
         return self.get_json_response(json_results)
@@ -162,6 +162,8 @@ class OLAPEndPoint(View, JSONResponseMixin):
                 'Block': olap_entities.Block,
                 'District': olap_entities.District,
                 'Pincode': olap_entities.Pincode,
+                'Assembly': olap_entities.Assembly,
+                'Parliament': olap_entities.Parliament
             }
             entity = entities.get(entity_name)
 

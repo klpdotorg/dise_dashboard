@@ -28,10 +28,26 @@
             window.location.hash = hash;
         },
         updateUrlParams: function(params) {
-            var existingParams = $.getUrlVars();
+            var existingParams = $.getUrlParams();
 
             var params = $.mergeObj(existingParams, params);
             $.setUrlParams(params);
+        },
+        getUrlParams: function() {
+            var vars = [],
+                hash;
+            if(window.location.href.indexOf('#') > 0){
+                var hashes = window.location.href.slice(window.location.href.indexOf('#') + 1).split('&');
+                for (var i = 0; i < hashes.length; i++) {
+                    hash = hashes[i].split('=');
+                    // vars.push(hash[0]);
+                    vars[hash[0]] = hash[1];
+                }
+            }
+            return vars;
+        },
+        getUrlParam: function(name) {
+            return $.getUrlParams()[name];
         },
         DiseAPI: function(options) {
             this.defaultOptions = {};
@@ -78,22 +94,6 @@
                 obj[attrname] = obj2[attrname];
             }
             return obj;
-        },
-        getUrlVars: function() {
-            var vars = [],
-                hash;
-            if(window.location.href.indexOf('#') > 0){
-                var hashes = window.location.href.slice(window.location.href.indexOf('#') + 1).split('&');
-                for (var i = 0; i < hashes.length; i++) {
-                    hash = hashes[i].split('=');
-                    // vars.push(hash[0]);
-                    vars[hash[0]] = hash[1];
-                }
-            }
-            return vars;
-        },
-        getUrlVar: function(name) {
-            return $.getUrlVars()[name];
         }
     });
 })(jQuery);
@@ -254,22 +254,22 @@ $(function(){
     /**
      * takes an object of url params and removes filters
      */
-    function clear_filters_from_urlvars(url_vars) {
-        for (var i = 0; i < url_vars.length; i++) {
-            if (url_vars[i].startsWith(filter_prefix)) {
-                delete url_vars[i];
+    function clear_filters_from_urlvars(url_params) {
+        for (var i = 0; i < url_params.length; i++) {
+            if (url_params[i].startsWith(filter_prefix)) {
+                delete url_params[i];
             }
         };
-        return url_vars;
+        return url_params;
     }
 
     /**
      * removes filters from url and resets it
      */
     function clear_filters() {
-        var url_vars = $.getUrlVars();
-        url_vars = clear_filters_from_urlvars(url_vars);
-        $.setUrlParams(url_vars);
+        var url_params = $.getUrlParams();
+        url_params = clear_filters_from_urlvars(url_params);
+        $.setUrlParams(url_params);
     }
 
     $('body').on('change', "input[name='academic_year']", function(e) {
@@ -349,9 +349,9 @@ $(function(){
             } else {
                 alert("Sorry, this school doesn't have a location.");
             }
-        } else if (e.object.type == 'cluster'){
+        } else if (['cluster', 'pincode', 'assembly', 'parliament'].indexOf(e.object.type) >= 0){
             $.updateUrlParams({
-                'do': 'Cluster.getSchools',
+                'do': e.object.type.toProperCase() + '.getSchools',
                 session: academic_year,
                 name: e.object.id,
                 include_entity: 'true',
@@ -372,14 +372,6 @@ $(function(){
                 name: e.object.id,
                 include_entity: 'true',
                 z: 10
-            });
-        } else if (e.object.type == 'pincode'){
-            $.updateUrlParams({
-                'do': 'Pincode.getSchools',
-                session: academic_year,
-                pincode: e.object.id,
-                include_entity: 'true',
-                z: 13
             });
         } else {
             // do nothing
@@ -624,7 +616,7 @@ $(function(){
     function is_filter_enabled(){
         if (filtersEnabled !== undefined) {
             return filtersEnabled;
-        } else if($.getUrlVar('enbl') !== undefined && $.getUrlVar('enbl').indexOf('f') >= 0) {
+        } else if($.getUrlParam('enbl') !== undefined && $.getUrlParam('enbl').indexOf('f') >= 0) {
             return true;
         } else {
             return false;
@@ -712,7 +704,7 @@ $(function(){
     }
 
     function handleHashChange(e) {
-        if ($.getUrlVar('do') === undefined) {
+        if ($.getUrlParam('do') === undefined) {
             return;
         }
 
@@ -720,7 +712,7 @@ $(function(){
         console.log('should hide now :(');
 
         // Invoke initial map layers.
-        var params = $.getUrlVars();
+        var params = $.getUrlParams();
         console.log(params);
 
         var method = params.do;
@@ -733,7 +725,7 @@ $(function(){
             var action = method.split('.')[1];
         }
 
-        if (['School', 'Cluster', 'Block', 'District', 'Pincode'].indexOf(entity) == -1) {
+        if (['School', 'Cluster', 'Block', 'District', 'Pincode', 'Assembly', 'Parliament'].indexOf(entity) == -1) {
             alert('Sorry, ' + entity + ' is an unknown entity.');
             return;
         }
@@ -747,22 +739,27 @@ $(function(){
             if ($(this).val() == session) {
                 $(this).parent('label').siblings('label').removeClass('active');
                 $(this).parent('label').addClass('active');
+                $(this).prop('checked', true);
+                $(this).attr('checked', 'checked');
+            } else {
+                $(this).prop('checked', false);
+                $(this).removeAttr('checked');
             }
         });
 
         // Clear current layers.
         currentLayers.clearLayers();
 
-        if ($.getUrlVar('bbox') !== undefined){
-            var bbox = $.getUrlVar('bbox').split(',');
+        if ($.getUrlParam('bbox') !== undefined){
+            var bbox = $.getUrlParam('bbox').split(',');
             map.fitBounds([
                 [bbox[1], bbox[0]],
                 [bbox[3], bbox[2]]
             ]);
         }
 
-        if ($.getUrlVar('z') !== undefined){
-            map.setZoom(parseInt($.getUrlVar('z')));
+        if ($.getUrlParam('z') !== undefined){
+            map.setZoom(parseInt($.getUrlParam('z')));
         }
 
         if (action == 'getInfo'){
@@ -892,7 +889,7 @@ $(function(){
         $(window).on('hashchange', handleHashChange);
     }
 
-    if ($.getUrlVar('do') === undefined) {
+    if ($.getUrlParam('do') === undefined) {
         // Invoke initial map layers.
         console.log('initiating map');
         mapInit();
