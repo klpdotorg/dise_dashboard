@@ -1,18 +1,23 @@
 import re
 import urllib
 import urllib2
+import traceback
 try: import simplejson as json
 except ImportError: import json
 
 from django.contrib.gis.geos import Polygon
 from geojson import Feature, FeatureCollection, Point, dumps as geojson_dumps
 
+from schools import olap_models
 from schools.olap_models import get_models
 from common.models import search_choices, YESNO, AREA, SCHOOL_CATEGORY, \
     SCHOOL_MANAGEMENT, SCHOOL_TYPES, MEDIUM, MDM_STATUS, KITCHENSHED_STATUS, BOUNDARY_WALL
 
 
 class BaseEntity:
+    # The private methods return Python objects
+    # So that they can be used by other private methods
+    # The classmethods return JSON that is sent as output
 
     @classmethod
     def to_json_str(cls, d=dict()):
@@ -43,6 +48,7 @@ class BaseEntity:
         # Check if we should send back the entity
         include_entity = params.get('include_entity', False)
         if include_entity:
+            print 'Entity object required, sending ..'
             entity_info = obj._getinfo(params)
             if obj.entity_type in entity_info:
                 result[obj.entity_type] = entity_info[obj.entity_type]
@@ -110,7 +116,8 @@ class BaseEntity:
 
     def _getinfo(self, params):
         # gets the details of a school and returns a dictionary
-        primary_key = params.get(self.param_name_for_primary_key, -1)
+        primary_key = params.get(self.param_name_for_primary_key)
+
         if type(primary_key) == str:
             primary_key = urllib.unquote_plus(primary_key)
 
@@ -135,6 +142,8 @@ class BaseEntity:
 
             result[self.entity_type] = self._get_geojson(entity_obj)
         except (EntityModel.DoesNotExist, Exception) as e:
+            print 'filters', filters
+            traceback.print_exc()
             result['error'] = str(e)
         return result
 
@@ -594,7 +603,7 @@ class Pincode(BaseEntity):
     only_fields = [
         'pincode', 'sum_boys', 'sum_girls', 'sum_schools', 'sum_male_tch',
         'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common',
-        'sum_toilet_boys', 'sum_toilet_girls' 'sum_tot_clrooms', 'sum_classrooms_in_good_condition',
+        'sum_toilet_boys', 'sum_toilet_girls', 'sum_tot_clrooms', 'sum_classrooms_in_good_condition',
         'sum_classrooms_require_minor_repair', 'sum_classrooms_require_major_repair']
 
     def _getschools(self, params):
@@ -616,6 +625,9 @@ class Pincode(BaseEntity):
                 # because there is no way to show them
                 centroid__isnull=False
             )
+
+            result['total_count'] = schools.count()
+
             for sch in schools:
                 temp_l.append(school_api._get_geojson(sch))
             result['results'] = FeatureCollection(temp_l)
@@ -665,6 +677,7 @@ class Pincode(BaseEntity):
 class Assembly(BaseEntity):
     # For all methods that start with Pincode
     entity_type = 'assembly'
+    model_name = 'Dise{}AssemblyAggregations'
 
     primary_key = 'assembly_name'
     param_name_for_primary_key = 'name'
@@ -674,14 +687,15 @@ class Assembly(BaseEntity):
     only_fields = [
         'assembly_name', 'sum_boys', 'sum_girls', 'sum_schools', 'sum_male_tch',
         'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common',
-        'sum_toilet_boys', 'sum_toilet_girls' 'sum_tot_clrooms', 'sum_classrooms_in_good_condition',
+        'sum_toilet_boys', 'sum_toilet_girls', 'sum_tot_clrooms', 'sum_classrooms_in_good_condition',
         'sum_classrooms_require_minor_repair', 'sum_classrooms_require_major_repair']
 
     def _getschools(self, params):
         # returns list of schools in a given assembly_name
         # if format = geo, returns FeatureCollection
         # if format = plain, returns a plain list
-        assembly_name = params.get(self.param_name_for_primary_key)
+        assembly_name = urllib.unquote_plus(params.get(self.param_name_for_primary_key))
+
         result = dict()
         result['query'] = params
 
@@ -695,6 +709,9 @@ class Assembly(BaseEntity):
             # because there is no way to show them
             centroid__isnull=False
         )
+
+        result['total_count'] = schools.count()
+
         for sch in schools:
             temp_l.append(school_api._get_geojson(sch))
         result['results'] = FeatureCollection(temp_l)
@@ -751,34 +768,35 @@ class Parliament(BaseEntity):
     only_fields = [
         'parliament_name', 'sum_boys', 'sum_girls', 'sum_schools', 'sum_male_tch',
         'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common',
-        'sum_toilet_boys', 'sum_toilet_girls' 'sum_tot_clrooms', 'sum_classrooms_in_good_condition',
+        'sum_toilet_boys', 'sum_toilet_girls', 'sum_tot_clrooms', 'sum_classrooms_in_good_condition',
         'sum_classrooms_require_minor_repair', 'sum_classrooms_require_major_repair']
 
     def _getschools(self, params):
         # returns list of schools in a given parliament
         # if format = geo, returns FeatureCollection
         # if format = plain, returns a plain list
-        parliament = params.get(self.param_name_for_primary_key)
+        parliament_name = urllib.unquote_plus(params.get(self.param_name_for_primary_key))
+
         result = dict()
         result['query'] = params
 
-        try:
-            SchoolModel = get_models(params.get('session', '10-11'), 'school')
+        SchoolModel = get_models(params.get('session', '10-11'), 'school')
 
-            temp_l = []
-            school_api = School()
-            schools = SchoolModel.objects.filter(
-                parliament_name__iexact=parliament,
-                # NOTE: Not sending schools without centroid
-                # because there is no way to show them
-                centroid__isnull=False
-            )
-            for sch in schools:
-                temp_l.append(school_api._get_geojson(sch))
-            result['results'] = FeatureCollection(temp_l)
+        temp_l = []
+        school_api = School()
+        schools = SchoolModel.objects.filter(
+            parliament_name__iexact=parliament_name,
+            # NOTE: Not sending schools without centroid
+            # because there is no way to show them
+            centroid__isnull=False
+        )
 
-        except (SchoolModel.DoesNotExist, Exception) as e:
-            result['error'] = str(e)
+        result['total_count'] = schools.count()
+
+        for sch in schools:
+            temp_l.append(school_api._get_geojson(sch))
+        result['results'] = FeatureCollection(temp_l)
+
         return result
 
     def _search(self, params):

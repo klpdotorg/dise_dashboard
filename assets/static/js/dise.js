@@ -349,13 +349,13 @@ $(function(){
             } else {
                 alert("Sorry, this school doesn't have a location.");
             }
-        } else if (['cluster', 'pincode', 'assembly', 'parliament'].indexOf(e.object.type) >= 0){
+        } else if (['cluster', 'assembly', 'parliament'].indexOf(e.object.type) >= 0){
             $.updateUrlParams({
                 'do': e.object.type.toProperCase() + '.getSchools',
                 session: academic_year,
                 name: e.object.id,
                 include_entity: 'true',
-                z: 13
+                z: 12
             });
         } else if (e.object.type == 'block'){
             $.updateUrlParams({
@@ -372,6 +372,14 @@ $(function(){
                 name: e.object.id,
                 include_entity: 'true',
                 z: 10
+            });
+        } else if (e.object.type == 'pincode'){
+            $.updateUrlParams({
+                'do': 'Pincode.getSchools',
+                session: academic_year,
+                pincode: e.object.id,
+                include_entity: 'true',
+                z: 14
             });
         } else {
             // do nothing
@@ -530,6 +538,45 @@ $(function(){
                 }
             });
         }
+        else if (feature.properties.entity_type == 'pincode') {
+            // Call block.getInfo and populate popup.
+            DISE.call('Pincode.getInfo', academic_year, {
+                'pincode': feature.properties.pincode
+            }, function (data) {
+                if(data.error !== undefined){
+                    alert(data.error);
+                }else{
+                    search_view.highlightEntity(data.pincode);
+                    fillCrumb('pincode', data.pincode.properties);
+                }
+            });
+        }
+        else if (feature.properties.entity_type == 'assembly') {
+            // Call assembly.getInfo and populate popup.
+            DISE.call('Assembly.getInfo', academic_year, {
+                'name': feature.properties.assembly_name
+            }, function (data) {
+                if(data.error !== undefined){
+                    alert(data.error);
+                }else{
+                    search_view.highlightEntity(data.assembly);
+                    fillCrumb('assembly', data.assembly.properties);
+                }
+            });
+        }
+        else if (feature.properties.entity_type == 'parliament') {
+            // Call parliament.getInfo and populate popup.
+            DISE.call('Parliament.getInfo', academic_year, {
+                'name': feature.properties.parliament_name
+            }, function (data) {
+                if(data.error !== undefined){
+                    alert(data.error);
+                }else{
+                    search_view.highlightEntity(data.parliament);
+                    fillCrumb('parliament', data.parliament.properties);
+                }
+            });
+        }
         else if (feature.properties.entity_type == 'cluster') {
           // Call cluster.getInfo and populate popup.
             DISE.call('Cluster.getInfo', academic_year, {
@@ -576,7 +623,7 @@ $(function(){
     function createLayer(feature_or_features, icon) {
         // @param {String} feature_or_features  Either Feature or FeatureCollection
         // @param {String} zoom                 Zoom level of the map
-        // console.log(feature_or_features);
+        console.log(feature_or_features);
         return L.geoJson(
             feature_or_features,
             {
@@ -614,9 +661,9 @@ $(function(){
     }
 
     function is_filter_enabled(){
-        if (filtersEnabled !== undefined) {
+        if($.getUrlParam('enbl') !== undefined && $.getUrlParam('enbl').indexOf('f') >= 0) {
             return filtersEnabled;
-        } else if($.getUrlParam('enbl') !== undefined && $.getUrlParam('enbl').indexOf('f') >= 0) {
+        } else if (filtersEnabled !== undefined) {
             return true;
         } else {
             return false;
@@ -709,7 +756,6 @@ $(function(){
         }
 
         $('#share').popover('hide')
-        console.log('should hide now :(');
 
         // Invoke initial map layers.
         var params = $.getUrlParams();

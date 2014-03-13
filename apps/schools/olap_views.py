@@ -172,6 +172,9 @@ class OLAPEndPoint(View, JSONResponseMixin):
 
             json_results = endpoint(params)
         except (KeyError, ValueError, ImportError, AttributeError) as e:
+            import traceback
+            traceback.print_exc()
+
             results['error'] = str(e)
             json_results = json.dumps(results)
             return self.get_json_response(json_results)
