@@ -662,9 +662,9 @@ $(function(){
 
     function is_filter_enabled(){
         if($.getUrlParam('enbl') !== undefined && $.getUrlParam('enbl').indexOf('f') >= 0) {
-            return filtersEnabled;
-        } else if (filtersEnabled !== undefined) {
             return true;
+        } else if (filtersEnabled !== undefined) {
+            return filtersEnabled;
         } else {
             return false;
         }
