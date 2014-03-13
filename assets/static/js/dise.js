@@ -101,7 +101,7 @@
 $(function(){
 
     UI.init(); // Initialize UI elements
-    filtersEnabled = false;
+    var filtersEnabled;
     var filter_prefix = 'f_';
 
     var School = function(feature) {
@@ -273,21 +273,18 @@ $(function(){
     }
 
     $('body').on('change', "input[name='academic_year']", function(e) {
-        console.log(e);
         var academic_year = e.target.value;
         $.updateUrlParams({
             session: academic_year
         });
     });
     $('body').on('change', "input[name='area']", function(e) {
-        console.log(e);
         var area = e.target.value;
         $.updateUrlParams({
             area: area
         });
     });
     $('body').on('change', "input[name='management']", function(e) {
-        console.log(e);
         var management = e.target.value;
         $.updateUrlParams({
             management: management
@@ -298,7 +295,6 @@ $(function(){
         html: true,
         content: "<input type='text' class='form-control' style='width: 200px' id='input-share' value='Getting URL ..'/>"
     }).on('show.bs.popover', function(e) {
-        console.log(e);
         $.getJSON('https://api-ssl.bitly.com/v3/shorten?login=bibhasatklp&apiKey=R_9e527fdbc5a74a308978b90139884efc&longurl=' + encodeURIComponent(window.location.toString()), function(data) {
             if(data.status_txt == 'OK') {
                 $('#input-share').val(data.data.url).focus().select();
@@ -336,7 +332,7 @@ $(function(){
         // Clear the preloaded layers when the search has been used
         currentLayers.clearLayers();
         // Flip the filter switch to disable all usual map interactions.
-        filtersEnabled = true;
+        window.filtersEnabled = true;
         var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
         if (e.object.type == 'school') {
             if(e.object.feature !== null && e.object.feature !== "{}"){
@@ -663,8 +659,8 @@ $(function(){
     function is_filter_enabled(){
         if($.getUrlParam('enbl') !== undefined && $.getUrlParam('enbl').indexOf('f') >= 0) {
             return true;
-        } else if (filtersEnabled !== undefined) {
-            return filtersEnabled;
+        } else if (window.filtersEnabled !== undefined) {
+            return window.filtersEnabled;
         } else {
             return false;
         }
@@ -672,8 +668,8 @@ $(function(){
 
     function mapInit () {
         // Load the district data and plot.
-        filtersEnabled = is_filter_enabled();
-        console.log('filter enabled: ' + filtersEnabled);
+        window.filtersEnabled = is_filter_enabled();
+        console.log('filter enabled: ' + window.filtersEnabled);
         loadEntityData('District');
     }
 
@@ -716,7 +712,7 @@ $(function(){
         //var bbox = map.getBounds().toBBoxString();
         console.log('zoooomed');
 
-        if (!filtersEnabled) {
+        if (!window.filtersEnabled) {
             console.log('filters not enabled, updating map');
             updateLayers(map.getZoom());
         }
@@ -726,7 +722,7 @@ $(function(){
     map.on('dragend', function(e) {
         console.log('dragged');
 
-        if (!filtersEnabled) {
+        if (!window.filtersEnabled) {
             var bbox = map.getBounds().toBBoxString();
             $.updateUrlParams({bbox: bbox});
         }
@@ -776,9 +772,6 @@ $(function(){
             return;
         }
 
-        filtersEnabled = is_filter_enabled();
-        console.log('filter', filtersEnabled);
-
         var session = params.session || $('input[name=academic_year]:checked').val() || '10-11';
         delete params.session;
         $('input[name=academic_year]').each(function(i) {
@@ -796,21 +789,9 @@ $(function(){
         // Clear current layers.
         currentLayers.clearLayers();
 
-        if ($.getUrlParam('bbox') !== undefined){
-            var bbox = $.getUrlParam('bbox').split(',');
-            map.fitBounds([
-                [bbox[1], bbox[0]],
-                [bbox[3], bbox[2]]
-            ]);
-        }
-
-        if ($.getUrlParam('z') !== undefined){
-            map.setZoom(parseInt($.getUrlParam('z')));
-        }
-
         if (action == 'getInfo'){
             // just needs to place the marker and fill Pane
-            filtersEnabled = true;
+            window.filtersEnabled = true;
             DISE.call(method, session, params, function(data) {
                 if (data.error !== undefined) {
                     alert(data.error);
@@ -826,14 +807,7 @@ $(function(){
                     newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
                     newLayer.addTo(currentLayers);
 
-                    $.updateUrlParams({
-                            bbox: [
-                                data[entity_lower].geometry.coordinates[0],
-                                data[entity_lower].geometry.coordinates[1],
-                                data[entity_lower].geometry.coordinates[0],
-                                data[entity_lower].geometry.coordinates[1]
-                            ].join(',')
-                        });
+                    map.panTo(L.latLng(data[entity_lower].geometry.coordinates[1], data[entity_lower].geometry.coordinates[0]))
                 } else {
                     alert('Sorry, no location available for this.');
                 }
@@ -841,7 +815,7 @@ $(function(){
         } else if (['getSchools', 'getClusters', 'getBlocks'].indexOf(action) > -1) {
             // show all the markers
             // if include_entity is set, fill the Pane
-            filtersEnabled = true;
+            window.filtersEnabled = true;
             DISE.call(method, session, params, function(data) {
                 if (data.error !== undefined) {
                     alert(data.error);
@@ -874,6 +848,7 @@ $(function(){
                 search_view.showPopupResultList(true);
 
                 if (params.include_entity !== undefined && params.include_entity == 'true' && data[entity_lower] !== undefined) {
+                    console.log('showing entity');
                     search_view.showPopupResultList(false);
 
                     search_view.highlightEntity(data[entity_lower]);
@@ -883,14 +858,7 @@ $(function(){
                         newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
                         newLayer.addTo(currentLayers);
 
-                        $.updateUrlParams({
-                            bbox: [
-                                data[entity_lower].geometry.coordinates[0],
-                                data[entity_lower].geometry.coordinates[1],
-                                data[entity_lower].geometry.coordinates[0],
-                                data[entity_lower].geometry.coordinates[1]
-                            ].join(',')
-                        });
+                        map.panTo(L.latLng(data[entity_lower].geometry.coordinates[1], data[entity_lower].geometry.coordinates[0]))
                     } else {
                         alert('Sorry, no location available for this.');
                     }
@@ -899,6 +867,8 @@ $(function(){
                 }
             });
         } else if (['search'].indexOf(action) > -1) {
+            window.filtersEnabled = is_filter_enabled();
+
             DISE.call(method, session, params, function(data) {
                 if (data.error !== undefined) {
                     alert(data.error);
@@ -927,8 +897,21 @@ $(function(){
                 search_view.n_results(data.total_count);
                 search_view.search_entity(entity);
                 search_view.showPopupResultList(true);
+
+                if ($.getUrlParam('bbox') !== undefined){
+                    var bbox = $.getUrlParam('bbox').split(',');
+                    map.fitBounds([
+                        [bbox[1], bbox[0]],
+                        [bbox[3], bbox[2]]
+                    ]);
+                }
             });
         }
+
+        if ($.getUrlParam('z') !== undefined){
+            map.setZoom(parseInt($.getUrlParam('z')));
+        }
+
     }
 
     if ("onhashchange" in window){
