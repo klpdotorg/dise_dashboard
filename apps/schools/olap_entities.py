@@ -118,7 +118,7 @@ class BaseEntity:
         # gets the details of a school and returns a dictionary
         primary_key = params.get(self.param_name_for_primary_key)
 
-        if type(primary_key) == str:
+        if type(primary_key) == str or type(primary_key) == unicode:
             primary_key = urllib.unquote_plus(primary_key)
 
         result = dict()

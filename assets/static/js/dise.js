@@ -807,7 +807,7 @@ $(function(){
                     newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
                     newLayer.addTo(currentLayers);
 
-                    map.panTo(L.latLng(data[entity_lower].geometry.coordinates[1], data[entity_lower].geometry.coordinates[0]))
+                    map.panTo(L.GeoJSON.coordsToLatLng(data[entity_lower].geometry.coordinates));
                 } else {
                     alert('Sorry, no location available for this.');
                 }
@@ -858,7 +858,7 @@ $(function(){
                         newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
                         newLayer.addTo(currentLayers);
 
-                        map.panTo(L.latLng(data[entity_lower].geometry.coordinates[1], data[entity_lower].geometry.coordinates[0]))
+                        map.panTo(L.GeoJSON.coordsToLatLng(data[entity_lower].geometry.coordinates));
                     } else {
                         alert('Sorry, no location available for this.');
                     }
