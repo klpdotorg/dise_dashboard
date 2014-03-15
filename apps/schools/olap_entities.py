@@ -183,6 +183,14 @@ class School(BaseEntity):
             schools = schools.filter(
                 cluster_name__icontains=params.get('cluster'))
 
+        if 'block' in params and params.get('block', ''):
+            schools = schools.filter(
+                block_name__icontains=params.get('block'))
+
+        if 'district' in params and params.get('district', ''):
+            schools = schools.filter(
+                district__icontains=params.get('district'))
+
         if 'limit' in params and params.get('limit', 0):
             schools = schools[:params.get('limit')]
 
@@ -291,8 +299,6 @@ class Cluster(BaseEntity):
     # For all methods that start with Cluster
     def _getschools(self, params):
         # returns list of schools in a given cluster
-        # if format = geo, returns FeatureCollection
-        # if format = plain, returns a plain list
         name = urllib.unquote_plus(params.get('name'))
         result = dict()
         result['query'] = params
@@ -375,8 +381,6 @@ class Block(BaseEntity):
 
     def _getschools(self, params):
         # returns list of schools in a given block
-        # if format = geo, returns FeatureCollection
-        # if format = plain, returns a plain list
         name = urllib.unquote_plus(params.get('name'))
         result = dict()
         result['query'] = params
@@ -608,8 +612,6 @@ class Pincode(BaseEntity):
 
     def _getschools(self, params):
         # returns list of schools in a given pincode
-        # if format = geo, returns FeatureCollection
-        # if format = plain, returns a plain list
         pincode = params.get('pincode')
         result = dict()
         result['query'] = params
@@ -677,7 +679,6 @@ class Pincode(BaseEntity):
 class Assembly(BaseEntity):
     # For all methods that start with Pincode
     entity_type = 'assembly'
-    model_name = 'Dise{}AssemblyAggregations'
 
     primary_key = 'assembly_name'
     param_name_for_primary_key = 'name'
@@ -692,8 +693,6 @@ class Assembly(BaseEntity):
 
     def _getschools(self, params):
         # returns list of schools in a given assembly_name
-        # if format = geo, returns FeatureCollection
-        # if format = plain, returns a plain list
         assembly_name = urllib.unquote_plus(params.get(self.param_name_for_primary_key))
 
         result = dict()
@@ -773,8 +772,6 @@ class Parliament(BaseEntity):
 
     def _getschools(self, params):
         # returns list of schools in a given parliament
-        # if format = geo, returns FeatureCollection
-        # if format = plain, returns a plain list
         parliament_name = urllib.unquote_plus(params.get(self.param_name_for_primary_key))
 
         result = dict()
