@@ -57,7 +57,7 @@ class BaseEntity:
 
     @classmethod
     def getBlocks(cls, params):
-        # this just parses the dictionary from _getschools() and returns JSON
+        # this just parses the dictionary from _getblocks() and returns JSON
         obj = cls()
         result = obj._getblocks(params)
 
@@ -72,7 +72,7 @@ class BaseEntity:
 
     @classmethod
     def getClusters(cls, params):
-        # this just parses the dictionary from _getschools() and returns JSON
+        # this just parses the dictionary from _getclusters() and returns JSON
         obj = cls()
         result = obj._getclusters(params)
 
