@@ -19,6 +19,12 @@ class BaseEntity:
     # So that they can be used by other private methods
     # The classmethods return JSON that is sent as output
 
+    common_aggr_fields = ['sum_boys', 'sum_girls', 'sum_schools', 'sum_govt_schools',
+        'medium_of_instructions', 'sum_male_tch',
+        'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common',
+        'sum_toilet_boys', 'sum_toilet_girls', 'sum_tot_clrooms', 'sum_classrooms_in_good_condition',
+        'sum_classrooms_require_minor_repair', 'sum_classrooms_require_major_repair']
+
     @classmethod
     def to_json_str(cls, d=dict()):
         return json.dumps(d)
@@ -104,6 +110,9 @@ class BaseEntity:
             properties[field] = getattr(entity, field)
             if hasattr(entity, "get_{}_display".format(field)):
                 properties[field + '_display'] = getattr(entity, "get_{}_display".format(field))()
+
+            if hasattr(entity, "set_{}_display".format(field)):
+                getattr(entity, "set_{}_display".format(field))()
 
         return Feature(
             geometry=Point(
@@ -290,11 +299,9 @@ class Cluster(BaseEntity):
     secondary_key = 'block_name'
     param_name_for_secondary_key = 'block'
 
-    only_fields = [
-        'cluster_name', 'block_name', 'district', 'sum_boys', 'sum_girls', 'sum_schools', 'sum_male_tch',
-        'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common', 'sum_toilet_boys',
-        'sum_toilet_girls', 'sum_tot_clrooms', 'sum_classrooms_in_good_condition', 'sum_classrooms_require_minor_repair',
-        'sum_classrooms_require_major_repair']
+    @property
+    def only_fields(self):
+        return ['cluster_name', 'block_name', 'district'] + self.common_aggr_fields
 
     # For all methods that start with Cluster
     def _getschools(self, params):
@@ -373,11 +380,9 @@ class Block(BaseEntity):
     secondary_key = ''
     param_name_for_secondary_key = ''
 
-    only_fields = [
-        'block_name', 'district', 'sum_boys', 'sum_girls', 'sum_schools', 'sum_male_tch',
-        'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common',
-        'sum_toilet_boys', 'sum_toilet_girls', 'sum_tot_clrooms', 'sum_classrooms_in_good_condition',
-        'sum_classrooms_require_minor_repair', 'sum_classrooms_require_major_repair']
+    @property
+    def only_fields(self):
+        return ['block_name', 'district'] + self.common_aggr_fields
 
     def _getschools(self, params):
         # returns list of schools in a given block
@@ -475,11 +480,9 @@ class District(BaseEntity):
     secondary_key = ''
     param_name_for_secondary_key = ''
 
-    only_fields = [
-        'district', 'sum_boys', 'sum_girls', 'sum_schools', 'sum_male_tch',
-        'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common',
-        'sum_toilet_boys', 'sum_toilet_girls', 'sum_tot_clrooms', 'sum_classrooms_in_good_condition',
-        'sum_classrooms_require_minor_repair', 'sum_classrooms_require_major_repair']
+    @property
+    def only_fields(self):
+        return ['district'] + self.common_aggr_fields
 
     def _getschools(self, params):
         # returns list of schools in a given district
@@ -604,11 +607,9 @@ class Pincode(BaseEntity):
     secondary_key = ''
     param_name_for_secondary_key = ''
 
-    only_fields = [
-        'pincode', 'sum_boys', 'sum_girls', 'sum_schools', 'sum_male_tch',
-        'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common',
-        'sum_toilet_boys', 'sum_toilet_girls', 'sum_tot_clrooms', 'sum_classrooms_in_good_condition',
-        'sum_classrooms_require_minor_repair', 'sum_classrooms_require_major_repair']
+    @property
+    def only_fields(self):
+        return ['pincode'] + self.common_aggr_fields
 
     def _getschools(self, params):
         # returns list of schools in a given pincode
@@ -685,11 +686,9 @@ class Assembly(BaseEntity):
     secondary_key = ''
     param_name_for_secondary_key = ''
 
-    only_fields = [
-        'assembly_name', 'sum_boys', 'sum_girls', 'sum_schools', 'sum_male_tch',
-        'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common',
-        'sum_toilet_boys', 'sum_toilet_girls', 'sum_tot_clrooms', 'sum_classrooms_in_good_condition',
-        'sum_classrooms_require_minor_repair', 'sum_classrooms_require_major_repair']
+    @property
+    def only_fields(self):
+        return ['assembly_name'] + self.common_aggr_fields
 
     def _getschools(self, params):
         # returns list of schools in a given assembly_name
@@ -764,11 +763,9 @@ class Parliament(BaseEntity):
     secondary_key = ''
     param_name_for_secondary_key = ''
 
-    only_fields = [
-        'parliament_name', 'sum_boys', 'sum_girls', 'sum_schools', 'sum_male_tch',
-        'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common',
-        'sum_toilet_boys', 'sum_toilet_girls', 'sum_tot_clrooms', 'sum_classrooms_in_good_condition',
-        'sum_classrooms_require_minor_repair', 'sum_classrooms_require_major_repair']
+    @property
+    def only_fields(self):
+        return ['parliament_name'] + self.common_aggr_fields
 
     def _getschools(self, params):
         # returns list of schools in a given parliament

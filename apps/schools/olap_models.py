@@ -8,7 +8,7 @@
 # into your database.
 from __future__ import unicode_literals
 
-from common.models import search_choices, YESNO, AREA, SCHOOL_CATEGORY, SCHOOL_MANAGEMENT, SCHOOL_TYPES, MEDIUM, MDM_STATUS, KITCHENSHED_STATUS, BOUNDARY_WALL
+from common.models import search_choices, search_choices_by_key, YESNO, AREA, SCHOOL_CATEGORY, SCHOOL_MANAGEMENT, SCHOOL_TYPES, MEDIUM, MDM_STATUS, KITCHENSHED_STATUS, BOUNDARY_WALL
 
 from django.contrib.gis.db import models
 from jsonfield import JSONField
@@ -211,6 +211,15 @@ class AggregationBase(models.Model):
 
     class Meta:
         abstract = True
+
+    def set_medium_of_instructions_display(self):
+        if not self.medium_of_instructions:
+            return []
+
+        moes = self.medium_of_instructions
+        for moe in moes:
+            moe['moe'] = search_choices_by_key(MEDIUM, moe['moe_id'])
+        return moes
 
 
 class AssemblyAggregations(BaseModel, AggregationBase):

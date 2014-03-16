@@ -14,6 +14,19 @@ def search_choices(t, value):
             return k
     return False
 
+def search_choices_by_key(t, key):
+    """
+    looks for index in a tuple of tuples
+
+    >>> search_choices(YESNO, 'Yes')
+    1
+
+    """
+    for k, v in t:
+        if k == key:
+            return v
+    return False
+
 
 YESNO = (
     (0, 'Not Applicable'),

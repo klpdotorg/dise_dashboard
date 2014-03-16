@@ -161,6 +161,19 @@ $(function(){
             return self.properties[entity_name] + ' <small>' + self.properties.entity_type + '</small>'
         });
 
+        self.properties.sum_pvt_schools = ko.computed(function() {
+            return (self.properties.sum_schools - self.properties.sum_govt_schools);
+        });
+
+        self.properties.medium_of_instructions_list = ko.computed(function() {
+            var moes = [];
+            for (var i = 0; i < self.properties.medium_of_instructions.length; i++) {
+                moes.push(self.properties.medium_of_instructions[i].moe + "(" + self.properties.medium_of_instructions[i].sch_count + ")");
+            };
+            console.log(moes);
+            return moes.join(', ');
+        });
+
         self.properties.sum_usable_classrooms = ko.computed(function() {
             return self.properties.sum_classrooms_in_good_condition + self.properties.sum_classrooms_require_minor_repair;
         });
