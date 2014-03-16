@@ -11,6 +11,8 @@ from __future__ import unicode_literals
 from common.models import search_choices, YESNO, AREA, SCHOOL_CATEGORY, SCHOOL_MANAGEMENT, SCHOOL_TYPES, MEDIUM, MDM_STATUS, KITCHENSHED_STATUS, BOUNDARY_WALL
 
 from django.contrib.gis.db import models
+from jsonfield import JSONField
+import collections
 
 
 class BaseModel(models.Model):
@@ -114,7 +116,13 @@ class BasicData(BaseModel):
 
 
 class AggregationBase(models.Model):
+    centroid = models.GeometryField(blank=True, null=True)
+
+    # JSONField: load_kwargs from https://github.com/bradjasper/django-jsonfield#advanced-usage
+    medium_of_instructions = JSONField(load_kwargs={'object_pairs_hook': collections.OrderedDict})
+
     sum_schools = models.BigIntegerField(null=True, blank=True)
+    sum_govt_schools = models.BigIntegerField(null=True, blank=True)
     sum_rural_schools = models.BigIntegerField(null=True, blank=True)
     avg_distance_brc = models.FloatField(null=True, blank=True)
     avg_distance_crc = models.FloatField(null=True, blank=True)
@@ -207,8 +215,6 @@ class AggregationBase(models.Model):
 
 class AssemblyAggregations(BaseModel, AggregationBase):
     assembly_name = models.CharField(max_length=35, primary_key=True)
-    centroid = models.GeometryField(blank=True, null=True)
-
     objects = models.GeoManager()
 
     class Meta:
@@ -218,8 +224,6 @@ class AssemblyAggregations(BaseModel, AggregationBase):
 class BlockAggregations(BaseModel, AggregationBase):
     block_name = models.CharField(max_length=50, primary_key=True)
     district = models.CharField(max_length=50, blank=True)
-    centroid = models.GeometryField(blank=True, null=True)
-
     objects = models.GeoManager()
 
     class Meta:
@@ -231,8 +235,6 @@ class ClusterAggregations(BaseModel, AggregationBase):
     block_name = models.CharField(max_length=50, blank=True)
     district = models.CharField(max_length=50, blank=True)
 
-    centroid = models.PointField(blank=True, null=True)
-
     objects = models.GeoManager()
 
     class Meta:
@@ -242,7 +244,6 @@ class ClusterAggregations(BaseModel, AggregationBase):
 
 class ParliamentAggregations(BaseModel, AggregationBase):
     parliament_name = models.CharField(max_length=35, primary_key=True)
-    centroid = models.GeometryField(blank=True, null=True)
 
     objects = models.GeoManager()
 
@@ -251,8 +252,6 @@ class ParliamentAggregations(BaseModel, AggregationBase):
 
 class DistrictAggregations(BaseModel, AggregationBase):
     district = models.CharField(max_length=35, primary_key=True)
-    centroid = models.GeometryField(blank=True, null=True)
-
 
     objects = models.GeoManager()
 
@@ -262,8 +261,6 @@ class DistrictAggregations(BaseModel, AggregationBase):
 
 class PincodeAggregations(BaseModel, AggregationBase):
     pincode = models.IntegerField(blank=True, primary_key=True)
-    centroid = models.PointField(blank=True, null=True)
-
     objects = models.GeoManager()
 
     class Meta:

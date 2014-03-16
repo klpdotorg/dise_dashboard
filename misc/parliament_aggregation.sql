@@ -14,9 +14,10 @@ BEGIN
         EXECUTE 'DROP TABLE IF EXISTS ' || table_name;
 
         EXECUTE 'CREATE TABLE ' || table_name || ' AS
-        SELECT parliament_name,
+        SELECT parliament_name, district,
             Count(school_code) AS sum_schools,
             Sum(CASE WHEN rural_urban = 1 THEN 1 ELSE 0 END) AS sum_rural_schools,
+            Sum(CASE WHEN sch_management IN (1, 7) THEN 1 ELSE 0 END) AS sum_govt_schools,
 
             Avg(distance_brc) AS avg_distance_brc,
             Avg(distance_crc) AS avg_distance_crc,
@@ -151,7 +152,7 @@ BEGIN
 
         FROM ' || basic_table_name || '
         WHERE parliament_name IS NOT NULL
-        GROUP BY parliament_name
+        GROUP BY parliament_name, district
         ORDER BY parliament_name';
 
         EXECUTE 'ALTER TABLE ' || table_name || '
@@ -166,14 +167,47 @@ BEGIN
 
         EXECUTE 'UPDATE ' || table_name || '
             SET centroid=parliament_centroid.centroid
-            FROM (SELECT t1.parliament_name, ST_Centroid(ST_Collect(t2.centroid)) as centroid
+            FROM (SELECT t1.parliament_name, t1.district, ST_Centroid(ST_Collect(t2.centroid)) as centroid
                     FROM ' || table_name || ' AS t1,
                     ' || basic_table_name || ' AS t2
-                WHERE t2.parliament_name=t1.parliament_name
-                GROUP BY t1.parliament_name
-                ORDER BY t1.parliament_name) as parliament_centroid
-            WHERE ' || table_name || '.parliament_name=parliament_centroid.parliament_name';
+                WHERE t2.parliament_name=t1.parliament_name AND
+                    t2.district=t1.district
+                GROUP BY t1.parliament_name, t1.district
+                ORDER BY t1.parliament_name, t1.district) as parliament_centroid
+            WHERE ' || table_name || '.parliament_name=parliament_centroid.parliament_name
+                AND ' || table_name || '.district=parliament_centroid.district';
 
+    END LOOP;
+
+    FOREACH year IN ARRAY years
+    LOOP
+        -- can do some processing here
+        table_name := 'dise_' || year || '_parliament_aggregations';
+        basic_table_name := 'dise_' || year || '_basic_data';
+
+        EXECUTE 'ALTER TABLE ' || table_name || '
+            ADD COLUMN medium_of_instructions json';
+
+        EXECUTE 'UPDATE ' || table_name || '
+            SET medium_of_instructions=json_v
+            FROM
+                (
+                    SELECT parliament_name, district_name, array_to_json(array_agg(row_to_json(moe_json))) as json_v
+                    FROM
+                    (
+                        SELECT
+                            distinct medium_of_instruction as moe_id,
+                            parliament_name,
+                            district as district_name,
+                            count(*) as sch_count
+                        FROM ' || basic_table_name || '
+                        GROUP BY moe_id, parliament_name, district_name
+                        ORDER BY sch_count
+                    ) moe_json
+                    GROUP BY parliament_name, district_name
+                ) moe_json_2
+            WHERE moe_json_2.parliament_name=' || table_name || '.parliament_name AND
+                moe_json_2.district_name=' || table_name || '.district';
     END LOOP;
     RETURN;
 END
