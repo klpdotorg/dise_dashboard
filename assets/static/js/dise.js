@@ -789,6 +789,14 @@ $(function(){
             return;
         }
 
+        if (entity_lower != 'school') {
+            $('.area_filter').hide('fast');
+            $('.management_filter').hide('fast');
+        } else {
+            $('.area_filter').show('fast');
+            $('.management_filter').show('fast');
+        }
+
         var session = params.session || $('input[name=academic_year]:checked').val() || '10-11';
         delete params.session;
         $('input[name=academic_year]').each(function(i) {

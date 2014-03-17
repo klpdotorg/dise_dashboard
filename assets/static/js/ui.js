@@ -47,10 +47,10 @@ var UI = {
             $(window).height() - $(".navbar").height()
         );
 
-        $("#schools").height(
-            // Strange!
-            $("#controls").height() - 238
-        );
+        // $("#schools").height(
+        //     // Strange!
+        //     $("#controls").height() - 238
+        // );
 
     },
 
