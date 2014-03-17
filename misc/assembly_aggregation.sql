@@ -14,7 +14,7 @@ BEGIN
         EXECUTE 'DROP TABLE IF EXISTS ' || table_name;
 
         EXECUTE 'CREATE TABLE ' || table_name || ' AS
-        SELECT assembly_name, district,
+        SELECT assembly_name,
             Count(school_code) AS sum_schools,
             Sum(CASE WHEN rural_urban = 1 THEN 1 ELSE 0 END) AS sum_rural_schools,
             Sum(CASE WHEN sch_management IN (1, 7) THEN 1 ELSE 0 END) AS sum_govt_schools,
@@ -152,7 +152,7 @@ BEGIN
 
         FROM ' || basic_table_name || '
         WHERE assembly_name IS NOT NULL
-        GROUP BY assembly_name, district
+        GROUP BY assembly_name
         ORDER BY assembly_name';
 
         EXECUTE 'ALTER TABLE ' || table_name || '
@@ -167,15 +167,13 @@ BEGIN
 
         EXECUTE 'UPDATE ' || table_name || '
             SET centroid=mla_centroid.centroid
-            FROM (SELECT t1.assembly_name, t1.district, ST_Centroid(ST_Collect(t2.centroid)) as centroid
+            FROM (SELECT t1.assembly_name, ST_Centroid(ST_Collect(t2.centroid)) as centroid
                     FROM ' || table_name || ' AS t1,
                     ' || basic_table_name || ' AS t2
-                WHERE t2.assembly_name=t1.assembly_name and
-                    t2.district=t1.district
-                GROUP BY t1.assembly_name, t1.district
-                ORDER BY t1.assembly_name, t1.district) as mla_centroid
-            WHERE ' || table_name || '.assembly_name=mla_centroid.assembly_name
-                AND ' || table_name || '.district=mla_centroid.district';
+                WHERE t2.assembly_name=t1.assembly_name
+                GROUP BY t1.assembly_name
+                ORDER BY t1.assembly_name) as mla_centroid
+            WHERE ' || table_name || '.assembly_name=mla_centroid.assembly_name';
 
     END LOOP;
 
@@ -192,22 +190,20 @@ BEGIN
             SET medium_of_instructions=json_v
             FROM
                 (
-                    SELECT assembly_name, district_name, array_to_json(array_agg(row_to_json(moe_json))) as json_v
+                    SELECT assembly_name, array_to_json(array_agg(row_to_json(moe_json))) as json_v
                     FROM
                     (
                         SELECT
                             distinct medium_of_instruction as moe_id,
                             assembly_name,
-                            district as district_name,
                             count(*) as sch_count
                         FROM ' || basic_table_name || '
-                        GROUP BY moe_id, assembly_name, district_name
+                        GROUP BY moe_id, assembly_name
                         ORDER BY sch_count
                     ) moe_json
-                    GROUP BY assembly_name, district_name
+                    GROUP BY assembly_name
                 ) moe_json_2
-            WHERE moe_json_2.assembly_name=' || table_name || '.assembly_name AND
-                moe_json_2.district_name=' || table_name || '.district';
+            WHERE moe_json_2.assembly_name=' || table_name || '.assembly_name';
     END LOOP;
     RETURN;
 END
