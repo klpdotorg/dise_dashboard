@@ -165,6 +165,10 @@ $(function(){
             return (self.properties.sum_schools - self.properties.sum_govt_schools);
         });
 
+        self.properties.sum_urban_schools = ko.computed(function() {
+            return (self.properties.sum_schools - self.properties.sum_rural_schools);
+        });
+
         self.properties.medium_of_instructions_list = ko.computed(function() {
             var moes = [];
             for (var i = 0; i < self.properties.medium_of_instructions.length; i++) {

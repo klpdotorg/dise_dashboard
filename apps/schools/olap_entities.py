@@ -20,7 +20,7 @@ class BaseEntity:
     # The classmethods return JSON that is sent as output
 
     common_aggr_fields = ['sum_boys', 'sum_girls', 'sum_schools', 'sum_govt_schools',
-        'medium_of_instructions', 'sum_male_tch',
+        'sum_rural_schools', 'medium_of_instructions', 'sum_male_tch',
         'sum_female_tch', 'sum_has_library', 'sum_has_electricity', 'sum_toilet_common',
         'sum_toilet_boys', 'sum_toilet_girls', 'sum_tot_clrooms', 'sum_classrooms_in_good_condition',
         'sum_classrooms_require_minor_repair', 'sum_classrooms_require_major_repair']
