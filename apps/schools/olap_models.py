@@ -15,12 +15,7 @@ from jsonfield import JSONField
 import collections
 
 
-class BaseModel(models.Model):
-    class Meta:
-        abstract = True
-
-
-class BasicData(BaseModel):
+class BasicData(models.Model):
     school_code = models.BigIntegerField(primary_key=True)
     centroid = models.GeometryField(blank=True, null=True)
     district = models.CharField(max_length=50, blank=True)
@@ -224,14 +219,14 @@ class AggregationBase(models.Model):
         return moes
 
 
-class AssemblyAggregations(BaseModel, AggregationBase):
+class AssemblyAggregations(AggregationBase):
     assembly_name = models.CharField(max_length=35, primary_key=True)
 
     class Meta:
         abstract = True
 
 
-class BlockAggregations(BaseModel, AggregationBase):
+class BlockAggregations(AggregationBase):
     block_name = models.CharField(max_length=50, primary_key=True)
     district = models.CharField(max_length=50, blank=True)
 
@@ -239,7 +234,7 @@ class BlockAggregations(BaseModel, AggregationBase):
         abstract = True
 
 
-class ClusterAggregations(BaseModel, AggregationBase):
+class ClusterAggregations(AggregationBase):
     cluster_name = models.CharField(max_length=50, primary_key=True)
     block_name = models.CharField(max_length=50, blank=True)
     district = models.CharField(max_length=50, blank=True)
@@ -249,20 +244,20 @@ class ClusterAggregations(BaseModel, AggregationBase):
         unique_together = ("cluster_name", "block_name")
 
 
-class ParliamentAggregations(BaseModel, AggregationBase):
+class ParliamentAggregations(AggregationBase):
     parliament_name = models.CharField(max_length=35, primary_key=True)
 
     class Meta:
         abstract = True
 
-class DistrictAggregations(BaseModel, AggregationBase):
+class DistrictAggregations(AggregationBase):
     district = models.CharField(max_length=35, primary_key=True)
 
     class Meta:
         abstract = True
 
 
-class PincodeAggregations(BaseModel, AggregationBase):
+class PincodeAggregations(AggregationBase):
     pincode = models.IntegerField(blank=True, primary_key=True)
 
     class Meta:

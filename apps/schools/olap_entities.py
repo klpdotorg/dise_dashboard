@@ -338,9 +338,10 @@ class Cluster(BaseEntity):
 
         clusters = ClusterModel.objects.filter(centroid__isnull=False)
 
-        if 'name' in params and params.get('name', ''):
+        if self.param_name_for_primary_key in params:
             clusters = clusters.filter(
-                cluster_name__icontains=params.get('name'))
+                cluster_name__icontains=params.get(self.param_name_for_primary_key)
+            )
 
         if 'block' in params and params.get('block', ''):
             clusters = clusters.filter(
@@ -443,8 +444,10 @@ class Block(BaseEntity):
         if len(params.keys()) > 1:
             blocks = BlockModel.objects.only(*self.only_fields).filter(centroid__isnull=False)
 
-        if 'name' in params and params.get('name', ''):
-            blocks = blocks.filter(block_name__icontains=params.get('name'))
+        if self.param_name_for_primary_key in params:
+            blocks = blocks.filter(
+                block_name__icontains=params.get(self.param_name_for_primary_key)
+            )
 
         result['total_count'] = blocks.count()
 
@@ -568,9 +571,9 @@ class District(BaseEntity):
         if len(params.keys()) > 1:
             districts = DistrictModel.objects.only(*self.only_fields).filter(centroid__isnull=False)
 
-        if 'name' in params and params.get('name', ''):
+        if self.param_name_for_primary_key in params:
             districts = districts.filter(
-                district__icontains=params.get('name')
+                district__icontains=params.get(self.param_name_for_primary_key)
             )
 
         result['total_count'] = districts.count()
@@ -648,9 +651,9 @@ class Pincode(BaseEntity):
         if len(params.keys()) > 1:
             pincodes = PincodeModel.objects.filter(centroid__isnull=False)
 
-        if 'pincode' in params and params.get('pincode', ''):
+        if self.param_name_for_primary_key in params:
             pincodes = pincodes.filter(
-                pincode__icontains=params.get('pincode')
+                pincode__icontains=params.get(self.param_name_for_primary_key)
             )
 
         result['total_count'] = pincodes.count()
@@ -725,9 +728,9 @@ class Assembly(BaseEntity):
         if len(params.keys()) > 1:
             assemblies = AssemblyModel.objects.filter(centroid__isnull=False)
 
-        if 'assembly' in params and params.get('assembly', ''):
+        if self.param_name_for_primary_key in params:
             assemblies = assemblies.filter(
-                assembly_name__icontains=params.get('assembly')
+                assembly_name__icontains=params.get(self.param_name_for_primary_key)
             )
 
         result['total_count'] = assemblies.count()
@@ -802,9 +805,9 @@ class Parliament(BaseEntity):
         if len(params.keys()) > 1:
             parliaments = ParliamentModel.objects.filter(centroid__isnull=False)
 
-        if 'parliament' in params and params.get('parliament', ''):
+        if self.param_name_for_primary_key in params:
             parliaments = parliaments.filter(
-                parliament_name__icontains=params.get('parliament')
+                parliament_name__icontains=params.get(self.param_name_for_primary_key)
             )
 
         result['total_count'] = parliaments.count()
