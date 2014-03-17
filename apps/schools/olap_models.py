@@ -209,6 +209,8 @@ class AggregationBase(models.Model):
     sum_girls = models.BigIntegerField(blank=True, null=True)
     avg_girls = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
 
+    objects = models.GeoManager()
+
     class Meta:
         abstract = True
 
@@ -224,7 +226,6 @@ class AggregationBase(models.Model):
 
 class AssemblyAggregations(BaseModel, AggregationBase):
     assembly_name = models.CharField(max_length=35, primary_key=True)
-    objects = models.GeoManager()
 
     class Meta:
         abstract = True
@@ -233,7 +234,6 @@ class AssemblyAggregations(BaseModel, AggregationBase):
 class BlockAggregations(BaseModel, AggregationBase):
     block_name = models.CharField(max_length=50, primary_key=True)
     district = models.CharField(max_length=50, blank=True)
-    objects = models.GeoManager()
 
     class Meta:
         abstract = True
@@ -244,8 +244,6 @@ class ClusterAggregations(BaseModel, AggregationBase):
     block_name = models.CharField(max_length=50, blank=True)
     district = models.CharField(max_length=50, blank=True)
 
-    objects = models.GeoManager()
-
     class Meta:
         abstract = True
         unique_together = ("cluster_name", "block_name")
@@ -254,15 +252,11 @@ class ClusterAggregations(BaseModel, AggregationBase):
 class ParliamentAggregations(BaseModel, AggregationBase):
     parliament_name = models.CharField(max_length=35, primary_key=True)
 
-    objects = models.GeoManager()
-
     class Meta:
         abstract = True
 
 class DistrictAggregations(BaseModel, AggregationBase):
     district = models.CharField(max_length=35, primary_key=True)
-
-    objects = models.GeoManager()
 
     class Meta:
         abstract = True
@@ -270,7 +264,6 @@ class DistrictAggregations(BaseModel, AggregationBase):
 
 class PincodeAggregations(BaseModel, AggregationBase):
     pincode = models.IntegerField(blank=True, primary_key=True)
-    objects = models.GeoManager()
 
     class Meta:
         abstract = True
