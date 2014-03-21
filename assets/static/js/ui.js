@@ -47,11 +47,11 @@ var UI = {
             $(window).height() - $(".navbar").height()
         );
 
-        // $("#schools").height(
-        //     // Strange!
-        //     $("#controls").height() - 238
-        // );
-
+        $("#schools").height(
+            // Strange!
+            $("#controls").height() - ($('#super-search-container').height() + $('#filter-container').height() + $('#no-of-matches').height())
+        );
+        console.log('uijs', $('#filter-container').height());
     },
 
     initICheck: function(){
