@@ -350,6 +350,7 @@ $(function(){
         currentLayers.clearLayers();
         // Flip the filter switch to disable all usual map interactions.
         window.filtersEnabled = true;
+
         var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
         if (e.object.type == 'school') {
             if(e.object.feature !== null && e.object.feature !== "{}"){
@@ -363,7 +364,7 @@ $(function(){
                 alert("Sorry, this school doesn't have a location.");
             }
         } else if (['cluster', 'assembly', 'parliament'].indexOf(e.object.type) >= 0){
-            $.updateUrlParams({
+            $.setUrlParams({
                 'do': e.object.type.toProperCase() + '.getSchools',
                 session: academic_year,
                 name: e.object.id,
@@ -371,7 +372,7 @@ $(function(){
                 z: 12
             });
         } else if (e.object.type == 'block'){
-            $.updateUrlParams({
+            $.setUrlParams({
                 'do': 'Block.getClusters',
                 session: academic_year,
                 name: e.object.id,
@@ -379,7 +380,7 @@ $(function(){
                 z: 12
             });
         } else if (e.object.type == 'district'){
-            $.updateUrlParams({
+            $.setUrlParams({
                 'do': 'District.getBlocks',
                 session: academic_year,
                 name: e.object.id,
@@ -387,7 +388,7 @@ $(function(){
                 z: 10
             });
         } else if (e.object.type == 'pincode'){
-            $.updateUrlParams({
+            $.setUrlParams({
                 'do': 'Pincode.getSchools',
                 session: academic_year,
                 pincode: e.object.id,
@@ -811,6 +812,8 @@ $(function(){
             }
         });
 
+        var zoom = parseInt($.getUrlParam('z')) || 14;
+
         // Clear current layers.
         currentLayers.clearLayers();
 
@@ -832,7 +835,9 @@ $(function(){
                     newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
                     newLayer.addTo(currentLayers);
 
-                    map.panTo(L.GeoJSON.coordsToLatLng(data[entity_lower].geometry.coordinates));
+                    map.setView(L.GeoJSON.coordsToLatLng(data[entity_lower].geometry.coordinates), zoom, {
+                        animate: false
+                    });
                 } else {
                     alert('Sorry, no location available for this.');
                 }
@@ -882,8 +887,12 @@ $(function(){
                     if (data[entity_lower].geometry.coordinates.length == 2) {
                         newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
                         newLayer.addTo(currentLayers);
+                        console.log('panning to ' + entity_lower + ' ' + data[entity_lower].id);
 
-                        map.panTo(L.GeoJSON.coordsToLatLng(data[entity_lower].geometry.coordinates));
+                        map.setView(L.GeoJSON.coordsToLatLng(data[entity_lower].geometry.coordinates), zoom, {
+                            animate: false
+                        });
+
                     } else {
                         alert('Sorry, no location available for this.');
                     }
@@ -933,10 +942,7 @@ $(function(){
             });
         }
 
-        if ($.getUrlParam('z') !== undefined){
-            map.setZoom(parseInt($.getUrlParam('z')));
-        }
-
+        UI.resize();
     }
 
     if ("onhashchange" in window){
