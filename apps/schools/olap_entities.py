@@ -317,10 +317,9 @@ class Cluster(BaseEntity):
             school_api = School()
             schools = SchoolModel.objects.filter(
                 cluster_name__iexact=name,
-                # NOTE: Not sending schools without centroid
-                # because there is no way to show them
-                centroid__isnull=False
             )
+
+            result['total_count'] = schools.count()
 
             for sch in schools:
                 temp_l.append(school_api._get_geojson(sch))
@@ -398,10 +397,10 @@ class Block(BaseEntity):
             school_api = School()
             schools = SchoolModel.objects.filter(
                 block_name__iexact=name,
-                # NOTE: Not sending schools without centroid
-                # because there is no way to show them
-                centroid__isnull=False
             )
+
+            result['total_count'] = schools.count()
+
             for sch in schools:
                 temp_l.append(school_api._get_geojson(sch))
             result['results'] = FeatureCollection(temp_l)
@@ -423,10 +422,10 @@ class Block(BaseEntity):
             cluster_api = Cluster()
             clusters = ClusterModel.objects.filter(
                 block_name__iexact=name,
-                # NOTE: Not sending clusters without centroid
-                # because there is no way to show them
-                centroid__isnull=False
             )
+
+            result['total_count'] = clusters.count()
+
             for sch in clusters:
                 temp_l.append(cluster_api._get_geojson(sch))
             result['results'] = FeatureCollection(temp_l)
@@ -500,10 +499,10 @@ class District(BaseEntity):
             school_api = School()
             schools = SchoolModel.objects.filter(
                 district__iexact=name,
-                # NOTE: Not sending schools without centroid
-                # because there is no way to show them
-                centroid__isnull=False
             )
+
+            result['total_count'] = schools.count()
+
             for sch in schools:
                 temp_l.append(school_api._get_geojson(sch))
             result['results'] = FeatureCollection(temp_l)
@@ -525,10 +524,10 @@ class District(BaseEntity):
             cluster_api = Cluster()
             clusters = ClusterModel.objects.filter(
                 district__iexact=name,
-                # NOTE: Not sending clusters without centroid
-                # because there is no way to show them
-                centroid__isnull=False
             )
+
+            result['total_count'] = clusters.count()
+
             for sch in clusters:
                 temp_l.append(cluster_api._get_geojson(sch))
             result['results'] = FeatureCollection(temp_l)
@@ -550,10 +549,10 @@ class District(BaseEntity):
             block_api = Block()
             blocks = BlockModel.objects.filter(
                 district__iexact=name,
-                # NOTE: Not sending blocks without centroid
-                # because there is no way to show them
-                centroid__isnull=False
             )
+
+            result['total_count'] = blocks.count()
+
             for sch in blocks:
                 temp_l.append(block_api._get_geojson(sch))
             result['results'] = FeatureCollection(temp_l)
@@ -627,9 +626,6 @@ class Pincode(BaseEntity):
             school_api = School()
             schools = SchoolModel.objects.filter(
                 pincode__iexact=pincode,
-                # NOTE: Not sending schools without centroid
-                # because there is no way to show them
-                centroid__isnull=False
             )
 
             result['total_count'] = schools.count()
@@ -706,10 +702,8 @@ class Assembly(BaseEntity):
         school_api = School()
         schools = SchoolModel.objects.filter(
             assembly_name__iexact=assembly_name,
-            # NOTE: Not sending schools without centroid
-            # because there is no way to show them
-            centroid__isnull=False
         )
+        print schools.query
 
         result['total_count'] = schools.count()
 
@@ -783,9 +777,6 @@ class Parliament(BaseEntity):
         school_api = School()
         schools = SchoolModel.objects.filter(
             parliament_name__iexact=parliament_name,
-            # NOTE: Not sending schools without centroid
-            # because there is no way to show them
-            centroid__isnull=False
         )
 
         result['total_count'] = schools.count()
