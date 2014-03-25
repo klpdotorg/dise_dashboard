@@ -209,6 +209,8 @@ $(function(){
                 entity_type_for_report = 'mla';
             } else if (self.properties.entity_type == 'assembly') {
                 entity_type_for_report = 'mp';
+            } else {
+                entity_type_for_report = self.properties.entity_type;
             }
             return [
                 self.report_url_base,
