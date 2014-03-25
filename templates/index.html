@@ -15,6 +15,8 @@
     <script type="text/javascript" src="{% static 'lib/knockout-3.0.0.js' %}"></script>
     <!-- <script type="text/javascript" src="{% static 'lib/jquery.customSelect.min.js' %}"></script> -->
     <script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
+    <script src="{% static 'js/spin.min.js' %}"></script>
+    <script src="{% static 'js/leaflet.spin.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/dise.js' %}"></script>
 {% endblock %}
 
@@ -497,52 +499,22 @@
       </div>
 
       <br>
+
+      <div class="row" style="padding-left: 30px, padding-right: 30px">
+        <h4 style="padding-left: 30px">Yearly Report for 2012-13: <span data-bind="html: properties.actual_name"></span></h4>
+        <div class="col-md-4 right-shift">
+          <a data-bind="attr: { href: properties.report_url_demo }" class="btn btn-default">Demographic</a>
+        </div>
+        <div class="col-md-4">
+          <a data-bind="attr: { href: properties.report_url_finance }" class="btn btn-default">Finance</a>
+        </div>
+        <div class="col-md-4">
+          <a data-bind="attr: { href: properties.report_url_infra }" class="btn btn-default">Infrastructure</a>
+        </div>
+      </div>
     </div>
 
-    <!--
-    <ul>
-      <li>
-        <span class="glyphicon glyphicon-map-marker"></span>
-        Delhi Public School
-        <small>Greater NOIDA</small>
-      </li>
-      <li>
-        <span class="glyphicon glyphicon-map-marker"></span>
-        Delhi Public School
-        <small>Greater NOIDA</small>
-      </li>
-      <li class="not-on-map">
-        <span class="glyphicon glyphicon-map-marker"></span>
-        Delhi Public School
-        <small>Greater NOIDA</small>
-      </li>
-      <li>
-        <span class="glyphicon glyphicon-map-marker"></span>
-        Delhi Public School
-        <small>Greater NOIDA</small>
-      </li>
-      <li>
-        <span class="glyphicon glyphicon-map-marker"></span>
-        Delhi Public School
-        <small>Greater NOIDA</small>
-      </li>
-      <li>
-        <span class="glyphicon glyphicon-map-marker"></span>
-        Delhi Public School
-        <small>Greater NOIDA</small>
-      </li>
-      <li class="not-on-map">
-        <span class="glyphicon glyphicon-map-marker"></span>
-        Delhi Public School
-        <small>Greater NOIDA</small>
-      </li>
-      <li>
-        <span class="glyphicon glyphicon-map-marker"></span>
-        Delhi Public School
-        <small>Greater NOIDA</small>
-      </li>
-    </ul>
-    -->
+
   </div>
 
 

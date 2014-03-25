@@ -148,8 +148,9 @@ $(function(){
         self.id = feature.id;
         self.geometry = feature.geometry;
         self.properties = feature.properties;
+        self.report_url_base = 'http://dev.klp.org.in:8020';
 
-        self.properties.name = ko.computed(function() {
+        self.properties.actual_name = ko.computed(function() {
             var entity_name = '';
             if(self.properties.entity_type == 'district') {
                 entity_name = 'district';
@@ -158,7 +159,11 @@ $(function(){
             }else{
                 entity_name = self.properties.entity_type + '_name';
             }
-            return self.properties[entity_name] + ' <small>' + self.properties.entity_type + '</small>'
+            return self.properties[entity_name];
+        });
+
+        self.properties.name = ko.computed(function() {
+            return self.properties.actual_name() + ' <small>' + self.properties.entity_type + '</small>'
         });
 
         self.properties.sum_pvt_schools = ko.computed(function() {
@@ -196,6 +201,33 @@ $(function(){
 
         self.properties.ptr = ko.computed(function() {
             return Math.round(self.properties.sum_students() / self.properties.sum_teachers());
+        });
+
+        self.get_report_url = function(report_type) {
+            var entity_type_for_report = '';
+            if (self.properties.entity_type == 'assembly') {
+                entity_type_for_report = 'mla';
+            } else if (self.properties.entity_type == 'assembly') {
+                entity_type_for_report = 'mp';
+            }
+            return [
+                self.report_url_base,
+                'charts',
+                entity_type_for_report,
+                self.properties.actual_name(),
+                'english',
+                report_type
+            ].join('/')
+        };
+
+        self.properties.report_url_demo = ko.computed(function () {
+            return self.get_report_url('demographics');
+        });
+        self.properties.report_url_finance = ko.computed(function () {
+            return self.get_report_url('finance');
+        });
+        self.properties.report_url_infra = ko.computed(function () {
+            return self.get_report_url('infrastructure');
         });
 
     }
@@ -812,7 +844,7 @@ $(function(){
             }
         });
 
-        var zoom = parseInt($.getUrlParam('z')) || 14;
+        var zoom = parseInt($.getUrlParam('z'));
 
         // Clear current layers.
         currentLayers.clearLayers();
@@ -939,10 +971,11 @@ $(function(){
                         [bbox[3], bbox[2]]
                     ]);
                 }
+
+                // map.setZoom(zoom);
             });
         }
 
-        UI.resize();
     }
 
     if ("onhashchange" in window){
