@@ -204,18 +204,10 @@ $(function(){
         });
 
         self.get_report_url = function(report_type) {
-            var entity_type_for_report = '';
-            if (self.properties.entity_type == 'assembly') {
-                entity_type_for_report = 'mla';
-            } else if (self.properties.entity_type == 'assembly') {
-                entity_type_for_report = 'mp';
-            } else {
-                entity_type_for_report = self.properties.entity_type;
-            }
             return [
                 self.report_url_base,
                 'charts',
-                entity_type_for_report,
+                self.properties.entity_type,
                 self.properties.actual_name(),
                 'english',
                 report_type
