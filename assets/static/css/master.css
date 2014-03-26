@@ -632,3 +632,38 @@ ol.top-breadcrumbs li.e:after{border-left-color: #666;}
 .right-shift > *{
     text-align: right !important;
 }
+
+/* Yearly Report */
+.yearly_report{
+    border: 1px solid  #cd5e00;
+    margin: 30px;
+    margin-bottom: 60px;
+    padding: 10px;
+    background: #f18352;
+    border-radius: 3px;
+    color: #fff;
+}
+
+.yearly_report h3{
+    margin: 0;
+    font: 12px 'Roboto Slab', 'Helvetica', 'Arial', sans-serif;
+    margin-bottom: 10px;
+}
+
+.yearly_report h3 span{
+    display: block;
+    font-size: 16px;
+}
+
+.yearly_report a{
+    color: #fff;
+    display: block;
+    margin-left: 10px;
+    margin-bottom: 3px;
+}
+
+.yearly_report > a > span.glyphicon{
+    display: inline;
+    margin: 0;
+    margin-left: 5px;
+}

@@ -817,11 +817,14 @@ $(function(){
         }
 
         if (entity_lower != 'school') {
-            $('.area_filter').hide('fast');
-            $('.management_filter').hide('fast');
+            $('.area_filter').hide();
+            $('.management_filter').hide();
+            UI.resize();
+
         } else {
-            $('.area_filter').show('fast');
-            $('.management_filter').show('fast');
+            $('.area_filter').show();
+            $('.management_filter').show();
+            UI.resize();
         }
 
         var session = params.session || $('input[name=academic_year]:checked').val() || '10-11';
