@@ -500,17 +500,20 @@
 
       <br>
 
-      <div class="row" style="padding-left: 30px, padding-right: 30px">
-        <h4 style="padding-left: 30px">Yearly Report for 2012-13: <span data-bind="html: properties.actual_name"></span></h4>
-        <div class="col-md-4 right-shift">
-          <a data-bind="attr: { href: properties.report_url_demo }" class="btn btn-default">Demographic</a>
-        </div>
-        <div class="col-md-4">
-          <a data-bind="attr: { href: properties.report_url_finance }" class="btn btn-default">Finance</a>
-        </div>
-        <div class="col-md-4">
-          <a data-bind="attr: { href: properties.report_url_infra }" class="btn btn-default">Infrastructure</a>
-        </div>
+      <div class="yearly_report">
+        <h3>Yearly Report for 2012-13 <span data-bind="html: properties.actual_name"></span></h3>
+         <a data-bind="attr: { href: properties.report_url_demo }" >
+            <span class="glyphicon glyphicon-file"></span>
+            Demographic
+        </a>
+         <a data-bind="attr: { href: properties.report_url_finance }" >
+            <span class="glyphicon glyphicon-file"></span>
+            Finance
+         </a>
+         <a data-bind="attr: { href: properties.report_url_infra }" >
+            <span class="glyphicon glyphicon-file"></span>
+            Infrastructure
+         </a>
       </div>
     </div>
 
