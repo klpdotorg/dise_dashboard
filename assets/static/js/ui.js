@@ -48,8 +48,7 @@ var UI = {
         );
 
         $("#schools").height(
-            // Strange!
-            $("#controls").height() - 238
+            $("#controls").height() - ($('#super-search-container').height() + $('#filter-container').height() + $('#no-of-matches').height())
         );
     },
 
