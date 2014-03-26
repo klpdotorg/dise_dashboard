@@ -9,7 +9,7 @@
 
 // Then make calls like -
 
-//     DISE.call('Cluster.getSchools', '10-11', {
+//     DISE.call('Cluster.getSchools', '12-13', {
 //         name: e.object.id,
 //         format: 'geo'
 //     }, function(data) {
@@ -103,6 +103,7 @@ $(function(){
     UI.init(); // Initialize UI elements
     var filtersEnabled;
     var filter_prefix = 'f_';
+    window.default_session = '12-13';
 
     var School = function(feature) {
         if (feature === undefined) return this;
@@ -377,7 +378,7 @@ $(function(){
         // Flip the filter switch to disable all usual map interactions.
         window.filtersEnabled = true;
 
-        var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
+        var academic_year = $('input[name=academic_year]:checked').val() || window.default_session;
         if (e.object.type == 'school') {
             if(e.object.feature !== null && e.object.feature !== "{}"){
                 school = JSON.parse(e.object.feature);
@@ -453,7 +454,7 @@ $(function(){
      */
     $('body').on('click', '.filter-apply', function(e) {
         var data_type = $(e.target).attr('data-type');
-        var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
+        var academic_year = $('input[name=academic_year]:checked').val() || window.default_session;
 
         switch (data_type) {
             case 'facilities':
@@ -493,7 +494,7 @@ $(function(){
      */
     function fillCrumb(entity_type, entity_properties) {
         clearCrumbs();
-        var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
+        var academic_year = $('input[name=academic_year]:checked').val() || window.default_session;
 
         if (['School', 'school'].indexOf(entity_type) > -1) {
             UI.renderCrumbs([
@@ -551,7 +552,7 @@ $(function(){
     }
 
     function fillPane(feature) {
-        var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
+        var academic_year = $('input[name=academic_year]:checked').val() || window.default_session;
 
         if (feature.properties.entity_type == 'district') {
             // Call district.getInfo and populate popup.
@@ -687,7 +688,7 @@ $(function(){
         // Clear current layers.
         currentLayers.clearLayers();
 
-        var academic_year = $('input[name=academic_year]:checked').val() || '10-11';
+        var academic_year = $('input[name=academic_year]:checked').val() || window.default_session;
         extraParams['do'] = entity + '.search';
         extraParams['session'] = academic_year;
 
@@ -827,7 +828,7 @@ $(function(){
             UI.resize();
         }
 
-        var session = params.session || $('input[name=academic_year]:checked').val() || '10-11';
+        var session = params.session || $('input[name=academic_year]:checked').val() || window.default_session;
         delete params.session;
         $('input[name=academic_year]').each(function(i) {
             if ($(this).val() == session) {
