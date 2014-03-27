@@ -84,7 +84,7 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
         districts = DistrictModel.objects.filter(district__icontains=query).order_by('district')[:3]
         if districts.count() > 0:
             temp_d = {
-                'text': 'Districts',
+                'text': 'Ed. Dept. Districts',
                 'children': []
             }
             for district in districts:
@@ -112,7 +112,7 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
         assemblies = AssemblyModel.objects.filter(assembly_name__icontains=query).order_by('assembly_name')[:3]
         if assemblies.count() > 0:
             temp_d = {
-                'text': 'Assemblies',
+                'text': 'Assembly Constituencies',
                 'children': []
             }
             for assembly in assemblies:
@@ -126,7 +126,7 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
         parliaments = ParliamentModel.objects.filter(parliament_name__icontains=query).order_by('parliament_name')[:3]
         if parliaments.count() > 0:
             temp_d = {
-                'text': 'Parliaments',
+                'text': 'Parliamentary Constituencies',
                 'children': []
             }
             for parliament in parliaments:
