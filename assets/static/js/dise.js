@@ -374,7 +374,7 @@ $(function(){
         mapInit();
     }).on("select2-selecting", function(e) {
         // Clear the preloaded layers when the search has been used
-        currentLayers.clearLayers();
+        window.currentLayers.clearLayers();
         // Flip the filter switch to disable all usual map interactions.
         window.filtersEnabled = true;
 
@@ -686,7 +686,7 @@ $(function(){
         bbox = map.getBounds().toBBoxString();
         var extraParams = {};
         // Clear current layers.
-        currentLayers.clearLayers();
+        window.currentLayers.clearLayers();
 
         var academic_year = $('input[name=academic_year]:checked').val() || window.default_session;
         extraParams['do'] = entity + '.search';
@@ -800,7 +800,6 @@ $(function(){
 
         // Invoke initial map layers.
         var params = $.getUrlParams();
-        console.log(params);
 
         var method = params.do;
         if(method.split('.').length !== 2){
@@ -845,7 +844,7 @@ $(function(){
         var zoom = parseInt($.getUrlParam('z'));
 
         // Clear current layers.
-        currentLayers.clearLayers();
+        window.currentLayers.clearLayers();
 
         if (action == 'getInfo'){
             // just needs to place the marker and fill Pane
@@ -863,7 +862,7 @@ $(function(){
 
                 if (data[entity_lower].geometry.coordinates.length == 2) {
                     newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
-                    newLayer.addTo(currentLayers);
+                    newLayer.addTo(window.currentLayers);
 
                     map.setView(L.GeoJSON.coordsToLatLng(data[entity_lower].geometry.coordinates), zoom, {
                         animate: false
@@ -899,7 +898,7 @@ $(function(){
                 icon = customIcon(child_entity.toLowerCase());
 
                 newLayer = createLayer(sanitized_results, icon);
-                newLayer.addTo(currentLayers);
+                newLayer.addTo(window.currentLayers);
 
                 // updates the result pane
                 search_view.results(data.results.features);
@@ -916,7 +915,7 @@ $(function(){
 
                     if (data[entity_lower].geometry.coordinates.length == 2) {
                         newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
-                        newLayer.addTo(currentLayers);
+                        newLayer.addTo(window.currentLayers);
                         console.log('panning to ' + entity_lower + ' ' + data[entity_lower].id);
 
                         map.setView(L.GeoJSON.coordsToLatLng(data[entity_lower].geometry.coordinates), zoom, {
@@ -960,10 +959,14 @@ $(function(){
                 // Let's plot the valid geojson now
                 icon = customIcon(entity_lower);
                 newLayer = createLayer(sanitized_results, icon);
-                newLayer.addTo(currentLayers);
+                newLayer.addTo(window.currentLayers);
 
                 if ($.getUrlParam('bbox') !== undefined){
                     var bbox = $.getUrlParam('bbox').split(',');
+                    if (bbox.length != 4) {
+                        return;
+                    }
+
                     map.fitBounds([
                         [bbox[1], bbox[0]],
                         [bbox[3], bbox[2]]
