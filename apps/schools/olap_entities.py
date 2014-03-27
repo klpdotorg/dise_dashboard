@@ -568,7 +568,7 @@ class District(BaseEntity):
         DistrictModel = get_models(params.get('session', '10-11'), 'district')
 
         if len(params.keys()) > 1:
-            districts = DistrictModel.objects.only(*self.only_fields).filter(centroid__isnull=False)
+            districts = DistrictModel.objects.only(*self.only_fields).order_by(self.primary_key)
 
         if self.param_name_for_primary_key in params:
             districts = districts.filter(
