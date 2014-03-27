@@ -951,16 +951,16 @@ $(function(){
                     }
                 };
 
-                // Let's plot the valid geojson now
-                icon = customIcon(entity_lower);
-                newLayer = createLayer(sanitized_results, icon);
-                newLayer.addTo(currentLayers);
-
                 // updates the count pane
                 search_view.results(data.results.features);
                 search_view.n_results(data.total_count);
                 search_view.search_entity(entity);
                 search_view.showPopupResultList(true);
+
+                // Let's plot the valid geojson now
+                icon = customIcon(entity_lower);
+                newLayer = createLayer(sanitized_results, icon);
+                newLayer.addTo(currentLayers);
 
                 if ($.getUrlParam('bbox') !== undefined){
                     var bbox = $.getUrlParam('bbox').split(',');

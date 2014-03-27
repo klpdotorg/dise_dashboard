@@ -335,7 +335,7 @@ class Cluster(BaseEntity):
         result['query'] = params
         ClusterModel = get_models(params.get('session', '10-11'), 'cluster')
 
-        clusters = ClusterModel.objects.filter(centroid__isnull=False)
+        clusters = ClusterModel.objects.filter()
 
         if self.param_name_for_primary_key in params:
             clusters = clusters.filter(
@@ -441,7 +441,7 @@ class Block(BaseEntity):
         BlockModel = get_models(params.get('session', '10-11'), 'block')
 
         if len(params.keys()) > 1:
-            blocks = BlockModel.objects.only(*self.only_fields).filter(centroid__isnull=False)
+            blocks = BlockModel.objects.only(*self.only_fields)
 
         if self.param_name_for_primary_key in params:
             blocks = blocks.filter(
