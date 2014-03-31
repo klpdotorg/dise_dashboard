@@ -4,6 +4,8 @@ DEBUG = False
 
 PROJECT_ROOT = os.path.realpath(os.path.dirname(os.path.dirname(__file__)))
 
+POSTGIS_VERSION = (2, 1, 0)
+
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
