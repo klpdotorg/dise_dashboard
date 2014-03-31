@@ -755,7 +755,7 @@ $(function(){
     map.on('zoomend', function(e) {
       // If filters are enabled then don't load the usual layers.
         //var bbox = map.getBounds().toBBoxString();
-        console.log('zoooomed');
+        console.log('zoooomed', e);
 
         if (!window.filtersEnabled) {
             console.log('filters not enabled, updating map');
@@ -861,12 +861,13 @@ $(function(){
                 fillCrumb(entity_lower, data[entity_lower].properties);
 
                 if (data[entity_lower].geometry.coordinates.length == 2) {
-                    newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
-                    newLayer.addTo(window.currentLayers);
-
                     map.setView(L.GeoJSON.coordsToLatLng(data[entity_lower].geometry.coordinates), zoom, {
                         animate: false
                     });
+
+                    newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
+                    newLayer.addTo(window.currentLayers);
+
                 } else {
                     alert('Sorry, no location available for this.');
                 }
@@ -914,13 +915,13 @@ $(function(){
                     fillCrumb(entity_lower, data[entity_lower].properties);
 
                     if (data[entity_lower].geometry.coordinates.length == 2) {
-                        newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
-                        newLayer.addTo(window.currentLayers);
-                        console.log('panning to ' + entity_lower + ' ' + data[entity_lower].id);
-
                         map.setView(L.GeoJSON.coordsToLatLng(data[entity_lower].geometry.coordinates), zoom, {
                             animate: false
                         });
+
+                        newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
+                        newLayer.addTo(window.currentLayers);
+                        console.log('panning to ' + entity_lower + ' ' + data[entity_lower].id);
 
                     } else {
                         alert('Sorry, no location available for this.');
@@ -950,17 +951,6 @@ $(function(){
                     }
                 };
 
-                // updates the count pane
-                search_view.results(data.results.features);
-                search_view.n_results(data.total_count);
-                search_view.search_entity(entity);
-                search_view.showPopupResultList(true);
-
-                // Let's plot the valid geojson now
-                icon = customIcon(entity_lower);
-                newLayer = createLayer(sanitized_results, icon);
-                newLayer.addTo(window.currentLayers);
-
                 if ($.getUrlParam('bbox') !== undefined){
                     var bbox = $.getUrlParam('bbox').split(',');
                     if (bbox.length != 4) {
@@ -972,6 +962,17 @@ $(function(){
                         [bbox[3], bbox[2]]
                     ]);
                 }
+
+                // updates the count pane
+                search_view.results(data.results.features);
+                search_view.n_results(data.total_count);
+                search_view.search_entity(entity);
+                search_view.showPopupResultList(true);
+
+                // Let's plot the valid geojson now
+                icon = customIcon(entity_lower);
+                newLayer = createLayer(sanitized_results, icon);
+                newLayer.addTo(window.currentLayers);
 
                 // map.setZoom(zoom);
             });
