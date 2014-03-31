@@ -16,15 +16,17 @@ var layerIDs = {'district': '', 'block': '', 'cluster': '',
 map = L.map('map-holder', {zoomControl: true, attributionControl: false}).setView(karnataka, 8);
 
 // Tile URL, Key and attribution.
-var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/{key}/997/256/{z}/{x}/{y}.png',
-cloudmadeKey = '3c4ab920016a46d8ba10c88227539774',
-cloudmadeAttribution = '<a href="http://osm.org">OpenStreetMap</a>, <a href="http://cloudmade.com">CloudMade</a>';
+var mapQuestUrl = 'http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.jpg',
+    mapQuestSubdomains = '1234',
+    mapQuestAttribution = 'Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png">';
 
 // Create the Tile layer and add it to the map.
-var cloudmadeLayer = L.tileLayer(cloudmadeUrl, {key: cloudmadeKey}).addTo(map);
+var cloudmadeLayer = L.tileLayer(mapQuestUrl, {
+    subdomains: mapQuestSubdomains
+}).addTo(map);
 
 // Custom attribution control.
-var attributionControl = L.control.attribution({position: 'bottomright', prefix: cloudmadeAttribution}).addTo(map);
+var attributionControl = L.control.attribution({position: 'bottomright', prefix: mapQuestAttribution}).addTo(map);
 
 // Group of layers that are on the map at any given
 // time.
