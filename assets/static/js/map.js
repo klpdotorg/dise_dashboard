@@ -16,9 +16,9 @@ var layerIDs = {'district': '', 'block': '', 'cluster': '',
 map = L.map('map-holder', {zoomControl: true, attributionControl: false}).setView(karnataka, 8);
 
 // Tile URL, Key and attribution.
-var mapQuestUrl = 'http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.jpg',
+var mapQuestUrl = 'http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.jpg',
     mapQuestSubdomains = '1234',
-    mapQuestAttribution = 'Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png">';
+    mapQuestAttribution = 'Imagery and map information provided by <a href="http://open.mapquest.co.uk" target="_blank">MapQuest</a>, <a href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> and contributors.';
 
 // Create the Tile layer and add it to the map.
 var cloudmadeLayer = L.tileLayer(mapQuestUrl, {
