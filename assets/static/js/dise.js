@@ -24,7 +24,7 @@
     $.extend({
         setUrlParams: function(params) {
             var hash = decodeURIComponent($.param(params));
-            console.log(hash);
+            // console.log(hash);
             window.location.hash = hash;
         },
         updateUrlParams: function(params) {
@@ -180,7 +180,7 @@ $(function(){
             for (var i = 0; i < self.properties.medium_of_instructions.length; i++) {
                 moes.push(self.properties.medium_of_instructions[i].moe + "(" + self.properties.medium_of_instructions[i].sch_count + ")");
             };
-            console.log(moes);
+            // console.log(moes);
             return moes.join(', ');
         });
 
@@ -260,17 +260,17 @@ $(function(){
         self.highlightedEntity = ko.observable();
 
         self.highlightEntity = function(feature) {
-            console.log('should highlight entity on sidebar');
+            // console.log('should highlight entity on sidebar');
 
             if (feature.properties.entity_type == 'school') {
-                console.log('showing school');
+                // console.log('showing school');
                 self.highlightedSchool(new School(feature));
 
                 self.showPopupResultList(false);
                 self.showPopupAggrEntity(false);
                 self.showPopupSchool(true);
             } else {
-                console.log('showing other entity');
+                // console.log('showing other entity');
                 self.highlightedEntity(new AggregatedEntity(feature));
 
                 self.showPopupResultList(false);
@@ -435,7 +435,7 @@ $(function(){
         placeholder: "Select a preset",
         allowClear: true
     }).on("select2-selecting", function(e) {
-        console.log(e);
+        // console.log(e);
     });
 
     $("#presets .glyphicon-cog").click(function(){
@@ -460,7 +460,7 @@ $(function(){
         switch (data_type) {
             case 'facilities':
                 var filters = UI.serializePreset()[data_type];
-                console.log(filters);
+                // console.log(filters);
 
                 if (filters.length == 0) {
                     window.location = window.location.protocol + '//' + window.location.host;
@@ -653,7 +653,7 @@ $(function(){
         // the entity.
         layer.on({
             click: function(e) {
-                console.log(e);
+                // console.log(e);
                 $('.marker-bounce').removeClass('marker-bounce');
                 $(e.target._icon).addClass('marker-bounce');
 
@@ -665,7 +665,7 @@ $(function(){
     function createLayer(feature_or_features, icon) {
         // @param {String} feature_or_features  Either Feature or FeatureCollection
         // @param {String} zoom                 Zoom level of the map
-        console.log(feature_or_features);
+        // console.log(feature_or_features);
         return L.geoJson(
             feature_or_features,
             {
@@ -715,7 +715,7 @@ $(function(){
     function mapInit () {
         // Load the district data and plot.
         window.filtersEnabled = is_filter_enabled();
-        console.log('filter enabled: ' + window.filtersEnabled);
+        // console.log('filter enabled: ' + window.filtersEnabled);
         loadEntityData('District');
     }
 
@@ -756,17 +756,17 @@ $(function(){
     map.on('zoomend', function(e) {
       // If filters are enabled then don't load the usual layers.
         //var bbox = map.getBounds().toBBoxString();
-        console.log('zoooomed', e);
+        // console.log('zoooomed', e);
 
         if (!window.filtersEnabled) {
-            console.log('filters not enabled, updating map');
+            // console.log('filters not enabled, updating map');
             updateLayers(map.getZoom());
         }
     })
 
     // When the map is panned, load the data in the new bounds.
     map.on('dragend', function(e) {
-        console.log('dragged');
+        // console.log('dragged');
 
         if (!window.filtersEnabled) {
             var bbox = map.getBounds().toBBoxString();
@@ -911,7 +911,7 @@ $(function(){
                 search_view.showPopupResultList(true);
 
                 if (params.include_entity !== undefined && params.include_entity == 'true' && data[entity_lower] !== undefined) {
-                    console.log('showing entity');
+                    // console.log('showing entity');
                     search_view.showPopupResultList(false);
 
                     search_view.highlightEntity(data[entity_lower]);
@@ -924,7 +924,7 @@ $(function(){
 
                         newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
                         newLayer.addTo(window.currentLayers);
-                        console.log('panning to ' + entity_lower + ' ' + data[entity_lower].id);
+                        // console.log('panning to ' + entity_lower + ' ' + data[entity_lower].id);
 
                     } else {
                         alert('Sorry, no location available for this.');
@@ -989,7 +989,7 @@ $(function(){
 
     if ($.getUrlParam('do') === undefined) {
         // Invoke initial map layers.
-        console.log('initiating map');
+        // console.log('initiating map');
         mapInit();
     } else {
         // query and show the results in hash
