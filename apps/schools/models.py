@@ -1,289 +1,231 @@
-from django.db import models
-
-from common.models import BaseModel
-
-def search_choices(t, value):
-    """
-    looks for index in a tuple of tuples
-
-    >>> search_choices(YESNO, 'Yes')
-    1
-
-    """
-    for k, v in t:
-        if v == value:
-            return k
-    return False
-
-AREA = (
-    (1, 'Rural'),
-    (2, 'Urban'),
-)
-
-YESNO = (
-    (0, 'Not Applicable'),
-    (1, 'Yes'),
-    (2, 'No'),
-    (3, 'Yes but not functional')
-)
-
-SCHOOL_TYPES = (
-    (1, 'Boys'),
-    (2, 'Girls'),
-    (3, 'Co-educational')
-)
-
-ROOM_TYPES = (
-    ('class', 'Classroom'),
-    ('other', 'Other')
-)
-
-ROOM_CONDITIONS = (
-    ('good', 'Good'),
-    ('major', 'Require Major Repair'),
-    ('minor', 'Require Minor Repair')
-)
-
-TOILET_TYPES = (
-    ('common', 'Common'),
-    ('boy', 'Boys'),
-    ('girl', 'Girls')
-)
-
-MDM_STATUS = (
-    (0, 'Not applicable'),
-    (1, 'Not provided'),
-    (2, 'Provided & prepared in school premises'),
-    (3, 'Provided but not prepared in school premises')
-)
-
-KITCHENSHED_STATUS = (
-    (0, 'not applicable'),
-    (1, 'available'),
-    (2, 'not available'),
-    (3, 'UNder construction'),
-    (4, 'classroom used as kitchen'),
-)
-
-
-class AcademicYear(models.Model):
-    from_year = models.SmallIntegerField()
-    to_year = models.SmallIntegerField()
-
-    def __unicode__(self):
-        return u"%s-%s" % (self.from_year, self.to_year)
-
-
-class School(BaseModel):
-    code = models.CharField(max_length=64, unique=True, db_index=True)
-    name = models.CharField(max_length=255, db_index=True)
-    pincode = models.IntegerField(blank=True, null=True)
-    year_established = models.SmallIntegerField(blank=True, null=True)
-
-    def __unicode__(self):
-        return u"%s: %s" % (self.code, self.name)
-
-
-class YearlyData(BaseModel):
-    academic_year = models.ForeignKey(AcademicYear)
-    school = models.ForeignKey(School)
-
-    cluster = models.ForeignKey('common.Cluster', blank=True, null=True)
-    village = models.ForeignKey('common.Village', blank=True, null=True)
-    ward_no = models.CharField(max_length=10, blank=True, null=True)
-
-    management = models.ForeignKey('SchoolManaagement', blank=True, null=True)
-    category = models.ForeignKey('SchoolCategory', blank=True, null=True)
-
-    area_type = models.SmallIntegerField(choices=AREA, blank=True, null=True)
-    mediums = models.ManyToManyField('InstractionMedium', blank=True, null=True)
-    distance_from_brc = models.FloatField(blank=True, null=True)
-    distance_from_crc = models.FloatField(blank=True, null=True)
-
-    pre_primary_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-    pre_primary_student_count = models.IntegerField(blank=True, null=True)
-    pre_primary_teacher_count = models.IntegerField(blank=True, null=True)
-
-    type = models.SmallIntegerField(choices=SCHOOL_TYPES, blank=True, null=True)
-    part_of_shift = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-    working_day_count = models.IntegerField(blank=True, null=True)
-
-    residential = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-    residential_type = models.ForeignKey('ResidentialType', blank=True, null=True)
-
-    lowest_class = models.SmallIntegerField(blank=True, null=True)
-    highest_class = models.SmallIntegerField(blank=True, null=True)
-
-    academic_inspection_count = models.IntegerField(blank=True, null=True)
-    crc_visit_count = models.IntegerField(blank=True, null=True)
-    brc_visit_count = models.IntegerField(blank=True, null=True)
-
-    development_grant_received = models.FloatField(blank=True, null=True)
-    development_grant_expenditure = models.FloatField(blank=True, null=True)
-    tlm_grant_received = models.FloatField(blank=True, null=True)
-    tlm_grant_expenditure = models.FloatField(blank=True, null=True)
-    fund_from_student_received = models.FloatField(blank=True, null=True)
-    fund_from_student_expenditure = models.FloatField(blank=True, null=True)
-
-    building_status = models.ForeignKey('SchoolBuildingStatus', blank=True, null=True)
-    room_count = models.IntegerField(blank=True, null=True)
-    room_for_headmaster = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-    drinking_water_source = models.ForeignKey('DrinkingWaterSource', blank=True, null=True)
-    electricity_status = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-    boundary_wall_type = models.ForeignKey('BoundaryWallType', blank=True, null=True)
-
-    library_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-    library_book_count = models.IntegerField(default=0)
-
-    playground_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-
-    computer_count = models.IntegerField(default=0)
-    blackboard_count = models.IntegerField(default=0)
-    cal_lab_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-    medical_checkup = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-    ramp_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-
-    sdmc_constituted = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-    sdmc_meeting_count = models.IntegerField(default=0)
-
-    textbook_received = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-    textbook_received_date = models.DateField(blank=True, null=True)
-
-    weakersec_children_applied = models.IntegerField(default=0)
-    weakersec_children_enrolled = models.IntegerField(default=0)
-
-    middaymeal_status = models.SmallIntegerField(choices=MDM_STATUS, blank=True, null=True)
-    kitchenshed_status = models.SmallIntegerField(choices=KITCHENSHED_STATUS, blank=True, null=True)
+# from django.db import models
+# from django.contrib.gis.db import models as geo_models
 
-    def __unicode__(self):
-        return u"%s (%s)" % (self.school, self.academic_year)
 
-    class Meta:
-        verbose_name_plural = 'Yearly Data'
-        ordering = ('id', )
+# class AcademicYear(models.Model):
+#     from_year = models.SmallIntegerField()
+#     to_year = models.SmallIntegerField()
 
+#     def __unicode__(self):
+#         return u"%s-%s" % (self.from_year, self.to_year)
 
-class Enrolment(BaseModel):
-    yearly_data = models.ForeignKey('YearlyData')
-    klass = models.IntegerField(db_index=True, default=0)
-    general_boys = models.IntegerField(default=0)
-    general_girls = models.IntegerField(default=0)
-    sc_boys = models.IntegerField(default=0)
-    sc_girls = models.IntegerField(default=0)
-    st_boys = models.IntegerField(default=0)
-    st_girls = models.IntegerField(default=0)
-    obc_boys = models.IntegerField(default=0)
-    obc_girls = models.IntegerField(default=0)
-    disabled_boys = models.IntegerField(default=0)
-    disabled_girls = models.IntegerField(default=0)
-    repeaters_boys = models.IntegerField(default=0)
-    repeaters_girls = models.IntegerField(default=0)
-    total_boys = models.IntegerField(db_index=True, default=0)
-    total_girls = models.IntegerField(db_index=True, default=0)
-    total = models.IntegerField(db_index=True, default=0)
 
-    class Meta:
-        unique_together = ("yearly_data", "klass")
+# class School(BaseModel):
+#     code = models.CharField(max_length=64, unique=True, db_index=True)
+#     klpid = models.CharField(max_length=64, unique=True, db_index=True, blank=True, null=True)
+#     name = models.CharField(max_length=255, db_index=True)
+#     pincode = models.IntegerField(blank=True, null=True)
+#     year_established = models.SmallIntegerField(blank=True, null=True)
+#     centroid = geo_models.GeometryField(blank=True, null=True)
 
-    def __unicode__(self):
-        return u"%s" % self.id
+#     def __unicode__(self):
+#         return u"%s: %s" % (self.code, self.name)
+
+#     @property
+#     def centroid_latlang(self):
+#         return [self.centroid.x, self.centroid.y] if self.centroid else []
+
+
+# class YearlyData(BaseModel):
+#     academic_year = models.ForeignKey(AcademicYear)
+#     school = models.ForeignKey(School)
+
+#     cluster = models.ForeignKey('common.Cluster', blank=True, null=True)
+#     village = models.ForeignKey('common.Village', blank=True, null=True)
+#     ward_no = models.CharField(max_length=10, blank=True, null=True)
 
+#     management = models.ForeignKey('SchoolManaagement', blank=True, null=True)
+#     category = models.ForeignKey('SchoolCategory', blank=True, null=True)
+
+#     area_type = models.SmallIntegerField(choices=AREA, blank=True, null=True)
+#     mediums = models.ManyToManyField('InstractionMedium', blank=True, null=True)
+#     distance_from_brc = models.FloatField(blank=True, null=True)
+#     distance_from_crc = models.FloatField(blank=True, null=True)
+
+#     pre_primary_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
+#     pre_primary_student_count = models.IntegerField(blank=True, null=True)
+#     pre_primary_teacher_count = models.IntegerField(blank=True, null=True)
+
+#     type = models.SmallIntegerField(choices=SCHOOL_TYPES, blank=True, null=True)
+#     part_of_shift = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
+#     working_day_count = models.IntegerField(blank=True, null=True)
+
+#     residential = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
+#     residential_type = models.ForeignKey('ResidentialType', blank=True, null=True)
+
+#     lowest_class = models.SmallIntegerField(blank=True, null=True)
+#     highest_class = models.SmallIntegerField(blank=True, null=True)
+
+#     academic_inspection_count = models.IntegerField(blank=True, null=True)
+#     crc_visit_count = models.IntegerField(blank=True, null=True)
+#     brc_visit_count = models.IntegerField(blank=True, null=True)
+
+#     development_grant_received = models.FloatField(blank=True, null=True)
+#     development_grant_expenditure = models.FloatField(blank=True, null=True)
+#     tlm_grant_received = models.FloatField(blank=True, null=True)
+#     tlm_grant_expenditure = models.FloatField(blank=True, null=True)
+#     fund_from_student_received = models.FloatField(blank=True, null=True)
+#     fund_from_student_expenditure = models.FloatField(blank=True, null=True)
+
+#     building_status = models.ForeignKey('SchoolBuildingStatus', blank=True, null=True)
+#     room_count = models.IntegerField(blank=True, null=True)
+#     room_for_headmaster = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
+#     drinking_water_source = models.ForeignKey('DrinkingWaterSource', blank=True, null=True)
+#     electricity_status = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
+#     boundary_wall_type = models.ForeignKey('BoundaryWallType', blank=True, null=True)
+
+#     library_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
+#     library_book_count = models.IntegerField(default=0)
 
-class TeacherCount(BaseModel):
-    yearly_data = models.OneToOneField('YearlyData')
-    male = models.IntegerField(default=0)
-    female = models.IntegerField(default=0)
-    # =====================
-    # total = male + female
-    # deserializing for performance,
-    # needs to be calculated when inserting/updating
-    total = models.IntegerField(db_index=True, default=0)
-    # =====================
-    noresp = models.IntegerField("No Responsibility", default=0)
-    headteacher = models.IntegerField(choices=YESNO, db_index=True, blank=True, null=True)
-    graduate = models.IntegerField(default=0)
-    with_prof_qual = models.IntegerField("With Professional Qualification", default=0)
-    days_in_non_tch = models.IntegerField(default=0)
-    involved_in_non_tch = models.IntegerField(default=0)
+#     playground_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
 
+#     computer_count = models.IntegerField(default=0)
+#     blackboard_count = models.IntegerField(default=0)
+#     cal_lab_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
+#     medical_checkup = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
+#     ramp_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
 
-class Room(BaseModel):
-    yearly_data = models.ForeignKey('YearlyData')
-    type = models.CharField(max_length=20, choices=ROOM_TYPES)
-    condition = models.CharField(max_length=20, choices=ROOM_CONDITIONS)
-    count = models.IntegerField(default=0)
+#     sdmc_constituted = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
+#     sdmc_meeting_count = models.IntegerField(default=0)
 
-    class Meta:
-        unique_together = ("yearly_data", "type", "condition")
+#     textbook_received = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
+#     textbook_received_date = models.DateField(blank=True, null=True)
 
+#     weakersec_children_applied = models.IntegerField(default=0)
+#     weakersec_children_enrolled = models.IntegerField(default=0)
 
-class Toilet(BaseModel):
-    yearly_data = models.ForeignKey('YearlyData')
-    type = models.CharField(max_length=20, choices=TOILET_TYPES)
-    count = models.IntegerField(default=0)
+#     middaymeal_status = models.SmallIntegerField(choices=MDM_STATUS, blank=True, null=True)
+#     kitchenshed_status = models.SmallIntegerField(choices=KITCHENSHED_STATUS, blank=True, null=True)
 
-    class Meta:
-        unique_together = ("yearly_data", "type")
+#     def __unicode__(self):
+#         return u"%s (%s)" % (self.school, self.academic_year)
 
+#     class Meta:
+#         verbose_name_plural = 'Yearly Data'
+#         ordering = ('id', )
 
-class InstractionMedium(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=50)
 
-    def __unicode__(self):
-        return u"%s" % self.name
+# class Enrolment(BaseModel):
+#     yearly_data = models.ForeignKey('YearlyData')
+#     klass = models.IntegerField(db_index=True, default=0)
+#     general_boys = models.IntegerField(default=0)
+#     general_girls = models.IntegerField(default=0)
+#     sc_boys = models.IntegerField(default=0)
+#     sc_girls = models.IntegerField(default=0)
+#     st_boys = models.IntegerField(default=0)
+#     st_girls = models.IntegerField(default=0)
+#     obc_boys = models.IntegerField(default=0)
+#     obc_girls = models.IntegerField(default=0)
+#     disabled_boys = models.IntegerField(default=0)
+#     disabled_girls = models.IntegerField(default=0)
+#     repeaters_boys = models.IntegerField(default=0)
+#     repeaters_girls = models.IntegerField(default=0)
+#     total_boys = models.IntegerField(db_index=True, default=0)
+#     total_girls = models.IntegerField(db_index=True, default=0)
+#     total = models.IntegerField(db_index=True, default=0)
 
+#     class Meta:
+#         unique_together = ("yearly_data", "klass")
 
-class SchoolManaagement(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=50)
+#     def __unicode__(self):
+#         return u"%s" % self.id
 
-    def __unicode__(self):
-        return u"%s" % self.name
 
-    class Meta:
-        verbose_name = "School Management"
-        verbose_name_plural = "School Managements"
+# class TeacherCount(BaseModel):
+#     yearly_data = models.OneToOneField('YearlyData')
+#     male = models.IntegerField(default=0)
+#     female = models.IntegerField(default=0)
+#     # =====================
+#     # total = male + female
+#     # deserializing for performance,
+#     # needs to be calculated when inserting/updating
+#     total = models.IntegerField(db_index=True, default=0)
+#     # =====================
+#     noresp = models.IntegerField("No Responsibility", default=0)
+#     headteacher = models.IntegerField(choices=YESNO, db_index=True, blank=True, null=True)
+#     graduate = models.IntegerField(default=0)
+#     with_prof_qual = models.IntegerField("With Professional Qualification", default=0)
+#     days_in_non_tch = models.IntegerField(default=0)
+#     involved_in_non_tch = models.IntegerField(default=0)
 
 
-class SchoolCategory(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=100)
+# class Room(BaseModel):
+#     yearly_data = models.ForeignKey('YearlyData')
+#     type = models.CharField(max_length=20, choices=ROOM_TYPES)
+#     condition = models.CharField(max_length=20, choices=ROOM_CONDITIONS)
+#     count = models.IntegerField(default=0)
 
-    class Meta:
-        verbose_name_plural = 'School categories'
+#     class Meta:
+#         unique_together = ("yearly_data", "type", "condition")
 
-    def __unicode__(self):
-        return u"%s" % self.name
 
+# class Toilet(BaseModel):
+#     yearly_data = models.ForeignKey('YearlyData')
+#     type = models.CharField(max_length=20, choices=TOILET_TYPES)
+#     count = models.IntegerField(default=0)
 
-class ResidentialType(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=50)
+#     class Meta:
+#         unique_together = ("yearly_data", "type")
 
-    def __unicode__(self):
-        return u"%s" % self.name
 
+# class InstractionMedium(models.Model):
+#     id = models.IntegerField(primary_key=True)
+#     name = models.CharField(max_length=50)
 
-class SchoolBuildingStatus(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=50)
+#     def __unicode__(self):
+#         return u"%s" % self.name
 
-    def __unicode__(self):
-        return u"%s" % self.name
 
+# class SchoolManaagement(models.Model):
+#     id = models.IntegerField(primary_key=True)
+#     name = models.CharField(max_length=50)
 
-class DrinkingWaterSource(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=50)
+#     def __unicode__(self):
+#         return u"%s" % self.name
 
-    def __unicode__(self):
-        return u"%s" % self.name
+#     class Meta:
+#         verbose_name = "School Management"
+#         verbose_name_plural = "School Managements"
 
 
-class BoundaryWallType(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=50)
+# class SchoolCategory(models.Model):
+#     id = models.IntegerField(primary_key=True)
+#     name = models.CharField(max_length=100)
 
-    def __unicode__(self):
-        return u"%s" % self.name
+#     class Meta:
+#         verbose_name_plural = 'School categories'
+
+#     def __unicode__(self):
+#         return u"%s" % self.name
+
+
+# class ResidentialType(models.Model):
+#     id = models.IntegerField(primary_key=True)
+#     name = models.CharField(max_length=50)
+
+#     def __unicode__(self):
+#         return u"%s" % self.name
+
+
+# class SchoolBuildingStatus(models.Model):
+#     id = models.IntegerField(primary_key=True)
+#     name = models.CharField(max_length=50)
+
+#     def __unicode__(self):
+#         return u"%s" % self.name
+
+
+# class DrinkingWaterSource(models.Model):
+#     id = models.IntegerField(primary_key=True)
+#     name = models.CharField(max_length=50)
+
+#     def __unicode__(self):
+#         return u"%s" % self.name
+
+
+# class BoundaryWallType(models.Model):
+#     id = models.IntegerField(primary_key=True)
+#     name = models.CharField(max_length=50)
+
+#     def __unicode__(self):
+#         return u"%s" % self.name

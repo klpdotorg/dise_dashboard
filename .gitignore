@@ -15,7 +15,6 @@ var
 sdist
 develop-eggs
 .installed.cfg
-lib
 lib64
 
 # Installer logs
@@ -40,3 +39,17 @@ data
 
 # statics
 assets/collected-static
+
+# vagrant
+.vagrant
+Vagrantfile
+
+# MacOS & Emacs
+.DS_Store
+*~
+*#
+
+#newrelic
+newrelic.ini
+
+fabfile.py

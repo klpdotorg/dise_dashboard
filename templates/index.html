@@ -1,0 +1,535 @@
+{% extends 'base.html' %}
+{% load static from staticfiles %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'lib/jquery-ui.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'lib/select2.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'lib/orange.css' %}">
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bounce.css' %}">
+{% endblock %}
+
+{% block navbar %}
+<li><a id="share" href="#" onclick="return false" data-toggle="popover" data-placement="bottom">Share <span class="glyphicon glyphicon glyphicon-send"></span></a></li>
+<li>
+  <a href="javascript:void(0)" id="control_toggle">
+    <span class="text">Hide</span>
+    <span class="glyphicon glyphicon-chevron-right" id="control_toggle_icon"></span>
+  </a>
+</li>
+{% endblock %}
+
+{% block body %}
+<div id="map-holder"></div>
+
+<!-- Preset Editor -->
+<div id="preset-editor-facility" class="preset-editor" data-type="facilities">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h2>Preset Editor</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <h3><span class="glyphicon glyphicon-briefcase"></span> Facilities</h3>
+        <div class="check-list">
+          <label><input type="checkbox" name="facilities" value="repair"> Classrooms need repair</label><br>
+          <label><input type="checkbox" name="facilities" value="toilet"> Doesn't have Toilet</label><br>
+          <label><input type="checkbox" name="facilities" value="toilet_for_girls"> Doesn't have Toilet for Girls</label><br>
+          <label><input type="checkbox" name="facilities" value="electricity"> Doesn't have Electricity</label><br>
+          <label><input type="checkbox" name="facilities" value="secure_wall"> Doesn't have Secure Wall</label><br>
+          <!-- <label><input type="checkbox" name="facilities" value="mid_day_meal"> Doesn't have Mid-day meal</label><br> -->
+          <label><input type="checkbox" name="facilities" value="library"> Doesn't have Library</label><br>
+          <label><input type="checkbox" name="facilities" value="ramp"> Doesn't have Ramp</label><br>
+          <label><input type="checkbox" name="facilities" value="blackboard"> Doesn't have Blackboard</label><br>
+          <label><input type="checkbox" name="facilities" value="playground"> Doesn't have Playground</label><br>
+          <!-- <label><input type="checkbox" name="facilities" value="medical_checkup"> Doesn't have Medical Checkup</label><br> -->
+          <label><input type="checkbox" name="facilities" value="drinking_water"> Doesn't have Drinking Water</label>
+        </div>
+      </div>
+<!--
+      <div class="col-md-4">
+        <h3><span class="glyphicon glyphicon-transfer"></span> RTE</h3>
+        <div class="check-list">
+          <label><input type="checkbox" name="rte" value="sdmc_constituted"> Without SDMC Constituted</label><br>
+          <label><input type="checkbox" name="rte" value="sdmc_meetings"> Without SDMC Meetings</label><br>
+          <label><input type="checkbox" name="rte" value="textbooks"> Without Textbooks</label><br>
+          <label><input type="checkbox" name="rte" value="weaker_sections"> With Chilren from Weaker Section Enrolled</label><br>
+        </div>
+
+        <h3><span class="glyphicon glyphicon-certificate"></span> Compound Indicators</h3>
+        <div class="check-list">
+          <label><input type="checkbox" id="wgltb"> With Girls <strong>&lt;</strong> Boys</label><br><br>
+<label class="range">
+            With enrollment from:&nbsp;&nbsp;
+            <strong>
+              <input type="text" id="wef-low" value="0" disabled>
+              -
+              <input type="text" id="wef-high" value="25" disabled>
+            </strong>
+          </label>
+          <div id="wef-slider" class="range-slider" data-high="wef-high" data-low="wef-low"></div>
+
+          <br>
+
+          <label class="range">
+            With Pupil-Teacher Ratio from:&nbsp;&nbsp;
+            <strong>
+              <input type="text" id="wptrf-low" value="0" disabled>
+              -
+              <input type="text" id="wptrf-high" value="35" disabled>
+            </strong>
+          </label>
+          <div id="wptrf-slider" class="range-slider" data-high="wptrf-high" data-low="wptrf-low"></div>
+
+          <br>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <h3><span class="glyphicon glyphicon-user"></span> Teachers</h3>
+        <div class="check-list">
+          <label><input type="checkbox" name="teachers" value="room_for_hm"> Without seperate room for HM</label><br>
+          <label><input type="checkbox" name="teachers" value="hm"> Without HM</label>
+        </div>
+
+
+        <h3><span class="glyphicon glyphicon-sound-stereo"></span> Range Indicators</h3>
+        <div class="check-list">
+
+          <label class="range">
+            With number of classrooms between:&nbsp;&nbsp;
+            <strong>
+              <input type="text" id="wncb-low" value="0" disabled>
+              -
+              <input type="text" id="wncb-high" value="50" disabled>
+            </strong>
+          </label>
+          <div id="wncb-slider" class="range-slider" data-high="wncb-high" data-low="wncb-low"></div>
+
+          <br>
+
+          <label class="range">
+            With number of teachers between:&nbsp;&nbsp;
+            <strong>
+              <input type="text" id="wntb-low" value="0" disabled>
+              -
+              <input type="text" id="wntb-high" value="50" disabled>
+            </strong>
+          </label>
+          <div id="wntb-slider" class="range-slider" data-high="wntb-high" data-low="wntb-low"></div>
+
+          <br>
+
+          <label class="range">
+            With number of girls in class:&nbsp;&nbsp;
+            <strong>
+              <input type="text" id="wngic-low" value="0" disabled>
+              -
+              <input type="text" id="wngic-high" value="50" disabled>
+            </strong>
+          </label>
+          <div id="wngic-slider" class="range-slider" data-high="wngic-high" data-low="wngic-low"></div>
+
+          <br>
+
+          <label class="range">
+            With number of boys in class:&nbsp;&nbsp;
+            <strong>
+              <input type="text" id="wnbic-low" value="0" disabled>
+              -
+              <input type="text" id="wnbic-high" value="50" disabled>
+            </strong>
+          </label>
+          <div id="wnbic-slider" class="range-slider" data-high="wnbic-high" data-low="wnbic-low"></div>
+
+
+
+        </div>
+      </div> -->
+    </div>
+
+    <div class="row action-row">
+      <div class="col-md-push-9 col-md-3">
+        <button type="button" class="btn filter-apply" data-type="facilities">Search</button>
+        or
+        <a href="javascript:void(0)">Cancel</a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Preset Editor -->
+
+
+<div id="controls">
+  <div id="super-search-container">
+    <input type="text"  placeholder="Search for districts, blocks, clusters, schools or PIN" id="filter-select" autofocus>
+    <!--
+    <button class="btn">
+      <span class="glyphicon glyphicon-filter"></span>
+    </button>
+    -->
+  </div>
+
+  <div class="form-holder" id="filter-container">
+    <form action="" name="basic_filters">
+
+      <div class="category_filter">
+        <label>Year</label>
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-primary active">
+            <input type="radio" name="academic_year" value="10-11"> 2010-2011
+          </label>
+          <label class="btn btn-primary">
+            <input type="radio" name="academic_year" value="11-12"> 2011-2012
+          </label>
+          <label class="btn btn-primary">
+            <input type="radio" name="academic_year" value="12-13" checked="checked"> 2012-2013
+          </label>
+        </div>
+      </div>
+
+      <div class="category_filter area_filter">
+        <label>Area</label>
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-primary active">
+            <input type="radio" name="area" value=""> All
+          </label>
+          <label class="btn btn-primary">
+            <input type="radio" name="area" value="rural"> Rural
+          </label>
+          <label class="btn btn-primary">
+            <input type="radio" name="area" value="urban"> Urban
+          </label>
+        </div>
+      </div>
+
+      <div class="category_filter management_filter">
+        <label>Management</label>
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-primary active">
+            <input type="radio" name="management" value=""> All
+          </label>
+          <label class="btn btn-primary">
+            <input type="radio" name="management" value="pvt"> Private
+          </label>
+          <label class="btn btn-primary">
+            <input type="radio" name="management" value="govt"> Goverment
+          </label>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- <div id="presets">
+    <select class="preset_selector">
+      <option value="">Select a Preset</option>
+      <option value="facility">Facilities</option>
+    </select>
+    <span class="glyphicon glyphicon-refresh reset_preset" data-toggle="tooltip" title="Reset the changes in the preset"></span>
+    <span class="glyphicon glyphicon-cog"></span>
+  </div> -->
+
+  <div class="no-of-matches" id="no-of-matches" data-bind="visible: show_search_count">
+    <span data-bind="text: n_results"></span> <span data-bind="text: search_entity"></span>s found <small>(<span data-bind="text: n_results_map"></span> on map)</small>
+  </div>
+
+  <div id="schools">
+    <ul class="popup" id="popup-result-list" data-bind="foreach: results, visible: showPopupResultList">
+      <li data-bind="click: $parent.highlightEntity">
+        <span class="glyphicon glyphicon-map-marker"></span>
+        <span data-bind="text: properties.popupContent"></span>
+        <small data-bind="text: properties.district"></small>
+      </li>
+    </ul>
+
+    <div class="popup" id='popup-school' data-bind="with: highlightedSchool, visible: showPopupSchool">
+      <h4 data-bind="click: $parent.backToResultList">
+        <span class="glyphicon glyphicon-chevron-left"></span>
+        <span data-bind="text: properties.school_name"></span>
+        <small class="address" data-bind="text: properties.address"></small>
+      </h4>
+
+
+      <div class="row">
+        <div class="col-md-4">
+          <h5>Students</h5>
+          <div class="circle_stat total_student" data-bind="text: properties.total_student">
+
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <h5 class="blue">Boys</h5>
+          <div class="circle_stat blue total_boys" data-bind="text: properties.total_boys">
+
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <h5 class="pink">Girls</h5>
+          <div class="circle_stat pink total_girls" data-bind="text: properties.total_girls">
+
+          </div>
+        </div>
+      </div>
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-4 col-md-push-2">
+          <h5>Classrooms</h5>
+          <div class="circle_stat total_classrooms" data-bind="text: properties.tot_clrooms">
+
+          </div>
+        </div>
+        <div class="col-md-4 col-md-push-2">
+          <h5>PTR Ratio</h5>
+          <div class="circle_stat" data-bind="text: properties.ptr, attr: {class: properties.ptr_color}">
+
+          </div>
+        </div>
+      </div>
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-3">
+          <h5>Toilets</h5>
+          <div class="circle_stat total_toilet" data-bind="text: properties.total_toilet">
+
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <h5 class="blue">for Boys</h5>
+          <div class="circle_stat blue total_toilet_boys" data-bind="text: properties.toilet_boys">
+
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <h5 class="pink">for Girls</h5>
+          <div class="circle_stat pink total_toilet_girls" data-bind="text: properties.toilet_girls">
+
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <h5 class="yellow">Common</h5>
+          <div class="circle_stat yellow total_toilet_girls" data-bind="text: properties.toilet_common">
+
+          </div>
+        </div>
+      </div>
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-6 right-shift">
+          <h5 class="question">Medium of Instruction</h5>
+          <p class="answer medium_of_instruction" data-bind="text: properties.medium_of_instruction_display"></p>
+        </div>
+
+        <div class="col-md-6">
+          <h5 class="question">Category</h5>
+          <p class="answer sch_category" data-bind="text: properties.sch_category_display"></p>
+        </div>
+      </div>
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-6 right-shift">
+          <h5 class="question">Management</h5>
+          <p class="answer sch_management" data-bind="text: properties.sch_management_display"></p>
+        </div>
+
+        <div class="col-md-6">
+          <h5 class="question">Electricity</h5>
+          <p class="answer electricity" data-bind="text: properties.electricity_display"></p>
+        </div>
+      </div>
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-6 right-shift">
+          <h5 class="question">Library</h5>
+          <p class="answer library" data-bind="text: properties.library"></p>
+        </div>
+      </div>
+
+      <br>
+
+    </div>
+
+    <div class="popup" id='popup-others' data-bind="with: highlightedEntity, visible: showPopupAggrEntity">
+      <h4 data-bind="click: $parent.backToResultList">
+        <span class="glyphicon glyphicon-chevron-left"></span>
+        <span class="entity_name" data-bind="html: properties.name"></span>
+      </h4>
+
+      <div class="row">
+        <div class="col-md-6">
+          <h5>Total Schools</h5>
+          <div class="circle_stat sum_schools" data-bind="text: properties.sum_schools"></div>
+        </div>
+        <div class="col-md-6">
+          <h5>Total Classrooms</h5>
+          <div class="circle_stat sum_classrooms" data-bind="text: properties.sum_usable_classrooms"></div>
+          </div>
+      </div>
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-6">
+          <h5>Private Schools</h5>
+          <div class="circle_stat" data-bind="text: properties.sum_pvt_schools"></div>
+        </div>
+        <div class="col-md-6">
+          <h5>Govt Schools</h5>
+          <div class="circle_stat" data-bind="text: properties.sum_govt_schools"></div>
+          </div>
+      </div>
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-6">
+          <h5>Urban Schools</h5>
+          <div class="circle_stat" data-bind="text: properties.sum_urban_schools"></div>
+        </div>
+        <div class="col-md-6">
+          <h5>Rural Schools</h5>
+          <div class="circle_stat" data-bind="text: properties.sum_rural_schools"></div>
+          </div>
+      </div>
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-4">
+          <h5>Students</h5>
+          <div class="circle_stat entity_student" data-bind="text: properties.sum_students"></div>
+        </div>
+
+        <div class="col-md-4">
+          <h5 class="blue">Boys</h5>
+          <div class="circle_stat blue sum_boys" data-bind="text: properties.sum_boys"></div>
+        </div>
+
+        <div class="col-md-4">
+          <h5 class="pink">Girls</h5>
+          <div class="circle_stat pink sum_girls" data-bind="text: properties.sum_girls"></div>
+        </div>
+      </div>
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-4">
+          <h5>Teachers</h5>
+          <div class="circle_stat entity_teacher" data-bind="text: properties.sum_teachers"></div>
+        </div>
+        <div class="col-md-4">
+          <h5 class="blue">Male</h5>
+          <div class="circle_stat blue sum_male_tch" data-bind="text: properties.sum_male_tch"></div>
+        </div>
+
+        <div class="col-md-4">
+          <h5 class="pink">Female</h5>
+          <div class="circle_stat pink sum_female_tch" data-bind="text: properties.sum_female_tch"></div>
+        </div>
+      </div>
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-3">
+          <h5>Toilets</h5>
+          <div class="circle_stat entity_toilet" data-bind="text: properties.sum_total_toilet"></div>
+        </div>
+
+        <div class="col-md-3">
+          <h5 class="blue">for Boys</h5>
+          <div class="circle_stat blue sum_toilet_boys" data-bind="text: properties.sum_toilet_boys"></div>
+        </div>
+
+        <div class="col-md-3">
+          <h5 class="pink">for Girls</h5>
+          <div class="circle_stat pink sum_toilet_girls" data-bind="text: properties.sum_toilet_girls"></div>
+        </div>
+
+        <div class="col-md-3">
+          <h5 class="yellow">Common</h5>
+          <div class="circle_stat yellow sum_toilet_common" data-bind="text: properties.sum_toilet_common"></div>
+        </div>
+      </div>
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-6 right-shift">
+          <h5 class="question">Libraries</h5>
+          <p class="answer entity_library" data-bind="text: properties.sum_has_library"></p>
+        </div>
+
+        <div class="col-md-6">
+          <h5 class="question">Has Electricity</h5>
+          <p class="answer entity_electricity" data-bind="text: properties.sum_has_electricity"></p>
+        </div>
+      </div>
+
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-6 right-shift">
+          <h5 class="question">Medium of Instruction</h5>
+          <p class="answer entity_moe" data-bind="text: properties.medium_of_instructions_list"></p>
+        </div>
+        <div class="col-md-6">
+          <h5 class="question">PTR</h5>
+          <p class="answer entity_ptr" data-bind="text: properties.ptr"></p>
+        </div>
+      </div>
+
+      <br>
+
+      <div class="yearly_report">
+        <h3>Yearly Report for 2012-13 <span data-bind="html: properties.actual_name"></span></h3>
+         <a data-bind="attr: { href: properties.report_url_demo }" target="_blank" >
+            <span class="glyphicon glyphicon-file"></span>
+            Demographic
+        </a>
+         <a data-bind="attr: { href: properties.report_url_finance }" target="_blank" >
+            <span class="glyphicon glyphicon-file"></span>
+            Finance
+         </a>
+         <a data-bind="attr: { href: properties.report_url_infra }" target="_blank" >
+            <span class="glyphicon glyphicon-file"></span>
+            Infrastructure
+         </a>
+      </div>
+    </div>
+
+
+  </div>
+
+
+</div>
+{% endblock %}
+
+{% block endbody %}
+  <script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
+  <script type="text/javascript" src="{% static 'lib/select2.js' %}"></script>
+  <script type="text/javascript" src="{% static 'lib/icheck.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'lib/knockout-3.0.0.js' %}"></script>
+
+  <script type="text/javascript" src="{% static 'js/map.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/ui.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/dise.js' %}"></script>
+{% endblock %}

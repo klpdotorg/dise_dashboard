@@ -1,5 +1,6 @@
 from django import http
-from django.utils import simplejson as json
+try: import simplejson as json
+except ImportError: import json
 
 
 class JSONResponseMixin(object):
