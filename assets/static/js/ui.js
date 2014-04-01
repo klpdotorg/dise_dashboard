@@ -48,7 +48,7 @@ var UI = {
         );
 
         $("#schools").height(
-            $("#controls").height() - ($('#super-search-container').height() + $('#filter-container').height() + $('#no-of-matches').height())
+            $("#controls").height() - ($('#super-search-container').height() + $('#filter-container').height() + $('#no-of-matches').height()) - 40
         );
     },
 
