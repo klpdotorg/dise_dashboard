@@ -230,6 +230,9 @@ $(function(){
     function SearchView(results, entity_type) {
         var self = this;
 
+        self.entity_type = entity_type;
+        self.reports_exclude_entities = ['pincode']
+
         self.results = ko.observableArray(results);
         self.search_entity = ko.observable(entity_type);
 
@@ -255,6 +258,7 @@ $(function(){
         self.showPopupResultList = ko.observable(false);
         self.showPopupSchool = ko.observable(false);
         self.showPopupAggrEntity = ko.observable(false);
+        self.showReportUrls = ko.observable(true);
 
         self.highlightedSchool = ko.observable();
         self.highlightedEntity = ko.observable();
@@ -276,7 +280,14 @@ $(function(){
                 self.showPopupResultList(false);
                 self.showPopupSchool(false);
                 self.showPopupAggrEntity(true);
+
+                if (self.reports_exclude_entities.indexOf(feature.properties.entity_type) >= 0) {
+                    self.showReportUrls(false);
+                } else {
+                    self.showReportUrls(true);
+                }
             }
+
         }
 
         self.backToResultList = function() {
