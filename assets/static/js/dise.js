@@ -385,7 +385,8 @@ $(function(){
                 $.updateUrlParams({
                     'do': 'School.getInfo',
                     session: academic_year,
-                    code: school.id
+                    code: school.id,
+                    z: 13
                 });
             } else {
                 alert("Sorry, this school doesn't have a location.");
@@ -855,8 +856,10 @@ $(function(){
                     return;
                 }
 
+                search_view.results([data[entity_lower]]);
+                search_view.n_results(1);
+                search_view.search_entity(entity);
                 search_view.highlightEntity(data[entity_lower]);
-                search_view.show_search_count(false);
 
                 fillCrumb(entity_lower, data[entity_lower].properties);
 
