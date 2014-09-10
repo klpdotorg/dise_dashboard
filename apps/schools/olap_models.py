@@ -279,6 +279,11 @@ class Dise1213AssemblyAggregations(AssemblyAggregations):
         db_table = 'dise_1213_assembly_aggregations'
 
 
+class Dise1314AssemblyAggregations(AssemblyAggregations):
+    class Meta:
+        db_table = 'dise_1314_assembly_aggregations'
+
+
 class Dise1011BlockAggregations(BlockAggregations):
     class Meta:
         db_table = 'dise_1011_block_aggregations'
@@ -292,6 +297,11 @@ class Dise1112BlockAggregations(BlockAggregations):
 class Dise1213BlockAggregations(BlockAggregations):
     class Meta:
         db_table = 'dise_1213_block_aggregations'
+
+
+class Dise1314BlockAggregations(BlockAggregations):
+    class Meta:
+        db_table = 'dise_1314_block_aggregations'
 
 
 class Dise1011ClusterAggregations(ClusterAggregations):
@@ -309,6 +319,11 @@ class Dise1213ClusterAggregations(ClusterAggregations):
         db_table = 'dise_1213_cluster_aggregations'
 
 
+class Dise1314ClusterAggregations(ClusterAggregations):
+    class Meta:
+        db_table = 'dise_1314_cluster_aggregations'
+
+
 class Dise1011ParliamentAggregations(ParliamentAggregations):
     class Meta:
         db_table = 'dise_1011_parliament_aggregations'
@@ -322,6 +337,11 @@ class Dise1112ParliamentAggregations(ParliamentAggregations):
 class Dise1213ParliamentAggregations(ParliamentAggregations):
     class Meta:
         db_table = 'dise_1213_parliament_aggregations'
+
+
+class Dise1314ParliamentAggregations(ParliamentAggregations):
+    class Meta:
+        db_table = 'dise_1314_parliament_aggregations'
 
 
 class Dise1011DistrictAggregations(DistrictAggregations):
@@ -339,6 +359,11 @@ class Dise1213DistrictAggregations(DistrictAggregations):
         db_table = 'dise_1213_district_aggregations'
 
 
+class Dise1314DistrictAggregations(DistrictAggregations):
+    class Meta:
+        db_table = 'dise_1314_district_aggregations'
+
+
 class Dise1011PincodeAggregations(PincodeAggregations):
     class Meta:
         db_table = 'dise_1011_pincode_aggregations'
@@ -354,6 +379,11 @@ class Dise1213PincodeAggregations(PincodeAggregations):
         db_table = 'dise_1213_pincode_aggregations'
 
 
+class Dise1314PincodeAggregations(PincodeAggregations):
+    class Meta:
+        db_table = 'dise_1314_pincode_aggregations'
+
+
 class Dise1011BasicData(BasicData):
     class Meta:
         db_table = 'dise_1011_basic_data'
@@ -367,6 +397,11 @@ class Dise1112BasicData(BasicData):
 class Dise1213BasicData(BasicData):
     class Meta:
         db_table = 'dise_1213_basic_data'
+
+
+class Dise1314BasicData(BasicData):
+    class Meta:
+        db_table = 'dise_1314_basic_data'
 
 
 def get_models(session='10-11', what='all'):
