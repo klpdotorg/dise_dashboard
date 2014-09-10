@@ -3,6 +3,7 @@ from django.db.models import Count, Min, Sum, Avg, F, Q
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 from django.db import connection
+from django.conf import settings
 
 from geojson import Feature, Point, dumps as geojson_dumps
 import re
@@ -27,7 +28,7 @@ class OLAPUnifiedSearch(View, JSONResponseMixin):
 
         query = params.get('q')
         session = params.get('filters[academic_year]')
-        if session not in ['10-11', '11-12', '12-13']:
+        if session not in settings.VALID_SESSIONS:
             raise ValueError('Session not valid')
 
         SchoolModel, ClusterModel, BlockModel, DistrictModel, PincodeModel, AssemblyModel, ParliamentModel = get_models(session, "all")

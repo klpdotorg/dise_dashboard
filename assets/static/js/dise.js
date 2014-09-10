@@ -103,7 +103,7 @@ $(function(){
     UI.init(); // Initialize UI elements
     var filtersEnabled;
     var filter_prefix = 'f_';
-    window.default_session = '12-13';
+    window.default_session = '13-14';
 
     var School = function(feature) {
         if (feature === undefined) return this;
