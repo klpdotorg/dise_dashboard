@@ -204,8 +204,12 @@ $(function(){
             return Math.round(self.properties.sum_students() / self.properties.sum_teachers());
         });
 
-        self.get_report_url = function(report_type) {
+        self.properties.academic_year = ko.computed(function() {
             var academic_year = $('input[name=academic_year]:checked').val() || window.default_session;
+            return academic_year.toString();
+        });
+
+        self.get_report_url = function(report_type) {
             return [
                 self.report_url_base,
                 'charts',
@@ -213,7 +217,7 @@ $(function(){
                 self.properties.actual_name(),
                 'english',
                 report_type,
-                academic_year.replace('-', '')
+                self.properties.academic_year.toString().replace('-', '')
             ].join('/')
         };
 
