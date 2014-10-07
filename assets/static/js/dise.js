@@ -206,7 +206,7 @@ $(function(){
 
         self.properties.academic_year = ko.computed(function() {
             var academic_year = $('input[name=academic_year]:checked').val() || window.default_session;
-            return academic_year.toString();
+            return academic_year;
         });
 
         self.get_report_url = function(report_type) {
@@ -217,7 +217,7 @@ $(function(){
                 self.properties.actual_name(),
                 'english',
                 report_type,
-                self.properties.academic_year.toString().replace('-', '')
+                self.properties.academic_year().replace('-', '')
             ].join('/')
         };
 
