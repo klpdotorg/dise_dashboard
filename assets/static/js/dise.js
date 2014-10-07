@@ -149,7 +149,7 @@ $(function(){
         self.id = feature.id;
         self.geometry = feature.geometry;
         self.properties = feature.properties;
-        self.report_url_base = 'http://dev.klp.org.in:8020';
+        self.report_url_base = 'http://disereports.klp.org.in';
 
         self.properties.actual_name = ko.computed(function() {
             var entity_name = '';
@@ -205,13 +205,15 @@ $(function(){
         });
 
         self.get_report_url = function(report_type) {
+            var academic_year = $('input[name=academic_year]:checked').val() || window.default_session;
             return [
                 self.report_url_base,
                 'charts',
                 self.properties.entity_type,
                 self.properties.actual_name(),
                 'english',
-                report_type
+                report_type,
+                academic_year.replace('-', '')
             ].join('/')
         };
 
