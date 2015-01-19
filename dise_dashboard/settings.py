@@ -139,6 +139,7 @@ INSTALLED_APPS = (
     # 'debug_toolbar',
     'bootstrapform',
     'raven.contrib.django.raven_compat',
+    'rest_framework',
 
     # in-project
     'account',
@@ -188,6 +189,17 @@ LOGGING = {
         },
     }
 }
+
+REST_FRAMEWORK = {
+    'PAGINATE_BY': 10,
+    'DEFAULT_RENDERER_CLASSES': (
+        # 'common.renderers.DiseJSONRenderer',
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    )
+}
+
+TEST_RUNNER = 'common.testrunner.NoDbTestRunner'
 
 try:
     from local_settings import *

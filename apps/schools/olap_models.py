@@ -8,9 +8,14 @@
 # into your database.
 from __future__ import unicode_literals
 
-from common.models import search_choices, search_choices_by_key, YESNO, AREA, SCHOOL_CATEGORY, SCHOOL_MANAGEMENT, SCHOOL_TYPES, MEDIUM, MDM_STATUS, KITCHENSHED_STATUS, BOUNDARY_WALL
+from common.models import (
+    search_choices, search_choices_by_key, YESNO, AREA, SCHOOL_CATEGORY,
+    SCHOOL_MANAGEMENT, SCHOOL_TYPES, MEDIUM, MDM_STATUS, KITCHENSHED_STATUS,
+    BOUNDARY_WALL
+)
 
 from django.contrib.gis.db import models
+from django.db import cached_property
 from jsonfield import JSONField
 import collections
 
@@ -250,8 +255,13 @@ class ParliamentAggregations(AggregationBase):
     class Meta:
         abstract = True
 
+
 class DistrictAggregations(AggregationBase):
     district = models.CharField(max_length=35, primary_key=True)
+
+    @cached_property
+    def district_name(self):
+        return self.district
 
     class Meta:
         abstract = True
@@ -406,34 +416,33 @@ class Dise1314BasicData(BasicData):
 
 def get_models(session='10-11', what='all'):
     session = session.replace('-', '')
+    schools = __import__('schools')
 
-    school_model = globals().get('Dise{}BasicData'.format(session))
-    if what == 'school':
-        return school_model
+    models = {
+        'school': getattr(
+            schools.olap_models, 'Dise{}BasicData'.format(session)
+        ),
+        'cluster': getattr(
+            schools.olap_models, 'Dise{}ClusterAggregations'.format(session)
+        ),
+        'block': getattr(
+            schools.olap_models, 'Dise{}BlockAggregations'.format(session)
+        ),
+        'district': getattr(
+            schools.olap_models, 'Dise{}DistrictAggregations'.format(session)
+        ),
+        'pincode': getattr(
+            schools.olap_models, 'Dise{}PincodeAggregations'.format(session)
+        ),
+        'assembly': getattr(
+            schools.olap_models, 'Dise{}AssemblyAggregations'.format(session)
+        ),
+        'parliament': getattr(
+            schools.olap_models, 'Dise{}ParliamentAggregations'.format(session)
+        ),
+    }
 
-    cluster_model = globals().get('Dise{}ClusterAggregations'.format(session))
-    if what == 'cluster':
-        return cluster_model
-
-    block_model = globals().get('Dise{}BlockAggregations'.format(session))
-    if what == 'block':
-        return block_model
-
-    district_model = globals().get('Dise{}DistrictAggregations'.format(session))
-    if what == 'district':
-        return district_model
-
-    pincode_model = globals().get('Dise{}PincodeAggregations'.format(session))
-    if what == 'pincode':
-        return pincode_model
-
-    assembly_model = globals().get('Dise{}AssemblyAggregations'.format(session))
-    if what == 'assembly':
-        return assembly_model
-
-    parliament_model = globals().get('Dise{}ParliamentAggregations'.format(session))
-    if what == 'parliament':
-        return parliament_model
-
-    return [school_model, cluster_model, block_model, district_model,
-        pincode_model, assembly_model, parliament_model]
+    if what == 'all':
+        return models.values()
+    else:
+        return models.get(what, None)

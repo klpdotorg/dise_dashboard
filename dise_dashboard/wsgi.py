@@ -39,5 +39,5 @@ application = get_wsgi_application()
 # from helloworld.wsgi import HelloWorldApplication
 # application = HelloWorldApplication(application)
 
-import dise_dashboard.monitor
-dise_dashboard.monitor.start(interval=1.0)
+# import dise_dashboard.monitor
+# dise_dashboard.monitor.start(interval=1.0)
