@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.exceptions import APIException
 from django.shortcuts import get_object_or_404, redirect
+from django.db.models import Q
 from collections import OrderedDict
 
 from .serializers import (
@@ -112,13 +113,11 @@ class AggregationListView(AggregationBaseView, generics.ListAPIView):
 class AggregationInfoView(AggregationBaseView, generics.RetrieveAPIView):
     def get_object(self):
         queryset = self.get_queryset()
-        session = self.kwargs.get('session')
-        entity = self.kwargs.get('entity')
-        entity_name = self.kwargs.get('entity_name')
-        serializer = serializers.get(entity)
+        slug = self.kwargs.get('slug')
 
-        filters = {}
-        filters['{}__iexact'.format(serializer.Meta.pk_field)] = entity_name
+        filters = {
+            'slug__iexact': slug
+        }
 
         try:
             obj = get_object_or_404(queryset, **filters)
@@ -129,15 +128,33 @@ class AggregationInfoView(AggregationBaseView, generics.RetrieveAPIView):
 
 class AggregationSchoolListView(SchoolApiBaseView, generics.ListAPIView):
     def get_queryset(self):
-        queryset = super(AggregationSchoolListView, self).get_queryset()
-        entity_name = self.kwargs.get('entity_name', None)
+        schools = super(AggregationSchoolListView, self).get_queryset()
+        slug = self.kwargs.get('slug', None)
         entity = self.kwargs.get('entity')
         serializer = serializers.get(entity)
+        session = self.kwargs.get('session')
+        entity = self.kwargs.get('entity')
 
-        queryset = queryset.filter(**{
-            '{}__iexact'.format(serializer.Meta.pk_field): entity_name
-        })
-        return queryset
+        try:
+            EntityModel = get_models(session, entity)
+        except AttributeError:
+            raise SessionNotFound()
+
+        entity_obj = EntityModel.objects.get(slug=slug)
+        filters = {
+            '{}__iexact'.format(serializer.Meta.pk_field): str(getattr(entity_obj, serializer.Meta.pk_field)),
+        }
+
+        if entity == 'pincode':
+            filters['new_pincode__iexact'] = str(getattr(entity_obj, serializer.Meta.pk_field))
+
+        if hasattr(entity_obj, 'district'):
+            filters['district__iexact'] = entity_obj.district
+
+        q_list = [Q(_) for _ in filters.items()]
+
+        import operator
+        return schools.filter(reduce(operator.or_, q_list))
 
 
 @api_view(('GET',))

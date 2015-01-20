@@ -30,7 +30,8 @@ class BasicData(models.Model):
     village_name = models.CharField(max_length=50, blank=True)
     assembly_name = models.CharField(max_length=35, blank=True)
     parliament_name = models.CharField(max_length=35, blank=True)
-    pincode = models.IntegerField(null=True, blank=True, db_column="new_pincode")
+    pincode = models.IntegerField(null=True, blank=True)
+    new_pincode = models.IntegerField(null=True, blank=True)
     rural_urban = models.IntegerField(choices=AREA, null=True, blank=True)
     medium_of_instruction = models.IntegerField(choices=MEDIUM, null=True, blank=True)
     distance_brc = models.FloatField(null=True, blank=True)
@@ -116,6 +117,7 @@ class BasicData(models.Model):
 
 
 class AggregationBase(models.Model):
+    slug = models.CharField(max_length=50, primary_key=True)
     centroid = models.GeometryField(blank=True, null=True)
 
     # JSONField: load_kwargs from https://github.com/bradjasper/django-jsonfield#advanced-usage
@@ -225,14 +227,14 @@ class AggregationBase(models.Model):
 
 
 class AssemblyAggregations(AggregationBase):
-    assembly_name = models.CharField(max_length=35, primary_key=True)
+    assembly_name = models.CharField(max_length=35)
 
     class Meta:
         abstract = True
 
 
 class BlockAggregations(AggregationBase):
-    block_name = models.CharField(max_length=50, primary_key=True)
+    block_name = models.CharField(max_length=50)
     district = models.CharField(max_length=50, blank=True)
 
     class Meta:
@@ -240,7 +242,7 @@ class BlockAggregations(AggregationBase):
 
 
 class ClusterAggregations(AggregationBase):
-    cluster_name = models.CharField(max_length=50, primary_key=True)
+    cluster_name = models.CharField(max_length=50)
     block_name = models.CharField(max_length=50, blank=True)
     district = models.CharField(max_length=50, blank=True)
 
@@ -250,14 +252,14 @@ class ClusterAggregations(AggregationBase):
 
 
 class ParliamentAggregations(AggregationBase):
-    parliament_name = models.CharField(max_length=35, primary_key=True)
+    parliament_name = models.CharField(max_length=35)
 
     class Meta:
         abstract = True
 
 
 class DistrictAggregations(AggregationBase):
-    district = models.CharField(max_length=35, primary_key=True)
+    district = models.CharField(max_length=35)
 
     @cached_property
     def district_name(self):
@@ -268,7 +270,7 @@ class DistrictAggregations(AggregationBase):
 
 
 class PincodeAggregations(AggregationBase):
-    pincode = models.IntegerField(blank=True, primary_key=True)
+    pincode = models.IntegerField(blank=True)
 
     class Meta:
         abstract = True

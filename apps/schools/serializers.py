@@ -10,7 +10,7 @@ class GeoJSONSerializer(serializers.ModelSerializer):
     def to_representation(self, obj):
         geom = getattr(obj, self.Meta.geometry_field) if hasattr(obj, self.Meta.geometry_field) else None
         return {
-            'id': getattr(obj, self.Meta.pk_field),
+            'id': getattr(obj, 'slug', getattr(obj, self.Meta.pk_field)),
             'type': 'Feature',
             'geometry': {
                 'type': 'Point',
