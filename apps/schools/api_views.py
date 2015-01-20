@@ -3,9 +3,8 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 from rest_framework import generics
-from rest_framework.response import Response
 from rest_framework.exceptions import APIException
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from collections import OrderedDict
 
 from .serializers import (
@@ -108,6 +107,37 @@ class AggregationBaseView(object):
 
 class AggregationListView(AggregationBaseView, generics.ListAPIView):
     pass
+
+
+class AggregationInfoView(AggregationBaseView, generics.RetrieveAPIView):
+    def get_object(self):
+        queryset = self.get_queryset()
+        session = self.kwargs.get('session')
+        entity = self.kwargs.get('entity')
+        entity_name = self.kwargs.get('entity_name')
+        serializer = serializers.get(entity)
+
+        filters = {}
+        filters['{}__iexact'.format(serializer.Meta.pk_field)] = entity_name
+
+        try:
+            obj = get_object_or_404(queryset, **filters)
+        except Exception as e:
+            raise APIException(e)
+        return obj
+
+
+class AggregationSchoolListView(SchoolApiBaseView, generics.ListAPIView):
+    def get_queryset(self):
+        queryset = super(AggregationSchoolListView, self).get_queryset()
+        entity_name = self.kwargs.get('entity_name', None)
+        entity = self.kwargs.get('entity')
+        serializer = serializers.get(entity)
+
+        queryset = queryset.filter(**{
+            '{}__iexact'.format(serializer.Meta.pk_field): entity_name
+        })
+        return queryset
 
 
 @api_view(('GET',))
