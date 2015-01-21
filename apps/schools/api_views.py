@@ -130,33 +130,42 @@ class AggregationSchoolListView(SchoolApiBaseView, generics.ListAPIView):
     """Lists all the schools in the given aggregated entity_obj
     """
     def get_queryset(self):
+        # get all schools
         schools = super(AggregationSchoolListView, self).get_queryset()
+
         slug = self.kwargs.get('slug', None)
         entity = self.kwargs.get('entity')
         serializer = serializers.get(entity)
         session = self.kwargs.get('session')
         entity = self.kwargs.get('entity')
 
+        # get the entity model
         try:
             EntityModel = get_models(session, entity)
         except AttributeError:
             raise SessionNotFound()
 
+        # get the entity object
         entity_obj = EntityModel.objects.get(slug=slug)
+
+        # if entity has district, filter schools in same district
+        if hasattr(entity_obj, 'district'):
+            schools = schools.filter(district__iexact=entity_obj.district)
+
         filters = {
             '{}__iexact'.format(serializer.Meta.pk_field): str(getattr(entity_obj, serializer.Meta.pk_field)),
         }
 
+        # if entity is pincode, search both pincode OR new_pincode field
         if entity == 'pincode':
             filters['new_pincode__iexact'] = str(getattr(entity_obj, serializer.Meta.pk_field))
 
-        if hasattr(entity_obj, 'district'):
-            filters['district__iexact'] = entity_obj.district
+            q_list = [Q(f) for f in filters.items()]
 
-        q_list = [Q(_) for _ in filters.items()]
+            import operator
+            return schools.filter(reduce(operator.or_, q_list))
 
-        import operator
-        return schools.filter(reduce(operator.or_, q_list))
+        return schools.filter(**filters)
 
 
 @api_view(('GET',))
