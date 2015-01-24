@@ -153,12 +153,16 @@ class AggregationSchoolListView(SchoolApiBaseView, generics.ListAPIView):
             schools = schools.filter(district__iexact=entity_obj.district)
 
         filters = {
-            '{}__iexact'.format(serializer.Meta.pk_field): str(getattr(entity_obj, serializer.Meta.pk_field)),
+            '{}__iexact'.format(serializer.Meta.pk_field): str(
+                getattr(entity_obj, serializer.Meta.pk_field)
+            ),
         }
 
         # if entity is pincode, search both pincode OR new_pincode field
         if entity == 'pincode':
-            filters['new_pincode__iexact'] = str(getattr(entity_obj, serializer.Meta.pk_field))
+            filters['new_pincode__iexact'] = str(
+                getattr(entity_obj, serializer.Meta.pk_field)
+            )
 
             q_list = [Q(f) for f in filters.items()]
 
@@ -166,6 +170,64 @@ class AggregationSchoolListView(SchoolApiBaseView, generics.ListAPIView):
             return schools.filter(reduce(operator.or_, q_list))
 
         return schools.filter(**filters)
+
+
+class ClustersInBlockView(AggregationListView, generics.ListAPIView):
+    """Lists all the clusters in a block"""
+    def get_queryset(self):
+        session = self.kwargs.get('session')
+        block_slug = self.kwargs.get('block_slug')
+
+        # We need to query the cluster_aggregations model
+        try:
+            ClusterModel = get_models(session, 'cluster')
+            BlockModel = get_models(session, 'block')
+        except AttributeError:
+            raise SessionNotFound()
+
+        block = get_object_or_404(BlockModel, slug=block_slug)
+        clusters = ClusterModel.objects.filter(
+            block_name__iexact=block.block_name
+        )
+        return clusters
+
+
+class ClustersInDistrictView(AggregationListView, generics.ListAPIView):
+    """Lists all the clusters in a district"""
+    def get_queryset(self):
+        session = self.kwargs.get('session')
+        district_slug = self.kwargs.get('district_slug')
+
+        # We need to query the cluster_aggregations model
+        try:
+            ClusterModel = get_models(session, 'cluster')
+            DistrictModel = get_models(session, 'district')
+        except AttributeError:
+            raise SessionNotFound()
+
+        district = get_object_or_404(DistrictModel, slug=district_slug)
+        clusters = ClusterModel.objects.filter(
+            district__iexact=district.district
+        )
+        return clusters
+
+
+class BlocksInDistrictView(AggregationListView, generics.ListAPIView):
+    """Lists all the blocks in a district"""
+    def get_queryset(self):
+        session = self.kwargs.get('session')
+        district_slug = self.kwargs.get('district_slug')
+
+        # We need to query the block_aggregations model
+        try:
+            BlockModel = get_models(session, 'block')
+            DistrictModel = get_models(session, 'district')
+        except AttributeError:
+            raise SessionNotFound()
+
+        district = get_object_or_404(DistrictModel, slug=district_slug)
+        blocks = BlockModel.objects.filter(district__iexact=district.district)
+        return blocks
 
 
 @api_view(('GET',))
@@ -199,8 +261,24 @@ def api_root(request, format=None):
         'api_entity_school_list', request=request,
         args=['12-13', 'block', 'gulbarga-afzalpur']
     )
-    endpoints['Scholls in District'] = reverse(
+    endpoints['Clusters in Block'] = reverse(
+        'api_clusters_in_block', request=request,
+        args=['12-13', 'block', 'gulbarga-afzalpur']
+    )
+    endpoints['District Info'] = reverse(
+        'api_entity_info', request=request,
+        args=['12-13', 'district', 'bagalkot']
+    )
+    endpoints['Schools in District'] = reverse(
         'api_entity_school_list', request=request,
+        args=['12-13', 'district', 'bagalkot']
+    )
+    endpoints['Clusters in District'] = reverse(
+        'api_clusters_in_district', request=request,
+        args=['12-13', 'district', 'bagalkot']
+    )
+    endpoints['Blocks in District'] = reverse(
+        'api_blocks_in_district', request=request,
         args=['12-13', 'district', 'bagalkot']
     )
     endpoints['Assembly Info'] = reverse(
