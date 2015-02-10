@@ -199,10 +199,10 @@ LOGGING = {
 }
 
 REST_FRAMEWORK = {
-    'PAGINATE_BY': 10,
+    'PAGINATE_BY': None,
     'DEFAULT_RENDERER_CLASSES': (
-        # 'common.renderers.DiseJSONRenderer',
-        'rest_framework.renderers.JSONRenderer',
+        'common.renderers.DiseJSONRenderer',
+        # 'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     )
 }

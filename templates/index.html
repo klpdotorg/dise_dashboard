@@ -236,14 +236,14 @@
   </div> -->
 
   <div class="no-of-matches" id="no-of-matches" data-bind="visible: show_search_count">
-    <span data-bind="text: n_results"></span> <span data-bind="text: search_entity"></span>s found <small>(<span data-bind="text: n_results_map"></span> on map)</small>
+    <span data-bind="text: n_results    "></span> <span data-bind="text: search_entity"></span>s found <small>(<span data-bind="text: n_results_map"></span> on map)</small>
   </div>
 
   <div id="schools">
     <ul class="popup" id="popup-result-list" data-bind="foreach: results, visible: showPopupResultList">
       <li data-bind="click: $parent.highlightEntity">
         <span class="glyphicon glyphicon-map-marker"></span>
-        <span data-bind="text: properties.popupContent"></span>
+        <span data-bind="text: properties.popup_content"></span>
         <small data-bind="text: properties.district"></small>
       </li>
     </ul>

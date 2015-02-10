@@ -4,6 +4,7 @@ from .olap_models import (
     PincodeAggregations
 )
 from rest_framework import serializers
+from collections import OrderedDict
 
 
 class GeoJSONSerializer(serializers.ModelSerializer):
@@ -49,7 +50,7 @@ class ClusterSerializer(GeoJSONSerializer):
         geometry_field = 'centroid'
         pk_field = 'cluster_name'
         # name_field is missing as pk_field has the name containinig field
-        fields = ClusterAggregations._meta.get_all_field_names()
+        fields = ClusterAggregations._meta.get_all_field_names() + ['entity_type', 'popup_content']
 
 
 class BlockSerializer(GeoJSONSerializer):
@@ -58,7 +59,7 @@ class BlockSerializer(GeoJSONSerializer):
         geometry_field = 'centroid'
         pk_field = 'block_name'
         # name_field is missing as pk_field has the name containinig field
-        fields = BlockAggregations._meta.get_all_field_names()
+        fields = BlockAggregations._meta.get_all_field_names() + ['entity_type', 'popup_content']
 
 
 class DistrictSerializer(GeoJSONSerializer):
@@ -67,7 +68,7 @@ class DistrictSerializer(GeoJSONSerializer):
         geometry_field = 'centroid'
         pk_field = 'district'
         # name_field is missing as pk_field has the name containinig field
-        fields = DistrictAggregations._meta.get_all_field_names()
+        fields = DistrictAggregations._meta.get_all_field_names() + ['entity_type', 'popup_content']
 
 
 class AssemblySerializer(GeoJSONSerializer):
@@ -76,7 +77,7 @@ class AssemblySerializer(GeoJSONSerializer):
         geometry_field = 'centroid'
         pk_field = 'assembly_name'
         # name_field is missing as pk_field has the name containinig field
-        fields = AssemblyAggregations._meta.get_all_field_names()
+        fields = AssemblyAggregations._meta.get_all_field_names() + ['entity_type', 'popup_content']
 
 
 class ParliamentSerializer(GeoJSONSerializer):
@@ -85,7 +86,7 @@ class ParliamentSerializer(GeoJSONSerializer):
         geometry_field = 'centroid'
         pk_field = 'parliament_name'
         # name_field is missing as pk_field has the name containinig field
-        fields = ParliamentAggregations._meta.get_all_field_names()
+        fields = ParliamentAggregations._meta.get_all_field_names() + ['entity_type', 'popup_content']
 
 
 class PincodeSerializer(GeoJSONSerializer):
@@ -94,4 +95,4 @@ class PincodeSerializer(GeoJSONSerializer):
         geometry_field = 'centroid'
         pk_field = 'pincode'
         # name_field is missing as pk_field has the name containinig field
-        fields = PincodeAggregations._meta.get_all_field_names()
+        fields = PincodeAggregations._meta.get_all_field_names() + ['entity_type', 'popup_content']

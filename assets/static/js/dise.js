@@ -34,7 +34,7 @@
             $.setUrlParams(params);
         },
         getUrlParams: function() {
-            var vars = [],
+            var vars = {},
                 hash;
             if(window.location.href.indexOf('#') > 0){
                 var hashes = window.location.href.slice(window.location.href.indexOf('#') + 1).split('&');
@@ -61,14 +61,24 @@
                 // @param {object}   params      Required GET parameters e.g. name, code
                 // @param {function} success     What to do with the return data? same as `success` for jQuery.getJSON()
                 var result;
-                base_params = {
-                    'method': method,
-                    'session': session,
-                }
-                params = $.extend({}, base_params, params);
+                var method_parts = method.split('.')
+                var entity = method_parts[0].toLowerCase();
+                var action = method_parts[1];
+
+                var kwargs = [session, entity];
+
+                action_map = {
+                    'getSchools': 'schools',
+                    'getClusters': 'clusters',
+                    'getBlocks': 'blocks',
+                };
+
+                kwargs.push(action_map[action]);
+                kwargs = Array.concat([settings.base_url], kwargs);
+                var url = kwargs.join('/');
 
                 $.getJSON(
-                    settings.base_url,
+                    url,
                     params,
                     success
                 )
@@ -309,7 +319,7 @@ $(function(){
 
     // Initialize the API wrapper
     var DISE = $.DiseAPI({
-        'base_url': window.location.protocol + '//' + window.location.host + '/api/v1/olap/'
+        'base_url': window.location.protocol + '//' + window.location.host + '/api/drf'
     });
 
     /**
@@ -818,6 +828,7 @@ $(function(){
 
         // Invoke initial map layers.
         var params = $.getUrlParams();
+        console.log(params);
 
         var method = params.do;
         if(method.split('.').length !== 2){
@@ -923,7 +934,7 @@ $(function(){
 
                 // updates the result pane
                 search_view.results(data.results.features);
-                search_view.n_results(data.total_count);
+                search_view.n_results(data.results.features.length);
                 search_view.search_entity(child_entity);
                 search_view.showPopupResultList(true);
 
@@ -953,6 +964,7 @@ $(function(){
         } else if (['search'].indexOf(action) > -1) {
             window.filtersEnabled = is_filter_enabled();
 
+            console.log(params);
             DISE.call(method, session, params, function(data) {
                 if (data.error !== undefined) {
                     alert(data.error);
@@ -984,8 +996,9 @@ $(function(){
                 }
 
                 // updates the count pane
+                console.log(data.results);
                 search_view.results(data.results.features);
-                search_view.n_results(data.total_count);
+                search_view.n_results(data.results.features.length);
                 search_view.search_entity(entity);
                 search_view.showPopupResultList(true);
 

@@ -229,6 +229,12 @@ class AggregationBase(models.Model):
 class AssemblyAggregations(AggregationBase):
     assembly_name = models.CharField(max_length=35)
 
+    entity_type = 'assembly'
+
+    @property
+    def popup_content(self):
+        return self.assembly_name
+
     class Meta:
         abstract = True
 
@@ -236,6 +242,12 @@ class AssemblyAggregations(AggregationBase):
 class BlockAggregations(AggregationBase):
     block_name = models.CharField(max_length=50)
     district = models.CharField(max_length=50, blank=True)
+
+    entity_type = 'block'
+
+    @property
+    def popup_content(self):
+        return ', '.join(self.block_name, self.district)
 
     class Meta:
         abstract = True
@@ -246,6 +258,12 @@ class ClusterAggregations(AggregationBase):
     block_name = models.CharField(max_length=50, blank=True)
     district = models.CharField(max_length=50, blank=True)
 
+    entity_type = 'cluster'
+
+    @property
+    def popup_content(self):
+        return ', '.join([self.cluster_name, self.block_name])
+
     class Meta:
         abstract = True
         unique_together = ("cluster_name", "block_name")
@@ -254,12 +272,24 @@ class ClusterAggregations(AggregationBase):
 class ParliamentAggregations(AggregationBase):
     parliament_name = models.CharField(max_length=35)
 
+    entity_type = 'parliament'
+
+    @property
+    def popup_content(self):
+        return self.parliament_name
+
     class Meta:
         abstract = True
 
 
 class DistrictAggregations(AggregationBase):
     district = models.CharField(max_length=35)
+
+    entity_type = 'district'
+
+    @property
+    def popup_content(self):
+        return self.district
 
     @cached_property
     def district_name(self):
@@ -271,6 +301,12 @@ class DistrictAggregations(AggregationBase):
 
 class PincodeAggregations(AggregationBase):
     pincode = models.IntegerField(blank=True)
+
+    entity_type = 'pincode'
+
+    @property
+    def popup_content(self):
+        return self.pincode
 
     class Meta:
         abstract = True
