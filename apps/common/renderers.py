@@ -1,6 +1,4 @@
 from rest_framework.renderers import JSONRenderer
-from shapely.wkt import loads as shapely_loads
-from shapely.geometry import mapping
 from collections import OrderedDict
 
 
