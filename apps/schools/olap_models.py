@@ -115,6 +115,10 @@ class BasicData(models.Model):
     class Meta:
         abstract = True
 
+    @property
+    def popup_content(self):
+        return self.school_name
+
 
 class AggregationBase(models.Model):
     slug = models.CharField(max_length=50, primary_key=True)
@@ -216,15 +220,6 @@ class AggregationBase(models.Model):
     class Meta:
         abstract = True
 
-    def set_medium_of_instructions_display(self):
-        if not self.medium_of_instructions:
-            return []
-
-        moes = self.medium_of_instructions
-        for moe in moes:
-            moe['moe'] = search_choices_by_key(MEDIUM, moe['moe_id'])
-        return moes
-
 
 class AssemblyAggregations(AggregationBase):
     assembly_name = models.CharField(max_length=35)
@@ -247,7 +242,7 @@ class BlockAggregations(AggregationBase):
 
     @property
     def popup_content(self):
-        return ', '.join(self.block_name, self.district)
+        return self.block_name
 
     class Meta:
         abstract = True
@@ -262,7 +257,7 @@ class ClusterAggregations(AggregationBase):
 
     @property
     def popup_content(self):
-        return ', '.join([self.cluster_name, self.block_name])
+        return self.cluster_name
 
     class Meta:
         abstract = True

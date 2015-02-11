@@ -40,7 +40,7 @@ class SchoolSerializer(GeoJSONSerializer):
             'medium_of_instruction', 'sch_management', 'sch_category',
             'library_yn', 'books_in_library', 'no_of_computers',
             'electricity', 'drinking_water', 'toilet_common', 'toilet_boys',
-            'toilet_girls', 'tot_clrooms'
+            'toilet_girls', 'tot_clrooms', 'popup_content'
         ]
 
 
