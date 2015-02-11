@@ -3,6 +3,7 @@ South==0.8.1
 argparse==1.2.1
 django-debug-toolbar==0.11
 django-grappelli==2.4.5
+djangorestframework==3.0.0
 geojson==1.0.1
 ipdb==0.8
 ipython==0.13.2
