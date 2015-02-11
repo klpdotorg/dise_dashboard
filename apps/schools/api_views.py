@@ -243,7 +243,7 @@ def api_root(request, format=None):
     for entity in serializers.keys():
         endpoints['%s List' % entity.title()] = reverse(
             'api_entity_list', request=request, args=['12-13', entity]
-        )
+        ) + "?bbox=76.10589981079102,15.00581078905935,76.34038925170898,15.074775626862015"
 
     endpoints['Cluster Info'] = reverse(
         'api_entity_info', request=request,
