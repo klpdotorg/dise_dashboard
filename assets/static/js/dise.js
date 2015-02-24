@@ -16,6 +16,39 @@
 //         plotOnMap(data.schools, 8);
 //     });
 
+MOI_LIST = {
+    1: "Assamese",
+    2: "Bengali",
+    3: "Gujarati",
+    4: "Hindi",
+    5: "Kannada",
+    6: "Kashmiri",
+    7: "Konkani",
+    8: "Malayalam",
+    9: "Manipuri",
+    10: "Marathi",
+    11: "Nepali",
+    12: "Odia",
+    13: "Punjabi",
+    14: "Sanskrit",
+    15: "Sindhi",
+    16: "Tamil",
+    17: "Telugu",
+    18: "Urdu",
+    19: "English",
+    20: "Bodo",
+    21: "Mising",
+    22: "Dogri",
+    23: "Khasi",
+    24: "Garo",
+    25: "Mizo",
+    26: "Bhutia",
+    27: "Lepcha",
+    28: "Limboo",
+    29: "French",
+    99: "Others"
+};
+
 ;(function($){
     String.prototype.toProperCase = function () {
         return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
@@ -74,7 +107,7 @@
                 };
 
                 kwargs.push(action_map[action]);
-                kwargs = Array.concat([settings.base_url], kwargs);
+                kwargs = Array.prototype.concat([settings.base_url], kwargs);
                 var url = kwargs.join('/');
 
                 $.getJSON(
@@ -188,7 +221,7 @@ $(function(){
         self.properties.medium_of_instructions_list = ko.computed(function() {
             var moes = [];
             for (var i = 0; i < self.properties.medium_of_instructions.length; i++) {
-                moes.push(self.properties.medium_of_instructions[i].moe + "(" + self.properties.medium_of_instructions[i].sch_count + ")");
+                moes.push(MOI_LIST[self.properties.medium_of_instructions[i].moe_id] + "(" + self.properties.medium_of_instructions[i].sch_count + ")");
             };
             // console.log(moes);
             return moes.join(', ');
