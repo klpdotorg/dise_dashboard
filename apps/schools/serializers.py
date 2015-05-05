@@ -4,35 +4,22 @@ from .olap_models import (
     PincodeAggregations
 )
 from rest_framework import serializers
-from collections import OrderedDict
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 
-class GeoJSONSerializer(serializers.ModelSerializer):
-    def to_representation(self, obj):
-        geom = getattr(obj, self.Meta.geometry_field) if hasattr(obj, self.Meta.geometry_field) else None
-        return {
-            'id': getattr(obj, 'slug', getattr(obj, self.Meta.pk_field)),
-            'type': 'Feature',
-            'geometry': {
-                'type': 'Point',
-                'coordinates': geom.coords if geom else []
-            },
-            'properties': {
-                key: getattr(obj, key)
-                for key in self.Meta.fields if key != self.Meta.geometry_field
-            }
-        }
+class SchoolSerializer(GeoFeatureModelSerializer):
+    library_yn = serializers.CharField(source='get_library_yn_display')
+    drinking_water = serializers.CharField(source='get_drinking_water_display')
+    electricity = serializers.CharField(source='get_electricity_display')
+    medium_of_instruction = serializers.CharField(source='get_medium_of_instruction_display')
+    sch_management = serializers.CharField(source='get_sch_management_display')
+    sch_category = serializers.CharField(source='get_sch_category_display')
 
-
-class SchoolSerializer(GeoJSONSerializer):
     class Meta:
         model = BasicData
-        geometry_field = 'centroid'
+        geo_field = 'centroid'
         pk_field = 'school_code'
 
-        # name_field should point to the field name that has the entity name
-        # if it's absent, pk_field will be used
-        name_field = 'school_name'
         fields = [
             'school_code', 'school_name', 'cluster_name', 'centroid',
             'block_name', 'district', 'pincode', 'yeur_estd',
@@ -44,55 +31,85 @@ class SchoolSerializer(GeoJSONSerializer):
         ]
 
 
-class ClusterSerializer(GeoJSONSerializer):
+class SchoolInfraSerializer(GeoFeatureModelSerializer):
+    status_of_mdm = serializers.CharField(source='get_status_of_mdm_display')
+    boundary_wall = serializers.CharField(source='get_boundary_wall_display')
+    library_yn = serializers.CharField(source='get_library_yn_display')
+    building_status = serializers.CharField(source='get_building_status_display')
+    ramps = serializers.CharField(source='get_ramps_display')
+    playground = serializers.CharField(source='get_playground_display')
+    separate_room_for_headmaster = serializers.CharField(source='get_separate_room_for_headmaster_display')
+    electricity = serializers.CharField(source='get_electricity_display')
+    computer_aided_learnin_lab = serializers.CharField(source='get_computer_aided_learnin_lab_display')
+    drinking_water = serializers.CharField(source='get_drinking_water_display')
+    medical_checkup = serializers.CharField(source='get_medical_checkup_display')
+
+    class Meta:
+        model = BasicData
+        geo_field = 'centroid'
+
+        fields = [
+            'school_code', 'school_name', 'centroid',
+            'status_of_mdm', 'drinking_water', 'building_status',
+            'ramps', 'playground', 'boundary_wall', 'medical_checkup',
+            'separate_room_for_headmaster', 'classrooms_require_major_repair',
+            'classrooms_require_minor_repair', 'electricity', 'blackboard',
+            'library_yn', 'books_in_library', 'computer_aided_learnin_lab',
+            'no_of_computers', 'toilet_common', 'toilet_boys',
+            'toilet_girls', 'tot_clrooms', 'popup_content'
+        ]
+
+
+class AggregationBaseSerializer(GeoFeatureModelSerializer):
+    medium_of_instructions = serializers.SerializerMethodField()
+
+    def get_medium_of_instructions(self, obj):
+        return obj.medium_of_instructions
+
+
+class ClusterSerializer(AggregationBaseSerializer):
     class Meta:
         model = ClusterAggregations
-        geometry_field = 'centroid'
+        geo_field = 'centroid'
         pk_field = 'cluster_name'
-        # name_field is missing as pk_field has the name containinig field
         fields = ClusterAggregations._meta.get_all_field_names() + ['entity_type', 'popup_content']
 
 
-class BlockSerializer(GeoJSONSerializer):
+class BlockSerializer(AggregationBaseSerializer):
     class Meta:
         model = BlockAggregations
-        geometry_field = 'centroid'
+        geo_field = 'centroid'
         pk_field = 'block_name'
-        # name_field is missing as pk_field has the name containinig field
         fields = BlockAggregations._meta.get_all_field_names() + ['entity_type', 'popup_content']
 
 
-class DistrictSerializer(GeoJSONSerializer):
+class DistrictSerializer(AggregationBaseSerializer):
     class Meta:
         model = DistrictAggregations
-        geometry_field = 'centroid'
+        geo_field = 'centroid'
         pk_field = 'district'
-        # name_field is missing as pk_field has the name containinig field
         fields = DistrictAggregations._meta.get_all_field_names() + ['entity_type', 'popup_content']
 
 
-class AssemblySerializer(GeoJSONSerializer):
+class AssemblySerializer(AggregationBaseSerializer):
     class Meta:
         model = AssemblyAggregations
-        geometry_field = 'centroid'
+        geo_field = 'centroid'
         pk_field = 'assembly_name'
-        # name_field is missing as pk_field has the name containinig field
         fields = AssemblyAggregations._meta.get_all_field_names() + ['entity_type', 'popup_content']
 
 
-class ParliamentSerializer(GeoJSONSerializer):
+class ParliamentSerializer(AggregationBaseSerializer):
     class Meta:
         model = ParliamentAggregations
-        geometry_field = 'centroid'
+        geo_field = 'centroid'
         pk_field = 'parliament_name'
-        # name_field is missing as pk_field has the name containinig field
         fields = ParliamentAggregations._meta.get_all_field_names() + ['entity_type', 'popup_content']
 
 
-class PincodeSerializer(GeoJSONSerializer):
+class PincodeSerializer(AggregationBaseSerializer):
     class Meta:
         model = PincodeAggregations
-        geometry_field = 'centroid'
+        geo_field = 'centroid'
         pk_field = 'pincode'
-        # name_field is missing as pk_field has the name containinig field
         fields = PincodeAggregations._meta.get_all_field_names() + ['entity_type', 'popup_content']
