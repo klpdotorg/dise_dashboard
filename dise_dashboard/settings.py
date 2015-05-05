@@ -101,6 +101,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -135,7 +136,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
 
     # third party
-    'south',
+    'corsheaders',
     # 'debug_toolbar',
     'bootstrapform',
     'raven.contrib.django.raven_compat',
@@ -199,12 +200,7 @@ LOGGING = {
 }
 
 REST_FRAMEWORK = {
-    'PAGINATE_BY': None,
-    'DEFAULT_RENDERER_CLASSES': (
-        'common.renderers.DiseJSONRenderer',
-        # 'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
-    )
+    'PAGE_SIZE': 100,
 }
 
 TEST_RUNNER = 'common.testrunner.NoDbTestRunner'
