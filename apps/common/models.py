@@ -34,7 +34,8 @@ YESNO = (
     (1, 'Yes'),
     (2, 'No'),
     (3, 'Yes but not functional'),
-    (4, 'Unknown')
+    (4, 'Unknown'),
+    (9, 'Unknown'),
 )
 
 AREA = (
@@ -51,6 +52,7 @@ SCHOOL_CATEGORY = (
     (6, "Primary, with Upper Primary and Secondary(1-10)"),
     (7, "Upper Primary with Secondary(6-10)"),
     (8, "Secondary only(9 & 10)"),
+    (9, "Unknown"),
     (10, "Secondary with Hr. Secondary(9-12) "),
     (11, "Hr. Secondary only/Jr. College(11 & 12)")
 )
@@ -64,6 +66,7 @@ SCHOOL_MANAGEMENT = (
     (6, "Others"),
     (7, "Central Govt."),
     (8, "Unrecognised"),
+    (9, "Unknown"),
     (97, "Madarsa recognized (by Wakf board/Madarsa Board)"),
     (98, "Madarsa unrecognized")
 )
