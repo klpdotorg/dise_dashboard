@@ -11,7 +11,7 @@ from collections import OrderedDict
 from .serializers import (
     SchoolSerializer, ClusterSerializer, BlockSerializer,
     DistrictSerializer, AssemblySerializer, ParliamentSerializer,
-    PincodeSerializer
+    PincodeSerializer, SchoolInfraSerializer
 )
 serializers = {
     'cluster': ClusterSerializer,
@@ -37,11 +37,8 @@ class EntityNotFound(APIException):
 
 class SchoolApiBaseView(object):
     serializer_class = SchoolSerializer
-    bbox_filter_field = SchoolSerializer.Meta.geometry_field
+    bbox_filter_field = SchoolSerializer.Meta.geo_field
     filter_backends = (filters.KLPInBBOXFilter, filters.TextSearchFilter, )
-
-    def get_bbox_filter_field(self):
-        return self.bbox_filter_field
 
     def get_queryset(self):
         session = self.kwargs.get('session')
@@ -71,23 +68,13 @@ class SchoolInfoView(SchoolApiBaseView, generics.RetrieveAPIView):
         return obj
 
 
+class SchoolInfraView(SchoolInfoView):
+    serializer_class = SchoolInfraSerializer
+
+
 class AggregationBaseView(object):
     filter_backends = (filters.KLPInBBOXFilter, filters.TextSearchFilter, )
-
-    def get_bbox_filter_field(self):
-        filter_field = ''
-        if hasattr(self, 'bbox_filter_field'):
-            filter_field = self.bbox_filter_field
-        else:
-            serializer = self.get_serializer_class()
-            try:
-                filter_field = serializer.Meta.geometry_field
-            except:
-                raise APIException(
-                    'No bbox_filter_field provided in the view or '
-                    'geometry_field provided in the serializer'
-                )
-        return filter_field
+    bbox_filter_field = 'centroid'
 
     def get_serializer_class(self):
         entity = self.kwargs.get('entity')
