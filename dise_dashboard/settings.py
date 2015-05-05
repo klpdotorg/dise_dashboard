@@ -203,6 +203,8 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 100,
 }
 
+CORS_ORIGIN_ALLOW_ALL = True
+
 TEST_RUNNER = 'common.testrunner.NoDbTestRunner'
 
 try:
