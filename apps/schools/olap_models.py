@@ -450,30 +450,29 @@ class Dise1314BasicData(BasicData):
 def get_models(session='10-11', what='all'):
     session = session.replace('-', '')
     schools = __import__('schools')
+    models = collections.OrderedDict()
 
-    models = {
-        'school': getattr(
-            schools.olap_models, 'Dise{}BasicData'.format(session)
-        ),
-        'cluster': getattr(
-            schools.olap_models, 'Dise{}ClusterAggregations'.format(session)
-        ),
-        'block': getattr(
-            schools.olap_models, 'Dise{}BlockAggregations'.format(session)
-        ),
-        'district': getattr(
-            schools.olap_models, 'Dise{}DistrictAggregations'.format(session)
-        ),
-        'pincode': getattr(
-            schools.olap_models, 'Dise{}PincodeAggregations'.format(session)
-        ),
-        'assembly': getattr(
-            schools.olap_models, 'Dise{}AssemblyAggregations'.format(session)
-        ),
-        'parliament': getattr(
-            schools.olap_models, 'Dise{}ParliamentAggregations'.format(session)
-        ),
-    }
+    models['school'] = getattr(
+        schools.olap_models, 'Dise{}BasicData'.format(session)
+    )
+    models['cluster'] = getattr(
+        schools.olap_models, 'Dise{}ClusterAggregations'.format(session)
+    )
+    models['block'] = getattr(
+        schools.olap_models, 'Dise{}BlockAggregations'.format(session)
+    )
+    models['district'] = getattr(
+        schools.olap_models, 'Dise{}DistrictAggregations'.format(session)
+    )
+    models['pincode'] = getattr(
+        schools.olap_models, 'Dise{}PincodeAggregations'.format(session)
+    )
+    models['assembly'] = getattr(
+        schools.olap_models, 'Dise{}AssemblyAggregations'.format(session)
+    )
+    models['parliament'] = getattr(
+        schools.olap_models, 'Dise{}ParliamentAggregations'.format(session)
+    )
 
     if what == 'all':
         return models.values()
