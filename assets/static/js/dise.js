@@ -74,7 +74,7 @@
                 };
 
                 kwargs.push(action_map[action]);
-                kwargs = Array.concat([settings.base_url], kwargs);
+                kwargs = Array.prototype.concat([settings.base_url], kwargs);
                 var url = kwargs.join('/');
 
                 $.getJSON(
@@ -380,7 +380,7 @@ $(function(){
         allowClear: true,
         minimumInputLength: 3,
         ajax: {
-            url: "/api/v1/olap/search/",
+            url: "/api/drf/" + window.default_session + "/search/",
             quietMillis: 300,
             data: function (term, page) {
                 var values = {};
@@ -388,7 +388,7 @@ $(function(){
                     values[field.name] = field.value;
                 });
                 return {
-                    q: term, // search term
+                    query: term, // search term
                     filters: values
                 };
             },
