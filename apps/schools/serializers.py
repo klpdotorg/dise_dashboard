@@ -14,6 +14,10 @@ class SchoolSerializer(GeoFeatureModelSerializer):
     medium_of_instruction = serializers.CharField(source='get_medium_of_instruction_display')
     sch_management = serializers.CharField(source='get_sch_management_display')
     sch_category = serializers.CharField(source='get_sch_category_display')
+    entity_type = serializers.SerializerMethodField()
+
+    def get_entity_type(self, obj):
+        return 'school'
 
     class Meta:
         model = BasicData
@@ -27,7 +31,7 @@ class SchoolSerializer(GeoFeatureModelSerializer):
             'medium_of_instruction', 'sch_management', 'sch_category',
             'library_yn', 'books_in_library', 'no_of_computers',
             'electricity', 'drinking_water', 'toilet_common', 'toilet_boys',
-            'toilet_girls', 'tot_clrooms', 'popup_content'
+            'toilet_girls', 'tot_clrooms', 'popup_content', 'entity_type'
         ]
 
 
