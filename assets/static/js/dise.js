@@ -64,16 +64,21 @@
                 var method_parts = method.split('.')
                 var entity = method_parts[0].toLowerCase();
                 var action = method_parts[1];
-
+                var url;
                 var kwargs = [session, entity];
 
-                action_map = {
-                    'getSchools': 'schools',
-                    'getClusters': 'clusters',
-                    'getBlocks': 'blocks',
+                if (action === 'getInfo') {
+                    kwargs.push(params['id_or_slug']);
+                    kwargs.push('');
+                } else {
+                    action_map = {
+                        'getSchools': 'schools',
+                        'getClusters': 'clusters',
+                        'getBlocks': 'blocks',
+                    };
+                    kwargs.push(action_map[action]);
                 };
 
-                kwargs.push(action_map[action]);
                 kwargs = Array.prototype.concat([settings.base_url], kwargs);
                 var url = kwargs.join('/');
 
@@ -581,98 +586,17 @@ $(function(){
 
     function fillPane(feature) {
         var academic_year = $('input[name=academic_year]:checked').val() || window.default_session;
-
-        if (feature.properties.entity_type == 'district') {
-            // Call district.getInfo and populate popup.
-            DISE.call('District.getInfo', academic_year, {
-                'name': feature.properties.district
-            }, function (data) {
-                if(data.error !== undefined){
-                    alert(data.error);
-                }else{
-                    search_view.highlightEntity(data.district);
-                }
-            });
-        }
-        else if (feature.properties.entity_type == 'block') {
-            // Call block.getInfo and populate popup.
-            DISE.call('Block.getInfo', academic_year, {
-                'name': feature.properties.block_name
-            }, function (data) {
-                if(data.error !== undefined){
-                    alert(data.error);
-                }else{
-                    search_view.highlightEntity(data.block);
-                    fillCrumb('block', data.block.properties);
-                }
-            });
-        }
-        else if (feature.properties.entity_type == 'pincode') {
-            // Call block.getInfo and populate popup.
-            DISE.call('Pincode.getInfo', academic_year, {
-                'pincode': feature.properties.pincode
-            }, function (data) {
-                if(data.error !== undefined){
-                    alert(data.error);
-                }else{
-                    search_view.highlightEntity(data.pincode);
-                    fillCrumb('pincode', data.pincode.properties);
-                }
-            });
-        }
-        else if (feature.properties.entity_type == 'assembly') {
-            // Call assembly.getInfo and populate popup.
-            DISE.call('Assembly.getInfo', academic_year, {
-                'name': feature.properties.assembly_name
-            }, function (data) {
-                if(data.error !== undefined){
-                    alert(data.error);
-                }else{
-                    search_view.highlightEntity(data.assembly);
-                    fillCrumb('assembly', data.assembly.properties);
-                }
-            });
-        }
-        else if (feature.properties.entity_type == 'parliament') {
-            // Call parliament.getInfo and populate popup.
-            DISE.call('Parliament.getInfo', academic_year, {
-                'name': feature.properties.parliament_name
-            }, function (data) {
-                if(data.error !== undefined){
-                    alert(data.error);
-                }else{
-                    search_view.highlightEntity(data.parliament);
-                    fillCrumb('parliament', data.parliament.properties);
-                }
-            });
-        }
-        else if (feature.properties.entity_type == 'cluster') {
-          // Call cluster.getInfo and populate popup.
-            DISE.call('Cluster.getInfo', academic_year, {
-                'name': feature.properties.cluster_name,
-                'block': feature.properties.block_name
-            }, function (data) {
-                if(data.error !== undefined){
-                    alert(data.error);
-                }else{
-                    search_view.highlightEntity(data.cluster);
-                    fillCrumb('cluster', data.cluster.properties);
-                }
-            });
-        }
-        else if (feature.properties.entity_type == 'school') {
-          // Call school.getInfo and populate popup.
-            DISE.call('School.getInfo', academic_year, {
-                'code': feature.id
-            }, function (data) {
-                if(data.error !== undefined){
-                    alert(data.error);
-                }else{
-                    search_view.highlightEntity(data.school);
-                    fillCrumb('school', data.school.properties);
-                }
-            });
-        };
+        var entity_type = feature.properties.entity_type.toProperCase();
+        // Call district.getInfo and populate popup.
+        DISE.call(entity_type + '.getInfo', academic_year, {
+            'id_or_slug': feature.id
+        }, function (data) {
+            if(data.error !== undefined){
+                alert(data.error);
+            }else{
+                search_view.highlightEntity(data);
+            }
+        });
     }
 
     function onEachFeature(feature, layer) {
