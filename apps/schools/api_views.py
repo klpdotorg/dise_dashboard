@@ -211,6 +211,7 @@ class SchoolListView(SchoolApiBaseView, generics.ListAPIView):
 
         return queryset
 
+
 class SchoolInfoView(SchoolApiBaseView, generics.RetrieveAPIView):
     """Returns details of the given school
     """

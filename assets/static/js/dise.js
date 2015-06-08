@@ -785,7 +785,7 @@ $(function(){
 
         // Invoke initial map layers.
         var params = $.getUrlParams();
-        console.log(params);
+        // console.log(params);
 
         var method = params.do;
         if(method.split('.').length !== 2){
@@ -921,7 +921,7 @@ $(function(){
         } else if (['search'].indexOf(action) > -1) {
             window.filtersEnabled = is_filter_enabled();
 
-            console.log(params);
+            // console.log(params);
             DISE.call(method, session, params, function(data) {
                 if (data.error !== undefined) {
                     alert(data.error);
@@ -953,7 +953,7 @@ $(function(){
                 }
 
                 // updates the count pane
-                console.log(data.results);
+                // console.log(data.results);
                 search_view.results(data.results.features);
                 search_view.n_results(data.results.features.length);
                 search_view.search_entity(entity);
