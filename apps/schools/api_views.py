@@ -23,6 +23,7 @@ serializers = {
 }
 from .olap_models import get_models
 from common import filters
+from common import models as common_utils
 
 
 class SessionNotFound(APIException):
@@ -200,6 +201,14 @@ class SchoolListView(SchoolApiBaseView, generics.ListAPIView):
                 queryset = queryset.exclude(
                     sch_management__in=[1, 7]
                 )
+
+        if 'area' in self.request.query_params and self.request.query_params.get('area', ''):
+            queryset = queryset.filter(
+                rural_urban=common_utils.search_choices(
+                    common_utils.AREA, self.request.query_params.get('area').title()
+                )
+            )
+
         return queryset
 
 class SchoolInfoView(SchoolApiBaseView, generics.RetrieveAPIView):
