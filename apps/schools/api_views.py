@@ -188,8 +188,19 @@ class SchoolApiBaseView(object):
 class SchoolListView(SchoolApiBaseView, generics.ListAPIView):
     """Returns the list of schools for given year and filters
     """
-    pass
+    def get_queryset(self):
+        queryset = super(SchoolListView, self).get_queryset()
 
+        if 'management' in self.request.query_params and self.request.query_params.get('management', ''):
+            if self.request.query_params.get('management') == 'govt':
+                queryset = queryset.filter(
+                    sch_management__in=[1, 7]
+                )
+            elif self.request.query_params.get('management') == 'pvt':
+                queryset = queryset.exclude(
+                    sch_management__in=[1, 7]
+                )
+        return queryset
 
 class SchoolInfoView(SchoolApiBaseView, generics.RetrieveAPIView):
     """Returns details of the given school
