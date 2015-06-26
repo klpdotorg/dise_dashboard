@@ -34,7 +34,7 @@
             $.setUrlParams(params);
         },
         getUrlParams: function() {
-            var vars = [],
+            var vars = {},
                 hash;
             if(window.location.href.indexOf('#') > 0){
                 var hashes = window.location.href.slice(window.location.href.indexOf('#') + 1).split('&');
@@ -61,14 +61,29 @@
                 // @param {object}   params      Required GET parameters e.g. name, code
                 // @param {function} success     What to do with the return data? same as `success` for jQuery.getJSON()
                 var result;
-                base_params = {
-                    'method': method,
-                    'session': session,
-                }
-                params = $.extend({}, base_params, params);
+                var method_parts = method.split('.')
+                var entity = method_parts[0].toLowerCase();
+                var action = method_parts[1];
+                var url;
+                var kwargs = [session, entity];
+
+                if (action === 'getInfo') {
+                    kwargs.push(params['id_or_slug']);
+                    kwargs.push('');
+                } else {
+                    action_map = {
+                        'getSchools': 'schools',
+                        'getClusters': 'clusters',
+                        'getBlocks': 'blocks',
+                    };
+                    kwargs.push(action_map[action]);
+                };
+
+                kwargs = Array.prototype.concat([settings.base_url], kwargs);
+                var url = kwargs.join('/');
 
                 $.getJSON(
-                    settings.base_url,
+                    url,
                     params,
                     success
                 )
@@ -104,6 +119,39 @@ $(function(){
     var filtersEnabled;
     var filter_prefix = 'f_';
     window.default_session = '13-14';
+
+    var moe_map = {
+        1: "Assamese",
+        2: "Bengali",
+        3: "Gujarati",
+        4: "Hindi",
+        5: "Kannada",
+        6: "Kashmiri",
+        7: "Konkani",
+        8: "Malayalam",
+        9: "Manipuri",
+        10: "Marathi",
+        11: "Nepali",
+        12: "Odia",
+        13: "Punjabi",
+        14: "Sanskrit",
+        15: "Sindhi",
+        16: "Tamil",
+        17: "Telugu",
+        18: "Urdu",
+        19: "English",
+        20: "Bodo",
+        21: "Mising",
+        22: "Dogri",
+        23: "Khasi",
+        24: "Garo",
+        25: "Mizo",
+        26: "Bhutia",
+        27: "Lepcha",
+        28: "Limboo",
+        29: "French",
+        99: "Others",
+    }
 
     var School = function(feature) {
         if (feature === undefined) return this;
@@ -178,7 +226,7 @@ $(function(){
         self.properties.medium_of_instructions_list = ko.computed(function() {
             var moes = [];
             for (var i = 0; i < self.properties.medium_of_instructions.length; i++) {
-                moes.push(self.properties.medium_of_instructions[i].moe + "(" + self.properties.medium_of_instructions[i].sch_count + ")");
+                moes.push(moe_map[self.properties.medium_of_instructions[i].moe_id] + " (" + self.properties.medium_of_instructions[i].sch_count + ")");
             };
             // console.log(moes);
             return moes.join(', ');
@@ -309,7 +357,7 @@ $(function(){
 
     // Initialize the API wrapper
     var DISE = $.DiseAPI({
-        'base_url': window.location.protocol + '//' + window.location.host + '/api/v1/olap/'
+        'base_url': window.location.protocol + '//' + window.location.host + '/api/drf'
     });
 
     /**
@@ -370,7 +418,7 @@ $(function(){
         allowClear: true,
         minimumInputLength: 3,
         ajax: {
-            url: "/api/v1/olap/search/",
+            url: "/api/drf/" + window.default_session + "/search/",
             quietMillis: 300,
             data: function (term, page) {
                 var values = {};
@@ -378,7 +426,7 @@ $(function(){
                     values[field.name] = field.value;
                 });
                 return {
-                    q: term, // search term
+                    query: term, // search term
                     filters: values
                 };
             },
@@ -571,98 +619,17 @@ $(function(){
 
     function fillPane(feature) {
         var academic_year = $('input[name=academic_year]:checked').val() || window.default_session;
-
-        if (feature.properties.entity_type == 'district') {
-            // Call district.getInfo and populate popup.
-            DISE.call('District.getInfo', academic_year, {
-                'name': feature.properties.district
-            }, function (data) {
-                if(data.error !== undefined){
-                    alert(data.error);
-                }else{
-                    search_view.highlightEntity(data.district);
-                }
-            });
-        }
-        else if (feature.properties.entity_type == 'block') {
-            // Call block.getInfo and populate popup.
-            DISE.call('Block.getInfo', academic_year, {
-                'name': feature.properties.block_name
-            }, function (data) {
-                if(data.error !== undefined){
-                    alert(data.error);
-                }else{
-                    search_view.highlightEntity(data.block);
-                    fillCrumb('block', data.block.properties);
-                }
-            });
-        }
-        else if (feature.properties.entity_type == 'pincode') {
-            // Call block.getInfo and populate popup.
-            DISE.call('Pincode.getInfo', academic_year, {
-                'pincode': feature.properties.pincode
-            }, function (data) {
-                if(data.error !== undefined){
-                    alert(data.error);
-                }else{
-                    search_view.highlightEntity(data.pincode);
-                    fillCrumb('pincode', data.pincode.properties);
-                }
-            });
-        }
-        else if (feature.properties.entity_type == 'assembly') {
-            // Call assembly.getInfo and populate popup.
-            DISE.call('Assembly.getInfo', academic_year, {
-                'name': feature.properties.assembly_name
-            }, function (data) {
-                if(data.error !== undefined){
-                    alert(data.error);
-                }else{
-                    search_view.highlightEntity(data.assembly);
-                    fillCrumb('assembly', data.assembly.properties);
-                }
-            });
-        }
-        else if (feature.properties.entity_type == 'parliament') {
-            // Call parliament.getInfo and populate popup.
-            DISE.call('Parliament.getInfo', academic_year, {
-                'name': feature.properties.parliament_name
-            }, function (data) {
-                if(data.error !== undefined){
-                    alert(data.error);
-                }else{
-                    search_view.highlightEntity(data.parliament);
-                    fillCrumb('parliament', data.parliament.properties);
-                }
-            });
-        }
-        else if (feature.properties.entity_type == 'cluster') {
-          // Call cluster.getInfo and populate popup.
-            DISE.call('Cluster.getInfo', academic_year, {
-                'name': feature.properties.cluster_name,
-                'block': feature.properties.block_name
-            }, function (data) {
-                if(data.error !== undefined){
-                    alert(data.error);
-                }else{
-                    search_view.highlightEntity(data.cluster);
-                    fillCrumb('cluster', data.cluster.properties);
-                }
-            });
-        }
-        else if (feature.properties.entity_type == 'school') {
-          // Call school.getInfo and populate popup.
-            DISE.call('School.getInfo', academic_year, {
-                'code': feature.id
-            }, function (data) {
-                if(data.error !== undefined){
-                    alert(data.error);
-                }else{
-                    search_view.highlightEntity(data.school);
-                    fillCrumb('school', data.school.properties);
-                }
-            });
-        };
+        var entity_type = feature.properties.entity_type.toProperCase();
+        // Call district.getInfo and populate popup.
+        DISE.call(entity_type + '.getInfo', academic_year, {
+            'id_or_slug': feature.id
+        }, function (data) {
+            if(data.error !== undefined){
+                alert(data.error);
+            }else{
+                search_view.highlightEntity(data);
+            }
+        });
     }
 
     function onEachFeature(feature, layer) {
@@ -818,6 +785,7 @@ $(function(){
 
         // Invoke initial map layers.
         var params = $.getUrlParams();
+        // console.log(params);
 
         var method = params.do;
         if(method.split('.').length !== 2){
@@ -923,7 +891,7 @@ $(function(){
 
                 // updates the result pane
                 search_view.results(data.results.features);
-                search_view.n_results(data.total_count);
+                search_view.n_results(data.results.features.length);
                 search_view.search_entity(child_entity);
                 search_view.showPopupResultList(true);
 
@@ -953,6 +921,7 @@ $(function(){
         } else if (['search'].indexOf(action) > -1) {
             window.filtersEnabled = is_filter_enabled();
 
+            // console.log(params);
             DISE.call(method, session, params, function(data) {
                 if (data.error !== undefined) {
                     alert(data.error);
@@ -984,8 +953,9 @@ $(function(){
                 }
 
                 // updates the count pane
+                // console.log(data.results);
                 search_view.results(data.results.features);
-                search_view.n_results(data.total_count);
+                search_view.n_results(data.results.features.length);
                 search_view.search_entity(entity);
                 search_view.showPopupResultList(true);
 

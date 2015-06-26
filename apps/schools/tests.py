@@ -8,6 +8,7 @@ Replace this with more appropriate tests for your application.
 from django.test import TestCase
 from django.test.client import RequestFactory
 from django.test.client import Client
+import json
 
 
 class EndpointTest(TestCase):
@@ -15,14 +16,18 @@ class EndpointTest(TestCase):
         # Every test needs access to the request factory.
         self.client = Client()
 
-    def test_school_endpoints(self):
+    def test_endpoints(self):
         """
-        Tests that 1 + 1 always equals 2.
+        Just for testing that things are OK
         """
-        response = self.client.get('/api/v1/olap/', {
-            'method': 'School.search',
-            'session': '10-11',
-            'name': 'govt',
-            'bbox': '75.73974609375,12.5223906020692,79.4476318359375,13.424352095715332'
-        })
+        response = self.client.get('/api/drf/')
         self.assertEqual(response.status_code, 200)
+
+        print 'Testing that all the endpoints are alive'
+        for endpoint in response.data.values():
+            print endpoint
+            eresp = self.client.get(endpoint)
+            self.assertEqual(
+                eresp.status_code, 200,
+                'Found %s during %s' % (eresp.status_code, endpoint)
+            )

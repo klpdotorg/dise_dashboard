@@ -14,6 +14,7 @@ def search_choices(t, value):
             return k
     return False
 
+
 def search_choices_by_key(t, key):
     """
     looks for index in a tuple of tuples
@@ -32,7 +33,9 @@ YESNO = (
     (0, 'Not Applicable'),
     (1, 'Yes'),
     (2, 'No'),
-    (3, 'Yes but not functional')
+    (3, 'Yes but not functional'),
+    (4, 'Unknown'),
+    (9, 'Unknown'),
 )
 
 AREA = (
@@ -49,6 +52,7 @@ SCHOOL_CATEGORY = (
     (6, "Primary, with Upper Primary and Secondary(1-10)"),
     (7, "Upper Primary with Secondary(6-10)"),
     (8, "Secondary only(9 & 10)"),
+    (9, "Unknown"),
     (10, "Secondary with Hr. Secondary(9-12) "),
     (11, "Hr. Secondary only/Jr. College(11 & 12)")
 )
@@ -62,6 +66,7 @@ SCHOOL_MANAGEMENT = (
     (6, "Others"),
     (7, "Central Govt."),
     (8, "Unrecognised"),
+    (9, "Unknown"),
     (97, "Madarsa recognized (by Wakf board/Madarsa Board)"),
     (98, "Madarsa unrecognized")
 )
@@ -109,14 +114,16 @@ MDM_STATUS = (
     (0, 'Not applicable'),
     (1, 'Not provided'),
     (2, 'Provided & prepared in school premises'),
-    (3, 'Provided but not prepared in school premises')
+    (3, 'Provided but not prepared in school premises'),
+    (4, 'Unknown'),
+    (9, 'Unknown')
 )
 
 KITCHENSHED_STATUS = (
     (0, 'not applicable'),
     (1, 'available'),
     (2, 'not available'),
-    (3, 'UNder construction'),
+    (3, 'Under construction'),
     (4, 'classroom used as kitchen'),
 )
 
@@ -130,4 +137,17 @@ BOUNDARY_WALL = (
     (6, "Others"),
     (7, "Partial"),
     (8, "Under Construction"),
+    (9, "Unknown"),
+    (10, "Unknown"),
+)
+
+BUILDING_STATUS = (
+    (1, "Private "),
+    (2, "Rented"),
+    (3, "Government"),
+    (4, "Government school in a rent free building"),
+    (5, "No Building"),
+    (6, "Dilapidated"),
+    (7, "Under Construction"),
+    (9, "Unknown"),
 )

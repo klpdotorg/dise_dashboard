@@ -1,7 +1,7 @@
 CREATE OR REPLACE FUNCTION aggregate_pincode() RETURNS void AS
 $BODY$
 DECLARE
-    years integer[] := array[1011, 1112, 1213];
+    years integer[] := array[1011, 1112, 1213, 1314];
     year integer;
     table_name varchar(50);
     basic_table_name varchar(50);
@@ -14,7 +14,9 @@ BEGIN
         EXECUTE 'DROP TABLE IF EXISTS ' || table_name;
 
         EXECUTE 'CREATE TABLE ' || table_name || ' AS
-        SELECT pincode,
+        SELECT COALESCE(new_pincode, pincode) as pincode,
+            getslug(COALESCE(new_pincode, pincode)::text) as slug,
+
             Count(school_code) AS sum_schools,
             Sum(CASE WHEN rural_urban = 1 THEN 1 ELSE 0 END) AS sum_rural_schools,
             Sum(CASE WHEN sch_management IN (1, 7) THEN 1 ELSE 0 END) AS sum_govt_schools,
@@ -151,8 +153,11 @@ BEGIN
             Avg(total_girls) as avg_girls
 
         FROM ' || basic_table_name || '
-        GROUP BY pincode
-        ORDER BY pincode';
+        GROUP BY COALESCE(new_pincode, pincode)
+        ORDER BY COALESCE(new_pincode, pincode)';
+
+        EXECUTE 'ALTER TABLE ' || table_name || '
+            ADD PRIMARY KEY (slug)';
 
         EXECUTE 'ALTER TABLE ' || table_name || '
             ADD COLUMN centroid geometry';

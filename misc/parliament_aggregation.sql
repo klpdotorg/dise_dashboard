@@ -15,6 +15,8 @@ BEGIN
 
         EXECUTE 'CREATE TABLE ' || table_name || ' AS
         SELECT parliament_name,
+            getslug(parliament_name) as slug,
+
             Count(school_code) AS sum_schools,
             Sum(CASE WHEN rural_urban = 1 THEN 1 ELSE 0 END) AS sum_rural_schools,
             Sum(CASE WHEN sch_management IN (1, 7) THEN 1 ELSE 0 END) AS sum_govt_schools,
@@ -154,6 +156,9 @@ BEGIN
         WHERE parliament_name IS NOT NULL
         GROUP BY parliament_name
         ORDER BY parliament_name';
+
+        EXECUTE 'ALTER TABLE ' || table_name || '
+            ADD PRIMARY KEY (slug)';
 
         EXECUTE 'ALTER TABLE ' || table_name || '
             ADD COLUMN centroid geometry';

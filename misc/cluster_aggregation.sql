@@ -15,6 +15,8 @@ BEGIN
 
         EXECUTE 'CREATE TABLE ' || table_name || ' AS
         SELECT cluster_name, block_name, district,
+            getslug(concat(block_name, '' '', cluster_name)) as slug,
+
             Count(school_code) AS sum_schools,
             Sum(CASE WHEN rural_urban = 1 THEN 1 ELSE 0 END) AS sum_rural_schools,
             Sum(CASE WHEN sch_management IN (1, 7) THEN 1 ELSE 0 END) AS sum_govt_schools,
@@ -153,6 +155,9 @@ BEGIN
         FROM ' || basic_table_name || '
         GROUP BY cluster_name, block_name, district
         ORDER BY cluster_name, block_name, district';
+
+        EXECUTE 'ALTER TABLE ' || table_name || '
+            ADD PRIMARY KEY (slug)';
 
         EXECUTE 'ALTER TABLE ' || table_name || '
             ADD COLUMN centroid geometry';

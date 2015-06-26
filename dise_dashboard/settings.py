@@ -101,6 +101,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -135,10 +136,11 @@ INSTALLED_APPS = (
     'django.contrib.admin',
 
     # third party
-    'south',
+    'corsheaders',
     # 'debug_toolbar',
     'bootstrapform',
     'raven.contrib.django.raven_compat',
+    'rest_framework',
 
     # in-project
     'account',
@@ -178,7 +180,11 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
     },
     'loggers': {
         'django.request': {
@@ -186,8 +192,20 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
+        'django.db.backends': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+        },
     }
 }
+
+REST_FRAMEWORK = {
+    'PAGE_SIZE': 100,
+}
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+TEST_RUNNER = 'common.testrunner.NoDbTestRunner'
 
 try:
     from local_settings import *
