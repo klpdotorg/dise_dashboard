@@ -11,7 +11,7 @@ from __future__ import unicode_literals
 from common.models import (
     search_choices, search_choices_by_key, YESNO, AREA, SCHOOL_CATEGORY,
     SCHOOL_MANAGEMENT, SCHOOL_TYPES, MEDIUM, MDM_STATUS, KITCHENSHED_STATUS,
-    BOUNDARY_WALL, BUILDING_STATUS
+    BOUNDARY_WALL, BUILDING_STATUS, DRINKING_WATER
 )
 
 from django.contrib.gis.db import models
@@ -79,7 +79,7 @@ class BasicData(models.Model):
     playground = models.IntegerField(choices=YESNO, null=True, blank=True)
     blackboard = models.IntegerField(null=True, blank=True)
     books_in_library = models.IntegerField(null=True, blank=True)
-    drinking_water = models.IntegerField(choices=YESNO, null=True, blank=True)
+    drinking_water = models.IntegerField(choices=DRINKING_WATER, null=True, blank=True)
     medical_checkup = models.IntegerField(choices=YESNO, null=True, blank=True)
     ramps = models.IntegerField(choices=YESNO, null=True, blank=True)
     no_of_computers = models.IntegerField(null=True, blank=True)

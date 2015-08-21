@@ -47,6 +47,8 @@ class OmniSearchApiView(APIView):
         if not query:
             raise NotFound('URL parameter "query" does not exist.')
 
+        stype = request.query_params.get('type', 'all')
+
         results = []
 
         try:
@@ -60,112 +62,119 @@ class OmniSearchApiView(APIView):
         except AttributeError:
             raise SessionNotFound()
 
-        # search schools
-        schools = SchoolModel.objects.filter(
-            Q(school_name__icontains=query) | Q(school_code__icontains=query)
-        ).order_by('school_name')[:3]
+        if stype in ('school', 'all'):
+            # search schools
+            schools = SchoolModel.objects.filter(
+                Q(school_name__icontains=query) | Q(school_code__icontains=query)
+            ).order_by('school_name')[:3]
 
-        if schools.count() > 0:
-            temp_d = {
-                'text': 'Schools',
-                'children': []
-            }
-            for school in schools:
-                feature = SchoolSerializer(school)
-                temp_d['children'].append({
-                    'type': 'school',
-                    'id': school.school_code,
-                    'text': school.school_name,
-                    # 'centroid': [school.centroid.y, school.centroid.x] if school.centroid is not None else []
-                    'feature': feature.data
-                })
+            if schools.count() > 0:
+                temp_d = {
+                    'text': 'Schools',
+                    'children': []
+                }
+                for school in schools:
+                    feature = SchoolSerializer(school)
+                    temp_d['children'].append({
+                        'type': 'school',
+                        'id': school.school_code,
+                        'text': school.school_name,
+                        # 'centroid': [school.centroid.y, school.centroid.x] if school.centroid is not None else []
+                        'feature': feature.data
+                    })
 
-            results.append(temp_d)
+                results.append(temp_d)
 
-        # search clusters
-        clusters = ClusterModel.objects.filter(cluster_name__icontains=query).order_by('cluster_name')[:3]
-        if clusters.count() > 0:
-            temp_d = {
-                'text': 'Clusters',
-                'children': []
-            }
-            for cluster in clusters:
-                temp_d['children'].append({
-                    'type': 'cluster',
-                    'id': cluster.cluster_name,
-                    'text': cluster.cluster_name,
-                })
-            results.append(temp_d)
+        if stype in ('cluster', 'all'):
+            # search clusters
+            clusters = ClusterModel.objects.filter(cluster_name__icontains=query).order_by('cluster_name')[:3]
+            if clusters.count() > 0:
+                temp_d = {
+                    'text': 'Clusters',
+                    'children': []
+                }
+                for cluster in clusters:
+                    temp_d['children'].append({
+                        'type': 'cluster',
+                        'id': cluster.slug,
+                        'text': cluster.cluster_name,
+                    })
+                results.append(temp_d)
 
-        blocks = BlockModel.objects.filter(block_name__icontains=query).order_by('block_name')[:3]
-        if blocks.count() > 0:
-            temp_d = {
-                'text': 'Blocks',
-                'children': []
-            }
-            for block in blocks:
-                temp_d['children'].append({
-                    'type': 'block',
-                    'id': block.block_name,
-                    'text': block.block_name,
-                })
-            results.append(temp_d)
+        if stype in ('block', 'all'):
+            blocks = BlockModel.objects.filter(block_name__icontains=query).order_by('block_name')[:3]
+            if blocks.count() > 0:
+                temp_d = {
+                    'text': 'Blocks',
+                    'children': []
+                }
+                for block in blocks:
+                    temp_d['children'].append({
+                        'type': 'block',
+                        'id': block.slug,
+                        'text': block.block_name,
+                    })
+                results.append(temp_d)
 
-        districts = DistrictModel.objects.filter(district__icontains=query).order_by('district')[:3]
-        if districts.count() > 0:
-            temp_d = {
-                'text': 'Ed. Dept. Districts',
-                'children': []
-            }
-            for district in districts:
-                temp_d['children'].append({
-                    'type': 'district',
-                    'id': district.district,
-                    'text': district.district,
-                })
-            results.append(temp_d)
+        if stype in ('district', 'all'):
+            districts = DistrictModel.objects.filter(district__icontains=query).order_by('district')[:3]
+            if districts.count() > 0:
+                temp_d = {
+                    'text': 'Ed. Dept. Districts',
+                    'children': []
+                }
+                for district in districts:
+                    temp_d['children'].append({
+                        'type': 'district',
+                        'id': district.slug,
+                        'text': district.district,
+                    })
+                results.append(temp_d)
 
-        pincodes = PincodeModel.objects.filter(pincode__icontains=query).order_by('pincode')[:3]
-        if pincodes.count() > 0:
-            temp_d = {
-                'text': 'Pincodes',
-                'children': []
-            }
-            for pincode in pincodes:
-                temp_d['children'].append({
-                    'type': 'pincode',
-                    'id': pincode.pincode,
-                    'text': str(pincode.pincode),
-                })
-            results.append(temp_d)
+        if stype in ('pincode', 'all'):
+            pincodes = PincodeModel.objects.filter(pincode__icontains=query).order_by('pincode')[:3]
+            if pincodes.count() > 0:
+                temp_d = {
+                    'text': 'Pincodes',
+                    'children': []
+                }
+                for pincode in pincodes:
+                    temp_d['children'].append({
+                        'type': 'pincode',
+                        'id': pincode.pincode,
+                        'text': str(pincode.pincode),
+                    })
+                results.append(temp_d)
 
-        assemblies = AssemblyModel.objects.filter(assembly_name__icontains=query).order_by('assembly_name')[:3]
-        if assemblies.count() > 0:
-            temp_d = {
-                'text': 'Assembly Constituencies',
-                'children': []
-            }
-            for assembly in assemblies:
-                temp_d['children'].append({
-                    'type': 'assembly',
-                    'id': assembly.assembly_name,
-                    'text': str(assembly.assembly_name),
-                })
-            results.append(temp_d)
+        if stype in ('assembly', 'all'):
+            assemblies = AssemblyModel.objects.filter(assembly_name__icontains=query).order_by('assembly_name')[:3]
+            if assemblies.count() > 0:
+                temp_d = {
+                    'text': 'Assembly Constituencies',
+                    'children': []
+                }
+                for assembly in assemblies:
+                    temp_d['children'].append({
+                        'type': 'assembly',
+                        'id': assembly.slug,
+                        'text': str(assembly.assembly_name),
+                    })
+                results.append(temp_d)
 
-        parliaments = ParliamentModel.objects.filter(parliament_name__icontains=query).order_by('parliament_name')[:3]
-        if parliaments.count() > 0:
-            temp_d = {
-                'text': 'Parliamentary Constituencies',
-                'children': []
-            }
-            for parliament in parliaments:
-                temp_d['children'].append({
-                    'type': 'parliament',
-                    'id': parliament.parliament_name,
-                    'text': str(parliament.parliament_name),
-                })
-            results.append(temp_d)
+        if stype in ('parliament', 'all'):
+            parliaments = ParliamentModel.objects.filter(parliament_name__icontains=query).order_by('parliament_name')[:3]
+            if parliaments.count() > 0:
+                temp_d = {
+                    'text': 'Parliamentary Constituencies',
+                    'children': []
+                }
+                for parliament in parliaments:
+                    temp_d['children'].append({
+                        'type': 'parliament',
+                        'id': parliament.slug,
+                        'text': str(parliament.parliament_name),
+                    })
+                results.append(temp_d)
 
         return Response(results)
 
