@@ -15,9 +15,6 @@ framework.
 """
 import os
 import sys
-import time
-import traceback
-import signal
 import newrelic.agent
 
 PROJECT_ROOT = os.path.realpath(os.path.dirname(os.path.dirname(__file__)))
@@ -36,14 +33,11 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dise_dashboard.settings")
 # file. This includes Django's development server, if the WSGI_APPLICATION
 # setting points here.
 from django.core.wsgi import get_wsgi_application
+application = get_wsgi_application()
 
-try:
-    application = get_wsgi_application()
-    print 'WSGI without exception'
-except Exception:
-    print 'handling WSGI exception'
-    # Error loading applications
-    if 'mod_wsgi' in sys.modules:
-        traceback.print_exc()
-        os.kill(os.getpid(), signal.SIGINT)
-        time.sleep(2)
+# Apply WSGI middleware here.
+# from helloworld.wsgi import HelloWorldApplication
+# application = HelloWorldApplication(application)
+
+# import dise_dashboard.monitor
+# dise_dashboard.monitor.start(interval=1.0)
