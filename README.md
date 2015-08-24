@@ -1,4 +1,4 @@
-DISE Dashboard
+[DISE Dashboard](http://dise.klp.org.in)
 ===============
 
 Dashboard for Dise data to allow interactive dise data gathering

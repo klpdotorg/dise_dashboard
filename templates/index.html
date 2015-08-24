@@ -5,7 +5,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'lib/jquery-ui.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'lib/select2.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'lib/orange.css' %}">
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.1/leaflet.css" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/bounce.css' %}">
 {% endblock %}
 
@@ -185,7 +185,10 @@
             <input type="radio" name="academic_year" value="11-12"> 2011-2012
           </label>
           <label class="btn btn-primary">
-            <input type="radio" name="academic_year" value="12-13" checked="checked"> 2012-2013
+            <input type="radio" name="academic_year" value="12-13"> 2012-2013
+          </label>
+          <label class="btn btn-primary">
+            <input type="radio" name="academic_year" value="13-14" checked="checked"> 2013-2014
           </label>
         </div>
       </div>
@@ -233,14 +236,14 @@
   </div> -->
 
   <div class="no-of-matches" id="no-of-matches" data-bind="visible: show_search_count">
-    <span data-bind="text: n_results"></span> <span data-bind="text: search_entity"></span>s found <small>(<span data-bind="text: n_results_map"></span> on map)</small>
+    <span data-bind="text: n_results    "></span> <span data-bind="text: search_entity"></span>s found <small>(<span data-bind="text: n_results_map"></span> on map)</small>
   </div>
 
   <div id="schools">
     <ul class="popup" id="popup-result-list" data-bind="foreach: results, visible: showPopupResultList">
       <li data-bind="click: $parent.highlightEntity">
         <span class="glyphicon glyphicon-map-marker"></span>
-        <span data-bind="text: properties.popupContent"></span>
+        <span data-bind="text: properties.popup_content"></span>
         <small data-bind="text: properties.district"></small>
       </li>
     </ul>
@@ -286,7 +289,7 @@
           </div>
         </div>
         <div class="col-md-4 col-md-push-2">
-          <h5>PTR Ratio</h5>
+          <h5 title="Pupil-Teacher Ratio">PTR Ratio</h5>
           <div class="circle_stat" data-bind="text: properties.ptr, attr: {class: properties.ptr_color}">
 
           </div>
@@ -330,12 +333,12 @@
       <div class="row">
         <div class="col-md-6 right-shift">
           <h5 class="question">Medium of Instruction</h5>
-          <p class="answer medium_of_instruction" data-bind="text: properties.medium_of_instruction_display"></p>
+          <p class="answer medium_of_instruction" data-bind="text: properties.medium_of_instruction"></p>
         </div>
 
         <div class="col-md-6">
           <h5 class="question">Category</h5>
-          <p class="answer sch_category" data-bind="text: properties.sch_category_display"></p>
+          <p class="answer sch_category" data-bind="text: properties.sch_category"></p>
         </div>
       </div>
 
@@ -344,12 +347,12 @@
       <div class="row">
         <div class="col-md-6 right-shift">
           <h5 class="question">Management</h5>
-          <p class="answer sch_management" data-bind="text: properties.sch_management_display"></p>
+          <p class="answer sch_management" data-bind="text: properties.sch_management"></p>
         </div>
 
         <div class="col-md-6">
           <h5 class="question">Electricity</h5>
-          <p class="answer electricity" data-bind="text: properties.electricity_display"></p>
+          <p class="answer electricity" data-bind="text: properties.electricity"></p>
         </div>
       </div>
 
@@ -358,7 +361,7 @@
       <div class="row">
         <div class="col-md-6 right-shift">
           <h5 class="question">Library</h5>
-          <p class="answer library" data-bind="text: properties.library"></p>
+          <p class="answer library" data-bind="text: properties.library_yn"></p>
         </div>
       </div>
 
@@ -499,8 +502,8 @@
 
       <br>
 
-      <div class="yearly_report">
-        <h3>Yearly Report for 2012-13 <span data-bind="html: properties.actual_name"></span></h3>
+      <div class="yearly_report" data-bind="visible: $parent.showReportUrls">
+        <h3>Yearly reports for <span data-bind="text: properties.academic_year"></span> for <span data-bind="html: properties.actual_name"></span> - </h3>
          <a data-bind="attr: { href: properties.report_url_demo }" target="_blank" >
             <span class="glyphicon glyphicon-file"></span>
             Demographic
@@ -524,7 +527,7 @@
 {% endblock %}
 
 {% block endbody %}
-  <script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.1/leaflet.js"></script>
   <script type="text/javascript" src="{% static 'lib/select2.js' %}"></script>
   <script type="text/javascript" src="{% static 'lib/icheck.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'lib/knockout-3.0.0.js' %}"></script>

@@ -19,6 +19,8 @@
 
   <p>KLP believes that the data DISE collects is an under-utilised resource and built this application to allow users to better explore this data set through multiple lenses.</p>
 
+  <p>Please read <a target="_blank" href="http://blog.klp.org.in/2014/04/in-beta-exploring-dise-data.html">our blog post</a> introducing this DISE exploration tool.</p>
+
 
   <h2>What The Data Sources Are</h2>
   <p>There are multiple data sources that have gone in to making this application:</p>
@@ -33,11 +35,27 @@
   <p>We have:</p>
   <ol>
     <li>Cleaned up the DISE data to the extent possible - in particular, filtered out schools that may not be primary schools.</li>
-    <li>We have done considerable geo-processing such that we have been able to find latitude and longitude points for many of the schools in the DISE database. Currently, we have points for X of Y schools. (Sajjad) Please note that these points may not be accurate for purposes of navigation but are accurate for purposes of representation.</li>
-    <li>We have then worked out what other boundaries - such as MP/MLA and Pin Codes each school corresponds to such that they can each be used as views for the DISE data.</li>
-    <li>We have created a set of pre-determined filters that users can use to view the data.</li>
+    <li>We have done considerable geo-processing such that we have been able to find latitude and longitude points for many of the schools in the DISE database. Please note that these points may not be accurate for purposes of navigation but are accurate for purposes of representation.</li>
+    <li>We have then worked out what other boundaries - such as elected representatives and PIN Codes each school corresponds to such that they can each be used as views for the DISE data. When processing the geo-data for the schools we had to make several assumptions and inferences to allow for aggregation said boundaries.</li>
+    <ol type="a">
+      <li>
+        For schools that we had an accurate GPS coordinate, we inferred the assembly and parliamentary constituencies through spatial queries. 51,391 for 2010-11, 50,890 for 2011-12, 50,527 for 2012-13.
+      </li>
+      <li>
+        For schools for which we did not have an accurate GPS coordinate, we looked at the PIN code mentioned, parsed that through shape files for that PIN code and then deduced a best fit to a constituency it fell within. 6447 for 2010-11, 7160 for 2011-12, 9970 for 2012-13.
+      </li>
+      <li>
+        For schools for which we did not have a valid PIN code, we first looked at the village and cluster it was attached to and then created an array of schools attached to the same village and cluster and inferred a best fit to a PIN code then deduced a best fit to a constituency it fell within. For schools for which we could not find a match at the village and cluster level, we expanded the search and match method to the cluster and block pair. 280 for 2010-11, 812 for 2011-12, 420 for 2012-13. <br>
+Post this, we were left with 30 for 2010-11, 46 for 2011-12 and 20 for 2012-13 schools that we could not fit. We have chosen to ignore those given that they are less than 1% of the total schools.
+      </li>
+      <li>
+        You can inspect and re-use and improve the scripts used for this.
+      </li>
+    </ol>
+    <li>
+      We have created a set of pre-determined filters that users can use to view the data.
+    </li>
   </ol>
-
 
   <div class="row">
     <div class="col-md-4">
