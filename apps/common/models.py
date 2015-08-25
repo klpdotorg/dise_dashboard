@@ -151,3 +151,11 @@ BUILDING_STATUS = (
     (7, "Under Construction"),
     (9, "Unknown"),
 )
+
+DRINKING_WATER = (
+    (1, 'Hand pumps'),
+    (2, 'Well'),
+    (3, 'Tap water'),
+    (4, 'others'),
+    (5, 'none')
+)
