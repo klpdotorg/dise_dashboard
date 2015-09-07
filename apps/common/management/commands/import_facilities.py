@@ -1,18 +1,16 @@
 import os
-import xlrd
+import csv
 from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
-from common.models import Cluster, Block, EducationDistrict, Village, State
 from django.conf import settings
 
-from common.models import Cluster, Block, Village, State, EducationDistrict
-from schools.models import *
+from schools.olap_models import get_models
 
 
 class Command(BaseCommand):
     args = '<filename filename ...>'
-    help = 'Imports General data files'
+    help = 'Imports Facility data files'
     option_list = BaseCommand.option_list + (
         make_option('--year',
             dest="year",
@@ -20,193 +18,72 @@ class Command(BaseCommand):
         ),
     )
 
-    INDEXES = {
-        'School_Code': 0,
-        'Building_Status': 1,
-        'Tot_Clrooms': 2,
-        'Classrooms_in_Good_Condition': 3,
-        'Classrooms_require_major_repair': 4,
-        'Classrooms_require_minor_repair': 5,
-        'Other_rooms_in_Good_Cond': 6,
-        'Other_rooms_need_major_rep': 7,
-        'Other_rooms_need_minor_rep': 8,
-        'Toilet_Common': 9,
-        'Toilet_Boys': 10,
-        'Toilet_Girls': 11,
-        'Kitchen_Devices_Grant': 12,
-        'Status_of_MDM': 13,
-        'Computer_Aided_Learnin_Lab': 14,
-        'Separate_Room_for_HeadMaster': 15,
-        'Electricity': 16,
-        'Boundary_Wall': 17,
-        'Library_YN': 18,
-        'PlayGround': 19,
-        'Blackboard': 20,
-        'Books_in_library': 21,
-        'Drinking_Water': 22,
-        'Medical_Checkup': 23,
-        'Ramps': 24,
-        'No_of_Computers': 25,
-        'Male_Tch': 26,
-        'Female_Tch': 27,
-        'NoResp_Tch': 28,
-        'Head_Teacher': 29,
-        'Graduate_Teachers': 30,
-        'Tch_with_professional_Qualification': 31,
-        'Days_involved_in_non_tch_assgn': 32,
-        'Teachers_involved_in_non_tch_assgn': 33
-    }
+    def process_row(self, row, basic_data_model):
+        # SCHCD,BLDSTATUS,CLROOMS,CLGOOD,CLMAJOR,CLMINOR,TOILETB,TOILET_G,
+        # MEALSINSCH,CAL_YN,HMROOM_YN,ELECTRIC_YN,BNDRYWALL,LIBRARY_YN,
+        # PGROUND_YN,BOOKINLIB,WATER,MEDCHK_YN,RAMPS_YN,COMPUTER
 
-    def process_row(self, row, year):
-        try:
-            school = School.objects.get(code=int(row[self.INDEXES['School_Code']]))
-        except Exception as e:
-            school = School(
-                code=int(row[self.INDEXES['School_Code']]),
-                name="School@%s" % int(row[self.INDEXES['School_Code']])
-            )
-            school.save()
-            print "created", str(school)
+        DiseBasicData = basic_data_model
 
-        yearly_data, created = YearlyData.objects.get_or_create(
-            school=school,
-            academic_year=year
-        )
+        school = {}
 
-        try:
-            building_status = SchoolBuildingStatus.objects.get(id=int(row[self.INDEXES['Building_Status']]))
-        except:
-            print 'Unknown SchoolBuildingStatus found', school.code, row[self.INDEXES['Building_Status']]
-            building_status = SchoolBuildingStatus(
-                id=int(row[self.INDEXES['Building_Status']]),
-                name="Unknown"
-            )
-            building_status.save()
-        yearly_data.building_status = building_status
+        if row.get('BLDSTATUS'):
+            school['building_status'] = row.get('BLDSTATUS')
+        if row.get('CLROOMS'):
+            school['tot_clrooms'] = row.get('CLROOMS')
+        if row.get('CLGOOD'):
+            school['classrooms_in_good_condition'] = row.get('CLGOOD')
+        if row.get('CLMAJOR'):
+            school['classrooms_require_major_repair'] = row.get('CLMAJOR')
+        if row.get('CLMINOR'):
+            school['classrooms_require_minor_repair'] = row.get('CLMINOR')
+        if row.get('TOILETB'):
+            school['toilet_boys'] = row.get('TOILETB')
+        if row.get('TOILET_G'):
+            school['toilet_girls'] = row.get('TOILET_G')
+        if row.get('MEALSINSCH'):
+            school['status_of_mdm'] = row.get('MEALSINSCH')
+        if row.get('CAL_YN'):
+            school['computer_aided_learnin_lab'] = row.get('CAL_YN')
+        if row.get('HMROOM_YN'):
+            school['separate_room_for_headmaster'] = row.get('HMROOM_YN')
+        if row.get('ELECTRIC_YN'):
+            school['electricity'] = row.get('ELECTRIC_YN')
+        if row.get('BNDRYWALL'):
+            school['boundary_wall'] = row.get('BNDRYWALL')
+        if row.get('LIBRARY_YN'):
+            school['library_yn'] = row.get('LIBRARY_YN')
+        if row.get('PGROUND_YN'):
+            school['playground'] = row.get('PGROUND_YN')
+        if row.get('BOOKINLIB'):
+            school['books_in_library'] = row.get('BOOKINLIB')
+        if row.get('WATER'):
+            school['drinking_water'] = row.get('WATER')
+        if row.get('MEDCHK_YN'):
+            school['medical_checkup'] = row.get('MEDCHK_YN')
+        if row.get('RAMPS_YN'):
+            school['ramps'] = row.get('RAMPS_YN')
+        if row.get('COMPUTER'):
+            school['no_of_computers'] = row.get('COMPUTER')
 
-        try:
-            drinking_water_source = DrinkingWaterSource.objects.get(id=int(row[self.INDEXES['Drinking_Water']]))
-        except:
-            print 'Unknown DrinkingWaterSource found', school.code, row[self.INDEXES['Drinking_Water']]
-            drinking_water_source = DrinkingWaterSource.objects.create(
-                id=int(row[self.INDEXES['Drinking_Water']]),
-                name="Unknown"
-            )
-        yearly_data.drinking_water_source = drinking_water_source
-
-        try:
-            boundary_wall_type = BoundaryWallType.objects.get(id=int(row[self.INDEXES['Boundary_Wall']]))
-        except:
-            print 'Unknown BoundaryWallType found', school.code, row[self.INDEXES['Boundary_Wall']]
-            boundary_wall_type = BoundaryWallType.objects.create(
-                id=int(row[self.INDEXES['Boundary_Wall']]),
-                name="Unknown"
-            )
-        yearly_data.boundary_wall_type = boundary_wall_type
-
-        yearly_data.room_count = int(row[self.INDEXES['Tot_Clrooms']])
-        yearly_data.room_for_headmaster = int(row[self.INDEXES['Separate_Room_for_HeadMaster']])
-        yearly_data.electricity_status = int(row[self.INDEXES['Electricity']])
-        yearly_data.library_available = int(row[self.INDEXES['Library_YN']])
-        yearly_data.library_book_count = int(row[self.INDEXES['Books_in_library']])
-        yearly_data.playground_available = int(row[self.INDEXES['PlayGround']])
-        yearly_data.computer_count = int(row[self.INDEXES['No_of_Computers']])
-        yearly_data.blackboard_count = int(row[self.INDEXES['Blackboard']])
-        yearly_data.cal_lab_available = int(row[self.INDEXES['Computer_Aided_Learnin_Lab']])
-        yearly_data.medical_checkup = int(row[self.INDEXES['Medical_Checkup']])
-        yearly_data.ramp_available = int(row[self.INDEXES['Ramps']])
-        yearly_data.save()
-
-        clroom_good = Room.objects.filter(
-            yearly_data=yearly_data,
-            type='class',
-            condition='good',
-        ).update(
-            count=int(row[self.INDEXES['Classrooms_in_Good_Condition']])
-        )
-
-        clroom_major = Room.objects.filter(
-            yearly_data=yearly_data,
-            type='class',
-            condition='major',
-        ).update(
-            count=int(row[self.INDEXES['Classrooms_require_major_repair']])
-        )
-
-        clroom_minor = Room.objects.filter(
-            yearly_data=yearly_data,
-            type='class',
-            condition='minor',
-        ).update(
-            count=int(row[self.INDEXES['Classrooms_require_minor_repair']])
-        )
-
-        other_room_good = Room.objects.filter(
-            yearly_data=yearly_data,
-            type='other',
-            condition='good',
-        ).update(
-            count = int(row[self.INDEXES['Other_rooms_in_Good_Cond']])
-        )
-
-        other_room_major = Room.objects.filter(
-            yearly_data=yearly_data,
-            type='other',
-            condition='major',
-        ).update(
-            count = int(row[self.INDEXES['Other_rooms_need_major_rep']])
-        )
-
-        other_room_minor = Room.objects.filter(
-            yearly_data=yearly_data,
-            type='other',
-            condition='minor',
-        ).update(
-            count = int(row[self.INDEXES['Other_rooms_need_minor_rep']])
-        )
-
-        toilet_common = Toilet.objects.filter(
-            yearly_data=yearly_data,
-            type='common',
-        ).update(
-            count = int(row[self.INDEXES['Toilet_Common']])
-        )
-
-        toilet_boys = Toilet.objects.filter(
-            yearly_data=yearly_data,
-            type='boy',
-        ).update(
-            count = int(row[self.INDEXES['Toilet_Boys']])
-        )
-
-        toilet_girls = Toilet.objects.filter(
-            yearly_data=yearly_data,
-            type='girl',
-        ).update(
-            count = int(row[self.INDEXES['Toilet_Girls']])
-        )
+        DiseBasicData.objects.filter(school_code=row.get('SCHCD')).update(**school)
 
     def handle(self, *args, **options):
-        year = None
-
         if 'year' in options:
             from_year, to_year = options.get('year').split('-')
-            year = AcademicYear.objects.get(from_year=from_year, to_year=to_year)
 
-        for basic_data in args:
-            full_path = os.path.join(settings.DATADUMP_ROOT, basic_data)
-            try:
-                fp = xlrd.open_workbook(full_path)
-                for sheet in fp.sheets():
-                    for idx in range(1, sheet.nrows):
-                        row = sheet.row_values(idx)
-                        if not row[self.INDEXES['School_Code']]:
-                            continue
-                        self.process_row(row, year)
-                        # import pdb; pdb.set_trace();
+        for facility_data in args:
+            full_path = os.path.join(settings.PROJECT_ROOT, facility_data)
 
-                        if idx % 100 == 0:
-                            print "%s/%s: %s%% done." % (idx, sheet.nrows, (idx/float(sheet.nrows))*100)
+            with open(full_path, 'r') as csvfile:
+                reader = csv.DictReader(csvfile)
+                count = 0
 
-            except Exception as e:
-                print str(e)
+                print 'processing schools'
+                DiseBasicData = get_models(session='%s-%s' % (from_year[-2:], to_year[-2:]), what='school')
+
+                for row in reader:
+                    self.process_row(row, DiseBasicData)
+                    count += 1
+                    if count % 100 == 0:
+                        print count,

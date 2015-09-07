@@ -18,77 +18,72 @@ class Command(BaseCommand):
         ),
     )
 
-    def process_row(self, row, dise_model):
-        DiseBasicData = dise_model
+    def process_row(self, row, basic_data_model):
+        DiseBasicData = basic_data_model
 
         # SCHCD,RURURB,MEDINSTR1,DISTHQ,DISTCRC,ESTDYEAR,PPSEC_YN,SCHRES_YN,SCHMGT,LOWCLASS,HIGHCLASS,SCHCAT,
         # PPSTUDENT,SCHTYPE,SCHSHI_YN,WORKDAYS,NOINSPECT,RESITYPE,PPTEACHER,VISITSBRC,VISITSCRC,
         # CONTI_R,CONTI_E,TLM_R,TLM_E,FUNDS_R,FUNDS_E
 
-        try:
-            school = {}
+        school = {}
 
-            if row.get('RURURB'):
-                school['rural_urban'] = row.get('RURURB')
-            if row.get('MEDINSTR1'):
-                school['medium_of_instruction'] = row.get('MEDINSTR1')
+        if row.get('RURURB'):
+            school['rural_urban'] = row.get('RURURB')
+        if row.get('MEDINSTR1'):
+            school['medium_of_instruction'] = row.get('MEDINSTR1')
 
-            if row.get('DISTHQ'):
-                school['distance_brc'] = row.get('DISTHQ')
-            if row.get('DISTCRC'):
-                school['distance_crc'] = row.get('DISTCRC')
+        if row.get('DISTHQ'):
+            school['distance_brc'] = row.get('DISTHQ')
+        if row.get('DISTCRC'):
+            school['distance_crc'] = row.get('DISTCRC')
 
-            if row.get('ESTDYEAR'):
-                school['yeur_estd'] = row.get('ESTDYEAR')
-            if row.get('PPSEC_YN'):
-                school['pre_pry_yn'] = row.get('PPSEC_YN')
-            if row.get('SCHRES_YN'):
-                school['residential_sch_yn'] = row.get('SCHRES_YN')
-            if row.get('SCHMGT'):
-                school['sch_management'] = row.get('SCHMGT')
-            if row.get('LOWCLASS'):
-                school['lowest_class'] = row.get('LOWCLASS')
-            if row.get('HIGHCLASS'):
-                school['highest_class'] = row.get('HIGHCLASS')
-            if row.get('SCHCAT'):
-                school['sch_category'] = row.get('SCHCAT')
-            if row.get('PPSTUDENT'):
-                school['pre_pry_students'] = row.get('PPSTUDENT')
-            if row.get('SCHTYPE'):
-                school['school_type'] = row.get('SCHTYPE')
-            if row.get('SCHSHI_YN'):
-                school['shift_school_yn'] = row.get('SCHSHI_YN')
-            if row.get('WORKDAYS'):
-                school['no_of_working_days'] = row.get('WORKDAYS')
-            if row.get('NOINSPECT'):
-                school['no_of_acad_inspection'] = row.get('NOINSPECT')
-            if row.get('RESITYPE'):
-                school['residential_sch_type'] = row.get('RESITYPE')
-            if row.get('PPTEACHER'):
-                school['pre_pry_teachers'] = row.get('PPTEACHER')
-            if row.get('VISITSBRC'):
-                school['visits_by_brc'] = row.get('VISITSBRC')
-            if row.get('VISITSCRC'):
-                school['visits_by_crc'] = row.get('VISITSCRC')
+        if row.get('ESTDYEAR'):
+            school['yeur_estd'] = row.get('ESTDYEAR')
+        if row.get('PPSEC_YN'):
+            school['pre_pry_yn'] = row.get('PPSEC_YN')
+        if row.get('SCHRES_YN'):
+            school['residential_sch_yn'] = row.get('SCHRES_YN')
+        if row.get('SCHMGT'):
+            school['sch_management'] = row.get('SCHMGT')
+        if row.get('LOWCLASS'):
+            school['lowest_class'] = row.get('LOWCLASS')
+        if row.get('HIGHCLASS'):
+            school['highest_class'] = row.get('HIGHCLASS')
+        if row.get('SCHCAT'):
+            school['sch_category'] = row.get('SCHCAT')
+        if row.get('PPSTUDENT'):
+            school['pre_pry_students'] = row.get('PPSTUDENT')
+        if row.get('SCHTYPE'):
+            school['school_type'] = row.get('SCHTYPE')
+        if row.get('SCHSHI_YN'):
+            school['shift_school_yn'] = row.get('SCHSHI_YN')
+        if row.get('WORKDAYS'):
+            school['no_of_working_days'] = row.get('WORKDAYS')
+        if row.get('NOINSPECT'):
+            school['no_of_acad_inspection'] = row.get('NOINSPECT')
+        if row.get('RESITYPE'):
+            school['residential_sch_type'] = row.get('RESITYPE')
+        if row.get('PPTEACHER'):
+            school['pre_pry_teachers'] = row.get('PPTEACHER')
+        if row.get('VISITSBRC'):
+            school['visits_by_brc'] = row.get('VISITSBRC')
+        if row.get('VISITSCRC'):
+            school['visits_by_crc'] = row.get('VISITSCRC')
 
-            if row.get('CONTI_R'):
-                school['school_dev_grant_recd'] = row.get('CONTI_R')
-            if row.get('CONTI_E'):
-                school['school_dev_grant_expnd'] = row.get('CONTI_E')
-            if row.get('TLM_R'):
-                school['tlm_grant_recd'] = row.get('TLM_R')
-            if row.get('TLM_E'):
-                school['tlm_grant_expnd'] = row.get('TLM_E')
-            if row.get('FUNDS_R'):
-                school['funds_from_students_recd'] = row.get('FUNDS_R')
-            if row.get('FUNDS_E'):
-                school['funds_from_students_expnd'] = row.get('FUNDS_E')
+        if row.get('CONTI_R'):
+            school['school_dev_grant_recd'] = row.get('CONTI_R')
+        if row.get('CONTI_E'):
+            school['school_dev_grant_expnd'] = row.get('CONTI_E')
+        if row.get('TLM_R'):
+            school['tlm_grant_recd'] = row.get('TLM_R')
+        if row.get('TLM_E'):
+            school['tlm_grant_expnd'] = row.get('TLM_E')
+        if row.get('FUNDS_R'):
+            school['funds_from_students_recd'] = row.get('FUNDS_R')
+        if row.get('FUNDS_E'):
+            school['funds_from_students_expnd'] = row.get('FUNDS_E')
 
-            DiseBasicData.objects.filter(school_code=row.get('SCHCD')).update(**school)
-        except Exception, e:
-            print 'School code %s NOT FOUND' % row.get('SCHCD')
-            raise e
-
+        DiseBasicData.objects.filter(school_code=row.get('SCHCD')).update(**school)
 
     def handle(self, *args, **options):
         if 'year' in options:
