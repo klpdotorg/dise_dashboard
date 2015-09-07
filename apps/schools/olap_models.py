@@ -11,7 +11,7 @@ from __future__ import unicode_literals
 from common.models import (
     search_choices, search_choices_by_key, YESNO, AREA, SCHOOL_CATEGORY,
     SCHOOL_MANAGEMENT, SCHOOL_TYPES, MEDIUM, MDM_STATUS, KITCHENSHED_STATUS,
-    BOUNDARY_WALL, BUILDING_STATUS
+    BOUNDARY_WALL, BUILDING_STATUS, DRINKING_WATER
 )
 
 from django.contrib.gis.db import models
@@ -79,7 +79,7 @@ class BasicData(models.Model):
     playground = models.IntegerField(choices=YESNO, null=True, blank=True)
     blackboard = models.IntegerField(null=True, blank=True)
     books_in_library = models.IntegerField(null=True, blank=True)
-    drinking_water = models.IntegerField(choices=YESNO, null=True, blank=True)
+    drinking_water = models.IntegerField(choices=DRINKING_WATER, null=True, blank=True)
     medical_checkup = models.IntegerField(choices=YESNO, null=True, blank=True)
     ramps = models.IntegerField(choices=YESNO, null=True, blank=True)
     no_of_computers = models.IntegerField(null=True, blank=True)
@@ -327,6 +327,11 @@ class Dise1314AssemblyAggregations(AssemblyAggregations):
         db_table = 'dise_1314_assembly_aggregations'
 
 
+class Dise1415AssemblyAggregations(AssemblyAggregations):
+    class Meta:
+        db_table = 'dise_1415_assembly_aggregations'
+
+
 class Dise1011BlockAggregations(BlockAggregations):
     class Meta:
         db_table = 'dise_1011_block_aggregations'
@@ -345,6 +350,11 @@ class Dise1213BlockAggregations(BlockAggregations):
 class Dise1314BlockAggregations(BlockAggregations):
     class Meta:
         db_table = 'dise_1314_block_aggregations'
+
+
+class Dise1415BlockAggregations(BlockAggregations):
+    class Meta:
+        db_table = 'dise_1415_block_aggregations'
 
 
 class Dise1011ClusterAggregations(ClusterAggregations):
@@ -367,6 +377,11 @@ class Dise1314ClusterAggregations(ClusterAggregations):
         db_table = 'dise_1314_cluster_aggregations'
 
 
+class Dise1415ClusterAggregations(ClusterAggregations):
+    class Meta:
+        db_table = 'dise_1415_cluster_aggregations'
+
+
 class Dise1011ParliamentAggregations(ParliamentAggregations):
     class Meta:
         db_table = 'dise_1011_parliament_aggregations'
@@ -385,6 +400,11 @@ class Dise1213ParliamentAggregations(ParliamentAggregations):
 class Dise1314ParliamentAggregations(ParliamentAggregations):
     class Meta:
         db_table = 'dise_1314_parliament_aggregations'
+
+
+class Dise1415ParliamentAggregations(ParliamentAggregations):
+    class Meta:
+        db_table = 'dise_1415_parliament_aggregations'
 
 
 class Dise1011DistrictAggregations(DistrictAggregations):
@@ -407,6 +427,11 @@ class Dise1314DistrictAggregations(DistrictAggregations):
         db_table = 'dise_1314_district_aggregations'
 
 
+class Dise1415DistrictAggregations(DistrictAggregations):
+    class Meta:
+        db_table = 'dise_1415_district_aggregations'
+
+
 class Dise1011PincodeAggregations(PincodeAggregations):
     class Meta:
         db_table = 'dise_1011_pincode_aggregations'
@@ -427,6 +452,11 @@ class Dise1314PincodeAggregations(PincodeAggregations):
         db_table = 'dise_1314_pincode_aggregations'
 
 
+class Dise1415PincodeAggregations(PincodeAggregations):
+    class Meta:
+        db_table = 'dise_1415_pincode_aggregations'
+
+
 class Dise1011BasicData(BasicData):
     class Meta:
         db_table = 'dise_1011_basic_data'
@@ -445,6 +475,11 @@ class Dise1213BasicData(BasicData):
 class Dise1314BasicData(BasicData):
     class Meta:
         db_table = 'dise_1314_basic_data'
+
+
+class Dise1415BasicData(BasicData):
+    class Meta:
+        db_table = 'dise_1415_basic_data'
 
 
 def get_models(session='10-11', what='all'):

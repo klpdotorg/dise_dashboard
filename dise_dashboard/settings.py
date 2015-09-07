@@ -141,6 +141,7 @@ INSTALLED_APPS = (
     'bootstrapform',
     'raven.contrib.django.raven_compat',
     'rest_framework',
+    'explorer',
 
     # in-project
     'account',
