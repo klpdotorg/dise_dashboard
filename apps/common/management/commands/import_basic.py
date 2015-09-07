@@ -68,5 +68,5 @@ class Command(BaseCommand):
                         print count,
 
                 print 'creating schools'
-                DiseBasicData = get_models(session='14-15', what='school')
+                DiseBasicData = get_models(session='%s-%s' % (from_year[-2:], to_year[-2:]), what='school')
                 DiseBasicData.objects.bulk_create(self.rows_to_create)
