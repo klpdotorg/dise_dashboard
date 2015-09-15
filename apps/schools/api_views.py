@@ -21,7 +21,7 @@ serializers = {
     'parliament': ParliamentSerializer,
     'pincode': PincodeSerializer,
 }
-from .olap_models import get_models
+from .models import get_models
 from common import filters
 from common import models as common_utils
 

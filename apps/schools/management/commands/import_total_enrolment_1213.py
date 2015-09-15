@@ -3,7 +3,7 @@ import csv
 import xlrd
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
-from schools.olap_models import get_models
+from schools.models import get_models
 
 class Command(BaseCommand):
     """

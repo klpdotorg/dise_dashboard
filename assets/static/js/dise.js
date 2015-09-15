@@ -357,7 +357,7 @@ $(function(){
 
     // Initialize the API wrapper
     var DISE = $.DiseAPI({
-        'base_url': window.location.protocol + '//' + window.location.host + '/api/drf'
+        'base_url': window.location.protocol + '//' + window.location.host + '/api'
     });
 
     /**
@@ -418,7 +418,7 @@ $(function(){
         allowClear: true,
         minimumInputLength: 3,
         ajax: {
-            url: "/api/drf/" + window.default_session + "/search/",
+            url: "/api/" + window.default_session + "/search/",
             quietMillis: 300,
             data: function (term, page) {
                 var values = {};

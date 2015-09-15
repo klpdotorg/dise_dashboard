@@ -1,231 +1,518 @@
-# from django.db import models
-# from django.contrib.gis.db import models as geo_models
+# This is an auto-generated Django model module.
+# You'll have to do the following manually to clean this up:
+#     * Rearrange models' order
+#     * Make sure each model has one field with primary_key=True
+# Feel free to rename the models, but don't rename db_table values or field names.
+#
+# Also note: You'll have to insert the output of 'django-admin.py sqlcustom [appname]'
+# into your database.
+from __future__ import unicode_literals
+
+from common.models import (
+    search_choices, search_choices_by_key, YESNO, AREA, SCHOOL_CATEGORY,
+    SCHOOL_MANAGEMENT, SCHOOL_TYPES, MEDIUM, MDM_STATUS, KITCHENSHED_STATUS,
+    BOUNDARY_WALL, BUILDING_STATUS, DRINKING_WATER
+)
+
+from django.contrib.gis.db import models
+from django.db import cached_property
+from jsonfield import JSONField
+import collections
 
 
-# class AcademicYear(models.Model):
-#     from_year = models.SmallIntegerField()
-#     to_year = models.SmallIntegerField()
+class BasicData(models.Model):
+    school_code = models.BigIntegerField(primary_key=True)
+    centroid = models.GeometryField(blank=True, null=True)
+    district = models.CharField(max_length=50, blank=True)
+    school_name = models.CharField(max_length=200, blank=True)
+    block_name = models.CharField(max_length=50, blank=True)
+    cluster_name = models.CharField(max_length=50, blank=True)
+    village_name = models.CharField(max_length=50, blank=True)
+    assembly_name = models.CharField(max_length=35, blank=True)
+    parliament_name = models.CharField(max_length=35, blank=True)
+    pincode = models.IntegerField(null=True, blank=True)
+    new_pincode = models.IntegerField(null=True, blank=True)
+    rural_urban = models.IntegerField(choices=AREA, null=True, blank=True)
+    medium_of_instruction = models.IntegerField(choices=MEDIUM, null=True, blank=True)
+    distance_brc = models.FloatField(null=True, blank=True)
+    distance_crc = models.FloatField(null=True, blank=True)
+    yeur_estd = models.IntegerField(null=True, blank=True)
+    pre_pry_yn = models.IntegerField(null=True, blank=True)
+    residential_sch_yn = models.IntegerField(null=True, blank=True)
+    sch_management = models.IntegerField(choices=SCHOOL_MANAGEMENT, null=True, blank=True)
+    lowest_class = models.IntegerField(null=True, blank=True)
+    highest_class = models.IntegerField(null=True, blank=True)
+    sch_category = models.IntegerField(choices=SCHOOL_CATEGORY, null=True, blank=True)
+    pre_pry_students = models.IntegerField(null=True, blank=True)
+    school_type = models.IntegerField(choices=SCHOOL_TYPES, null=True, blank=True)
+    shift_school_yn = models.IntegerField(null=True, blank=True)
+    no_of_working_days = models.IntegerField(null=True, blank=True)
+    no_of_acad_inspection = models.IntegerField(null=True, blank=True)
+    residential_sch_type = models.IntegerField(null=True, blank=True)
+    pre_pry_teachers = models.IntegerField(null=True, blank=True)
+    visits_by_brc = models.IntegerField(null=True, blank=True)
+    visits_by_crc = models.IntegerField(null=True, blank=True)
+    school_dev_grant_recd = models.FloatField(null=True, blank=True)
+    school_dev_grant_expnd = models.FloatField(null=True, blank=True)
+    tlm_grant_recd = models.FloatField(null=True, blank=True)
+    tlm_grant_expnd = models.FloatField(null=True, blank=True)
+    funds_from_students_recd = models.FloatField(null=True, blank=True)
+    funds_from_students_expnd = models.FloatField(null=True, blank=True)
+    building_status = models.IntegerField(choices=BUILDING_STATUS, null=True, blank=True)
+    tot_clrooms = models.IntegerField(null=True, blank=True)
+    classrooms_in_good_condition = models.IntegerField(null=True, blank=True)
+    classrooms_require_major_repair = models.IntegerField(choices=YESNO, null=True, blank=True)
+    classrooms_require_minor_repair = models.IntegerField(choices=YESNO, null=True, blank=True)
+    other_rooms_in_good_cond = models.IntegerField(null=True, blank=True)
+    other_rooms_need_major_rep = models.IntegerField(null=True, blank=True)
+    other_rooms_need_minor_rep = models.IntegerField(null=True, blank=True)
+    toilet_common = models.IntegerField(null=True, blank=True)
+    toilet_boys = models.IntegerField(null=True, blank=True)
+    toilet_girls = models.IntegerField(null=True, blank=True)
+    kitchen_devices_grant = models.IntegerField(null=True, blank=True)
+    status_of_mdm = models.IntegerField(choices=MDM_STATUS, null=True, blank=True)
+    computer_aided_learnin_lab = models.IntegerField(choices=YESNO, null=True, blank=True)
+    separate_room_for_headmaster = models.IntegerField(choices=YESNO, null=True, blank=True)
+    electricity = models.IntegerField(choices=YESNO, null=True, blank=True)
+    boundary_wall = models.IntegerField(choices=BOUNDARY_WALL, null=True, blank=True)
+    library_yn = models.IntegerField(choices=YESNO, null=True, blank=True)
+    playground = models.IntegerField(choices=YESNO, null=True, blank=True)
+    blackboard = models.IntegerField(null=True, blank=True)
+    books_in_library = models.IntegerField(null=True, blank=True)
+    drinking_water = models.IntegerField(choices=DRINKING_WATER, null=True, blank=True)
+    medical_checkup = models.IntegerField(choices=YESNO, null=True, blank=True)
+    ramps = models.IntegerField(choices=YESNO, null=True, blank=True)
+    no_of_computers = models.IntegerField(null=True, blank=True)
+    male_tch = models.IntegerField(null=True, blank=True)
+    female_tch = models.IntegerField(null=True, blank=True)
+    noresp_tch = models.IntegerField(null=True, blank=True)
+    head_teacher = models.IntegerField(null=True, blank=True)
+    graduate_teachers = models.IntegerField(null=True, blank=True)
+    tch_with_professional_qualification = models.IntegerField(null=True, blank=True)
+    days_involved_in_non_tch_assgn = models.IntegerField(null=True, blank=True)
+    teachers_involved_in_non_tch_assgn = models.IntegerField(null=True, blank=True)
+    class1_total_enr_boys = models.IntegerField(blank=True, null=True)
+    class2_total_enr_boys = models.IntegerField(blank=True, null=True)
+    class3_total_enr_boys = models.IntegerField(blank=True, null=True)
+    class4_total_enr_boys = models.IntegerField(blank=True, null=True)
+    class5_total_enr_boys = models.IntegerField(blank=True, null=True)
+    class6_total_enr_boys = models.IntegerField(blank=True, null=True)
+    class7_total_enr_boys = models.IntegerField(blank=True, null=True)
+    class8_total_enr_boys = models.IntegerField(blank=True, null=True)
+    class1_total_enr_girls = models.IntegerField(blank=True, null=True)
+    class2_total_enr_girls = models.IntegerField(blank=True, null=True)
+    class3_total_enr_girls = models.IntegerField(blank=True, null=True)
+    class4_total_enr_girls = models.IntegerField(blank=True, null=True)
+    class5_total_enr_girls = models.IntegerField(blank=True, null=True)
+    class6_total_enr_girls = models.IntegerField(blank=True, null=True)
+    class7_total_enr_girls = models.IntegerField(blank=True, null=True)
+    class8_total_enr_girls = models.IntegerField(blank=True, null=True)
+    total_boys = models.IntegerField(blank=True, null=True)
+    total_girls = models.IntegerField(blank=True, null=True)
 
-#     def __unicode__(self):
-#         return u"%s-%s" % (self.from_year, self.to_year)
+    objects = models.GeoManager()
 
+    class Meta:
+        abstract = True
 
-# class School(BaseModel):
-#     code = models.CharField(max_length=64, unique=True, db_index=True)
-#     klpid = models.CharField(max_length=64, unique=True, db_index=True, blank=True, null=True)
-#     name = models.CharField(max_length=255, db_index=True)
-#     pincode = models.IntegerField(blank=True, null=True)
-#     year_established = models.SmallIntegerField(blank=True, null=True)
-#     centroid = geo_models.GeometryField(blank=True, null=True)
+    def __unicode__(self):
+        return self.school_name
 
-#     def __unicode__(self):
-#         return u"%s: %s" % (self.code, self.name)
-
-#     @property
-#     def centroid_latlang(self):
-#         return [self.centroid.x, self.centroid.y] if self.centroid else []
-
-
-# class YearlyData(BaseModel):
-#     academic_year = models.ForeignKey(AcademicYear)
-#     school = models.ForeignKey(School)
-
-#     cluster = models.ForeignKey('common.Cluster', blank=True, null=True)
-#     village = models.ForeignKey('common.Village', blank=True, null=True)
-#     ward_no = models.CharField(max_length=10, blank=True, null=True)
-
-#     management = models.ForeignKey('SchoolManaagement', blank=True, null=True)
-#     category = models.ForeignKey('SchoolCategory', blank=True, null=True)
-
-#     area_type = models.SmallIntegerField(choices=AREA, blank=True, null=True)
-#     mediums = models.ManyToManyField('InstractionMedium', blank=True, null=True)
-#     distance_from_brc = models.FloatField(blank=True, null=True)
-#     distance_from_crc = models.FloatField(blank=True, null=True)
-
-#     pre_primary_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-#     pre_primary_student_count = models.IntegerField(blank=True, null=True)
-#     pre_primary_teacher_count = models.IntegerField(blank=True, null=True)
-
-#     type = models.SmallIntegerField(choices=SCHOOL_TYPES, blank=True, null=True)
-#     part_of_shift = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-#     working_day_count = models.IntegerField(blank=True, null=True)
-
-#     residential = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-#     residential_type = models.ForeignKey('ResidentialType', blank=True, null=True)
-
-#     lowest_class = models.SmallIntegerField(blank=True, null=True)
-#     highest_class = models.SmallIntegerField(blank=True, null=True)
-
-#     academic_inspection_count = models.IntegerField(blank=True, null=True)
-#     crc_visit_count = models.IntegerField(blank=True, null=True)
-#     brc_visit_count = models.IntegerField(blank=True, null=True)
-
-#     development_grant_received = models.FloatField(blank=True, null=True)
-#     development_grant_expenditure = models.FloatField(blank=True, null=True)
-#     tlm_grant_received = models.FloatField(blank=True, null=True)
-#     tlm_grant_expenditure = models.FloatField(blank=True, null=True)
-#     fund_from_student_received = models.FloatField(blank=True, null=True)
-#     fund_from_student_expenditure = models.FloatField(blank=True, null=True)
-
-#     building_status = models.ForeignKey('SchoolBuildingStatus', blank=True, null=True)
-#     room_count = models.IntegerField(blank=True, null=True)
-#     room_for_headmaster = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-#     drinking_water_source = models.ForeignKey('DrinkingWaterSource', blank=True, null=True)
-#     electricity_status = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-#     boundary_wall_type = models.ForeignKey('BoundaryWallType', blank=True, null=True)
-
-#     library_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-#     library_book_count = models.IntegerField(default=0)
-
-#     playground_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-
-#     computer_count = models.IntegerField(default=0)
-#     blackboard_count = models.IntegerField(default=0)
-#     cal_lab_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-#     medical_checkup = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-#     ramp_available = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-
-#     sdmc_constituted = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-#     sdmc_meeting_count = models.IntegerField(default=0)
-
-#     textbook_received = models.SmallIntegerField(choices=YESNO, blank=True, null=True)
-#     textbook_received_date = models.DateField(blank=True, null=True)
-
-#     weakersec_children_applied = models.IntegerField(default=0)
-#     weakersec_children_enrolled = models.IntegerField(default=0)
-
-#     middaymeal_status = models.SmallIntegerField(choices=MDM_STATUS, blank=True, null=True)
-#     kitchenshed_status = models.SmallIntegerField(choices=KITCHENSHED_STATUS, blank=True, null=True)
-
-#     def __unicode__(self):
-#         return u"%s (%s)" % (self.school, self.academic_year)
-
-#     class Meta:
-#         verbose_name_plural = 'Yearly Data'
-#         ordering = ('id', )
-
-
-# class Enrolment(BaseModel):
-#     yearly_data = models.ForeignKey('YearlyData')
-#     klass = models.IntegerField(db_index=True, default=0)
-#     general_boys = models.IntegerField(default=0)
-#     general_girls = models.IntegerField(default=0)
-#     sc_boys = models.IntegerField(default=0)
-#     sc_girls = models.IntegerField(default=0)
-#     st_boys = models.IntegerField(default=0)
-#     st_girls = models.IntegerField(default=0)
-#     obc_boys = models.IntegerField(default=0)
-#     obc_girls = models.IntegerField(default=0)
-#     disabled_boys = models.IntegerField(default=0)
-#     disabled_girls = models.IntegerField(default=0)
-#     repeaters_boys = models.IntegerField(default=0)
-#     repeaters_girls = models.IntegerField(default=0)
-#     total_boys = models.IntegerField(db_index=True, default=0)
-#     total_girls = models.IntegerField(db_index=True, default=0)
-#     total = models.IntegerField(db_index=True, default=0)
-
-#     class Meta:
-#         unique_together = ("yearly_data", "klass")
-
-#     def __unicode__(self):
-#         return u"%s" % self.id
+    @property
+    def popup_content(self):
+        return self.school_name
 
 
-# class TeacherCount(BaseModel):
-#     yearly_data = models.OneToOneField('YearlyData')
-#     male = models.IntegerField(default=0)
-#     female = models.IntegerField(default=0)
-#     # =====================
-#     # total = male + female
-#     # deserializing for performance,
-#     # needs to be calculated when inserting/updating
-#     total = models.IntegerField(db_index=True, default=0)
-#     # =====================
-#     noresp = models.IntegerField("No Responsibility", default=0)
-#     headteacher = models.IntegerField(choices=YESNO, db_index=True, blank=True, null=True)
-#     graduate = models.IntegerField(default=0)
-#     with_prof_qual = models.IntegerField("With Professional Qualification", default=0)
-#     days_in_non_tch = models.IntegerField(default=0)
-#     involved_in_non_tch = models.IntegerField(default=0)
+class AggregationBase(models.Model):
+    slug = models.CharField(max_length=50, primary_key=True)
+    centroid = models.GeometryField(blank=True, null=True)
+
+    # JSONField: load_kwargs from https://github.com/bradjasper/django-jsonfield#advanced-usage
+    medium_of_instructions = JSONField(load_kwargs={'object_pairs_hook': collections.OrderedDict})
+
+    sum_schools = models.BigIntegerField(null=True, blank=True)
+    sum_govt_schools = models.BigIntegerField(null=True, blank=True)
+    sum_rural_schools = models.BigIntegerField(null=True, blank=True)
+    avg_distance_brc = models.FloatField(null=True, blank=True)
+    avg_distance_crc = models.FloatField(null=True, blank=True)
+    sum_pre_primary_schools = models.BigIntegerField(null=True, blank=True)
+    sum_residential_schools = models.BigIntegerField(null=True, blank=True)
+    sum_pre_primary_students = models.BigIntegerField(null=True, blank=True)
+    avg_pre_primary_students = models.FloatField(null=True, blank=True)
+    sum_shift_schools = models.BigIntegerField(null=True, blank=True)
+    sum_no_of_working_days = models.BigIntegerField(null=True, blank=True)
+    avg_no_of_working_days = models.FloatField(null=True, blank=True)
+    sum_no_of_acad_inspection = models.BigIntegerField(null=True, blank=True)
+    avg_no_of_acad_inspection = models.FloatField(null=True, blank=True)
+    sum_visits_by_brc = models.BigIntegerField(null=True, blank=True)
+    avg_visits_by_brc = models.FloatField(null=True, blank=True)
+    sum_visits_by_crc = models.BigIntegerField(null=True, blank=True)
+    avg_visits_by_crc = models.FloatField(null=True, blank=True)
+    sum_school_dev_grant_recd = models.FloatField(null=True, blank=True)
+    avg_school_dev_grant_recd = models.FloatField(null=True, blank=True)
+    sum_school_dev_grant_expnd = models.FloatField(null=True, blank=True)
+    avg_school_dev_grant_expnd = models.FloatField(null=True, blank=True)
+    sum_tlm_grant_recd = models.FloatField(null=True, blank=True)
+    avg_tlm_grant_recd = models.FloatField(null=True, blank=True)
+    sum_tlm_grant_expnd = models.FloatField(null=True, blank=True)
+    avg_tlm_grant_expnd = models.FloatField(null=True, blank=True)
+    sum_funds_from_students_recd = models.FloatField(null=True, blank=True)
+    avg_funds_from_students_recd = models.FloatField(null=True, blank=True)
+    sum_funds_from_students_expnd = models.FloatField(null=True, blank=True)
+    avg_funds_from_students_expnd = models.FloatField(null=True, blank=True)
+    sum_tot_clrooms = models.BigIntegerField(null=True, blank=True)
+    avg_tot_clrooms = models.FloatField(null=True, blank=True)
+    sum_classrooms_in_good_condition = models.BigIntegerField(null=True, blank=True)
+    avg_classrooms_in_good_condition = models.FloatField(null=True, blank=True)
+    sum_classrooms_require_major_repair = models.BigIntegerField(null=True, blank=True)
+    avg_classrooms_require_major_repair = models.FloatField(null=True, blank=True)
+    sum_classrooms_require_minor_repair = models.BigIntegerField(null=True, blank=True)
+    avg_classrooms_require_minor_repair = models.FloatField(null=True, blank=True)
+    sum_other_rooms_in_good_cond = models.BigIntegerField(null=True, blank=True)
+    avg_other_rooms_in_good_cond = models.FloatField(null=True, blank=True)
+    sum_other_rooms_need_major_rep = models.BigIntegerField(null=True, blank=True)
+    avg_other_rooms_need_major_rep = models.FloatField(null=True, blank=True)
+    sum_other_rooms_need_minor_rep = models.BigIntegerField(null=True, blank=True)
+    avg_other_rooms_need_minor_rep = models.FloatField(null=True, blank=True)
+    sum_toilet_common = models.BigIntegerField(null=True, blank=True)
+    avg_toilet_common = models.FloatField(null=True, blank=True)
+    sum_toilet_boys = models.BigIntegerField(null=True, blank=True)
+    avg_toilet_boys = models.FloatField(null=True, blank=True)
+    sum_toilet_girls = models.BigIntegerField(null=True, blank=True)
+    avg_toilet_girls = models.FloatField(null=True, blank=True)
+    sum_kitchen_devices_grant = models.BigIntegerField(null=True, blank=True)
+    avg_kitchen_devices_grant = models.FloatField(null=True, blank=True)
+    sum_has_mdm = models.BigIntegerField(null=True, blank=True)
+    sum_has_cal_lab = models.BigIntegerField(null=True, blank=True)
+    sum_has_separate_room_for_headmaster = models.BigIntegerField(null=True, blank=True)
+    sum_has_electricity = models.BigIntegerField(null=True, blank=True)
+    sum_has_boundary_wall = models.BigIntegerField(null=True, blank=True)
+    sum_has_library = models.BigIntegerField(null=True, blank=True)
+    sum_books_in_library = models.BigIntegerField(null=True, blank=True)
+    avg_books_in_library = models.FloatField(null=True, blank=True)
+    sum_has_playground = models.BigIntegerField(null=True, blank=True)
+    sum_has_blackboard = models.BigIntegerField(null=True, blank=True)
+    sum_has_drinking_water = models.BigIntegerField(null=True, blank=True)
+    sum_has_medical_checkup = models.BigIntegerField(null=True, blank=True)
+    sum_has_ramps = models.BigIntegerField(null=True, blank=True)
+    sum_no_of_computers = models.BigIntegerField(null=True, blank=True)
+    avg_no_of_computers = models.FloatField(null=True, blank=True)
+    sum_male_tch = models.BigIntegerField(null=True, blank=True)
+    avg_male_tch = models.FloatField(null=True, blank=True)
+    sum_female_tch = models.BigIntegerField(null=True, blank=True)
+    avg_female_tch = models.FloatField(null=True, blank=True)
+    sum_noresp_tch = models.BigIntegerField(null=True, blank=True)
+    avg_noresp_tch = models.FloatField(null=True, blank=True)
+    sum_head_teacher = models.BigIntegerField(null=True, blank=True)
+    avg_head_teacher = models.FloatField(null=True, blank=True)
+    sum_graduate_teachers = models.BigIntegerField(null=True, blank=True)
+    avg_graduate_teachers = models.FloatField(null=True, blank=True)
+    sum_tch_with_professional_qualification = models.BigIntegerField(null=True, blank=True)
+    avg_tch_with_professional_qualification = models.FloatField(null=True, blank=True)
+    sum_days_involved_in_non_tch_assgn = models.BigIntegerField(null=True, blank=True)
+    avg_days_involved_in_non_tch_assgn = models.FloatField(null=True, blank=True)
+    sum_teachers_involved_in_non_tch_assgn = models.BigIntegerField(null=True, blank=True)
+    avg_teachers_involved_in_non_tch_assgn = models.FloatField(null=True, blank=True)
+    sum_boys = models.BigIntegerField(blank=True, null=True)
+    avg_boys = models.FloatField(blank=True, null=True)
+    sum_girls = models.BigIntegerField(blank=True, null=True)
+    avg_girls = models.FloatField(blank=True, null=True)
+
+    objects = models.GeoManager()
+
+    class Meta:
+        abstract = True
 
 
-# class Room(BaseModel):
-#     yearly_data = models.ForeignKey('YearlyData')
-#     type = models.CharField(max_length=20, choices=ROOM_TYPES)
-#     condition = models.CharField(max_length=20, choices=ROOM_CONDITIONS)
-#     count = models.IntegerField(default=0)
+class AssemblyAggregations(AggregationBase):
+    assembly_name = models.CharField(max_length=35)
 
-#     class Meta:
-#         unique_together = ("yearly_data", "type", "condition")
+    entity_type = 'assembly'
 
+    @property
+    def popup_content(self):
+        return self.assembly_name
 
-# class Toilet(BaseModel):
-#     yearly_data = models.ForeignKey('YearlyData')
-#     type = models.CharField(max_length=20, choices=TOILET_TYPES)
-#     count = models.IntegerField(default=0)
-
-#     class Meta:
-#         unique_together = ("yearly_data", "type")
+    class Meta:
+        abstract = True
 
 
-# class InstractionMedium(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     name = models.CharField(max_length=50)
+class BlockAggregations(AggregationBase):
+    block_name = models.CharField(max_length=50)
+    district = models.CharField(max_length=50, blank=True)
 
-#     def __unicode__(self):
-#         return u"%s" % self.name
+    entity_type = 'block'
 
+    @property
+    def popup_content(self):
+        return self.block_name
 
-# class SchoolManaagement(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     name = models.CharField(max_length=50)
-
-#     def __unicode__(self):
-#         return u"%s" % self.name
-
-#     class Meta:
-#         verbose_name = "School Management"
-#         verbose_name_plural = "School Managements"
+    class Meta:
+        abstract = True
 
 
-# class SchoolCategory(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     name = models.CharField(max_length=100)
+class ClusterAggregations(AggregationBase):
+    cluster_name = models.CharField(max_length=50)
+    block_name = models.CharField(max_length=50, blank=True)
+    district = models.CharField(max_length=50, blank=True)
 
-#     class Meta:
-#         verbose_name_plural = 'School categories'
+    entity_type = 'cluster'
 
-#     def __unicode__(self):
-#         return u"%s" % self.name
+    @property
+    def popup_content(self):
+        return self.cluster_name
 
-
-# class ResidentialType(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     name = models.CharField(max_length=50)
-
-#     def __unicode__(self):
-#         return u"%s" % self.name
+    class Meta:
+        abstract = True
+        unique_together = ("cluster_name", "block_name")
 
 
-# class SchoolBuildingStatus(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     name = models.CharField(max_length=50)
+class ParliamentAggregations(AggregationBase):
+    parliament_name = models.CharField(max_length=35)
 
-#     def __unicode__(self):
-#         return u"%s" % self.name
+    entity_type = 'parliament'
 
+    @property
+    def popup_content(self):
+        return self.parliament_name
 
-# class DrinkingWaterSource(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     name = models.CharField(max_length=50)
-
-#     def __unicode__(self):
-#         return u"%s" % self.name
+    class Meta:
+        abstract = True
 
 
-# class BoundaryWallType(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     name = models.CharField(max_length=50)
+class DistrictAggregations(AggregationBase):
+    district = models.CharField(max_length=35)
 
-#     def __unicode__(self):
-#         return u"%s" % self.name
+    entity_type = 'district'
+
+    @property
+    def popup_content(self):
+        return self.district
+
+    @cached_property
+    def district_name(self):
+        return self.district
+
+    class Meta:
+        abstract = True
+
+
+class PincodeAggregations(AggregationBase):
+    pincode = models.IntegerField()
+
+    entity_type = 'pincode'
+
+    @property
+    def popup_content(self):
+        return self.pincode
+
+    class Meta:
+        abstract = True
+
+
+class Dise1011AssemblyAggregations(AssemblyAggregations):
+    class Meta:
+        db_table = 'dise_1011_assembly_aggregations'
+
+
+class Dise1112AssemblyAggregations(AssemblyAggregations):
+    class Meta:
+        db_table = 'dise_1112_assembly_aggregations'
+
+
+class Dise1213AssemblyAggregations(AssemblyAggregations):
+    class Meta:
+        db_table = 'dise_1213_assembly_aggregations'
+
+
+class Dise1314AssemblyAggregations(AssemblyAggregations):
+    class Meta:
+        db_table = 'dise_1314_assembly_aggregations'
+
+
+class Dise1415AssemblyAggregations(AssemblyAggregations):
+    class Meta:
+        db_table = 'dise_1415_assembly_aggregations'
+
+
+class Dise1011BlockAggregations(BlockAggregations):
+    class Meta:
+        db_table = 'dise_1011_block_aggregations'
+
+
+class Dise1112BlockAggregations(BlockAggregations):
+    class Meta:
+        db_table = 'dise_1112_block_aggregations'
+
+
+class Dise1213BlockAggregations(BlockAggregations):
+    class Meta:
+        db_table = 'dise_1213_block_aggregations'
+
+
+class Dise1314BlockAggregations(BlockAggregations):
+    class Meta:
+        db_table = 'dise_1314_block_aggregations'
+
+
+class Dise1415BlockAggregations(BlockAggregations):
+    class Meta:
+        db_table = 'dise_1415_block_aggregations'
+
+
+class Dise1011ClusterAggregations(ClusterAggregations):
+    class Meta:
+        db_table = 'dise_1011_cluster_aggregations'
+
+
+class Dise1112ClusterAggregations(ClusterAggregations):
+    class Meta:
+        db_table = 'dise_1112_cluster_aggregations'
+
+
+class Dise1213ClusterAggregations(ClusterAggregations):
+    class Meta:
+        db_table = 'dise_1213_cluster_aggregations'
+
+
+class Dise1314ClusterAggregations(ClusterAggregations):
+    class Meta:
+        db_table = 'dise_1314_cluster_aggregations'
+
+
+class Dise1415ClusterAggregations(ClusterAggregations):
+    class Meta:
+        db_table = 'dise_1415_cluster_aggregations'
+
+
+class Dise1011ParliamentAggregations(ParliamentAggregations):
+    class Meta:
+        db_table = 'dise_1011_parliament_aggregations'
+
+
+class Dise1112ParliamentAggregations(ParliamentAggregations):
+    class Meta:
+        db_table = 'dise_1112_parliament_aggregations'
+
+
+class Dise1213ParliamentAggregations(ParliamentAggregations):
+    class Meta:
+        db_table = 'dise_1213_parliament_aggregations'
+
+
+class Dise1314ParliamentAggregations(ParliamentAggregations):
+    class Meta:
+        db_table = 'dise_1314_parliament_aggregations'
+
+
+class Dise1415ParliamentAggregations(ParliamentAggregations):
+    class Meta:
+        db_table = 'dise_1415_parliament_aggregations'
+
+
+class Dise1011DistrictAggregations(DistrictAggregations):
+    class Meta:
+        db_table = 'dise_1011_district_aggregations'
+
+
+class Dise1112DistrictAggregations(DistrictAggregations):
+    class Meta:
+        db_table = 'dise_1112_district_aggregations'
+
+
+class Dise1213DistrictAggregations(DistrictAggregations):
+    class Meta:
+        db_table = 'dise_1213_district_aggregations'
+
+
+class Dise1314DistrictAggregations(DistrictAggregations):
+    class Meta:
+        db_table = 'dise_1314_district_aggregations'
+
+
+class Dise1415DistrictAggregations(DistrictAggregations):
+    class Meta:
+        db_table = 'dise_1415_district_aggregations'
+
+
+class Dise1011PincodeAggregations(PincodeAggregations):
+    class Meta:
+        db_table = 'dise_1011_pincode_aggregations'
+
+
+class Dise1112PincodeAggregations(PincodeAggregations):
+    class Meta:
+        db_table = 'dise_1112_pincode_aggregations'
+
+
+class Dise1213PincodeAggregations(PincodeAggregations):
+    class Meta:
+        db_table = 'dise_1213_pincode_aggregations'
+
+
+class Dise1314PincodeAggregations(PincodeAggregations):
+    class Meta:
+        db_table = 'dise_1314_pincode_aggregations'
+
+
+class Dise1415PincodeAggregations(PincodeAggregations):
+    class Meta:
+        db_table = 'dise_1415_pincode_aggregations'
+
+
+class Dise1011BasicData(BasicData):
+    class Meta:
+        db_table = 'dise_1011_basic_data'
+
+
+class Dise1112BasicData(BasicData):
+    class Meta:
+        db_table = 'dise_1112_basic_data'
+
+
+class Dise1213BasicData(BasicData):
+    class Meta:
+        db_table = 'dise_1213_basic_data'
+
+
+class Dise1314BasicData(BasicData):
+    class Meta:
+        db_table = 'dise_1314_basic_data'
+
+
+class Dise1415BasicData(BasicData):
+    class Meta:
+        db_table = 'dise_1415_basic_data'
+
+
+def get_models(session='10-11', what='all'):
+    session = session.replace('-', '')
+    schools = __import__('schools')
+    models = collections.OrderedDict()
+
+    models['school'] = getattr(
+        schools.models, 'Dise{}BasicData'.format(session)
+    )
+    models['cluster'] = getattr(
+        schools.models, 'Dise{}ClusterAggregations'.format(session)
+    )
+    models['block'] = getattr(
+        schools.models, 'Dise{}BlockAggregations'.format(session)
+    )
+    models['district'] = getattr(
+        schools.models, 'Dise{}DistrictAggregations'.format(session)
+    )
+    models['pincode'] = getattr(
+        schools.models, 'Dise{}PincodeAggregations'.format(session)
+    )
+    models['assembly'] = getattr(
+        schools.models, 'Dise{}AssemblyAggregations'.format(session)
+    )
+    models['parliament'] = getattr(
+        schools.models, 'Dise{}ParliamentAggregations'.format(session)
+    )
+
+    if what == 'all':
+        return models.values()
+    else:
+        return models.get(what, None)

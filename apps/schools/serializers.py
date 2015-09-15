@@ -1,4 +1,4 @@
-from .olap_models import (
+from .models import (
     BasicData, ClusterAggregations, BlockAggregations,
     DistrictAggregations, AssemblyAggregations, ParliamentAggregations,
     PincodeAggregations

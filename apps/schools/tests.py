@@ -20,7 +20,7 @@ class EndpointTest(TestCase):
         """
         Just for testing that things are OK
         """
-        response = self.client.get('/api/drf/')
+        response = self.client.get('/api/')
         self.assertEqual(response.status_code, 200)
 
         print 'Testing that all the endpoints are alive'

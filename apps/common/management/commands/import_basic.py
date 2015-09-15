@@ -5,7 +5,7 @@ from optparse import make_option
 from django.db import connection
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
-from schools.olap_models import get_models
+from schools.models import get_models
 
 
 class Command(BaseCommand):
