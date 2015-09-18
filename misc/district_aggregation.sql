@@ -1,7 +1,7 @@
 CREATE OR REPLACE FUNCTION aggregate_district() RETURNS void AS
 $BODY$
 DECLARE
-    years integer[] := array[1011, 1112, 1213, 1314];
+    years integer[] := array[1011, 1112, 1213, 1314, 1415];
     year integer;
     table_name varchar(50);
     basic_table_name varchar(50);
