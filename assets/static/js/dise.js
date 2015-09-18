@@ -118,7 +118,7 @@ $(function(){
     UI.init(); // Initialize UI elements
     var filtersEnabled;
     var filter_prefix = 'f_';
-    window.default_session = '13-14';
+    window.default_session = '14-15';
 
     var moe_map = {
         1: "Assamese",
