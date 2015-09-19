@@ -307,18 +307,8 @@ class AggregationSchoolListView(SchoolApiBaseView, generics.ListAPIView):
             '{}__iexact'.format(serializer.Meta.pk_field): str(
                 getattr(entity_obj, serializer.Meta.pk_field)
             ),
+            'centroid__isnull': False
         }
-
-        # if entity is pincode, search both pincode OR new_pincode field
-        if entity == 'pincode':
-            filters['new_pincode__iexact'] = str(
-                getattr(entity_obj, serializer.Meta.pk_field)
-            )
-
-            q_list = [Q(f) for f in filters.items()]
-
-            import operator
-            return schools.filter(reduce(operator.or_, q_list))
 
         return schools.filter(**filters)
 
@@ -338,7 +328,8 @@ class ClustersInBlockView(AggregationListView, generics.ListAPIView):
 
         block = get_object_or_404(BlockModel, slug=block_slug)
         clusters = ClusterModel.objects.filter(
-            block_name__iexact=block.block_name
+            block_name__iexact=block.block_name,
+            centroid__isnull=False
         )
         return clusters
 
@@ -358,7 +349,8 @@ class ClustersInDistrictView(AggregationListView, generics.ListAPIView):
 
         district = get_object_or_404(DistrictModel, slug=district_slug)
         clusters = ClusterModel.objects.filter(
-            district__iexact=district.district
+            district__iexact=district.district,
+            centroid__isnull=False
         )
         return clusters
 
@@ -377,7 +369,10 @@ class BlocksInDistrictView(AggregationListView, generics.ListAPIView):
             raise SessionNotFound()
 
         district = get_object_or_404(DistrictModel, slug=district_slug)
-        blocks = BlockModel.objects.filter(district__iexact=district.district)
+        blocks = BlockModel.objects.filter(
+            district__iexact=district.district,
+            centroid__isnull=False
+        )
         return blocks
 
 
