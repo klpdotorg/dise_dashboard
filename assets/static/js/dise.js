@@ -55,6 +55,11 @@
             // Take config options. `base_url` is mandatory
             var settings = $.extend({}, this.defaultOptions, options);
 
+            var entity_types = [
+                'school', 'cluster', 'block', 'district', 'assembly',
+                'parliament', 'pincode'
+            ]
+
             this.call = function(method, session, params, success) {
                 // @param {String}   method      Method name in the form of Entity.function
                 // @param {String}   session     Session in the form of YY-YY e.g. 10-11 for 2010-2011
@@ -67,6 +72,7 @@
                 var url;
                 var kwargs = [session, entity];
 
+
                 if (action === 'getInfo') {
                     kwargs.push(params['id_or_slug']);
                     kwargs.push('');
@@ -76,7 +82,11 @@
                         'getClusters': 'clusters',
                         'getBlocks': 'blocks',
                     };
-                    kwargs.push(action_map[action]);
+                    if (action_map[action]) {
+                        kwargs.push(params['id']);
+                        kwargs.push(action_map[action]);
+                    }
+
                 };
 
                 kwargs = Array.prototype.concat([settings.base_url], kwargs);
@@ -96,6 +106,41 @@
 
             this.info = function(entity, session, params, success) {
                 return this.call(entity + '.getInfo', session, params, success);
+            }
+
+            // these are for future use.
+            // the plan is to move from the previous hash url format
+            // to something that's more DRF friendly.
+            this.drfCall = function(entity_type, id_or_slug, endpoint, params, success) {
+                if (!entity_type || self.entity_types.indexOf(entity_type) < 0) {
+                    alert('Invalid entity type: ' + entity_type);
+                }
+
+                var url = [entity_type, id_or_slug, endpoint].join('/');
+
+                // Make the call
+                $.getJSON(url, params, success)
+            }
+
+            this.getSchools = function(entity_type, id_or_slug, params, success) {
+                return this.drfCall(entity_type, id_or_slug, 'schools', params, success);
+            }
+            this.getClusters = function(entity_type, id_or_slug, params, success) {
+                if (['district', 'block'].indexOf(entity_type) < 0) {
+                    alert(entity_type + ' does not have any clusters.');
+                }
+
+                return this.drfCall(entity_type, id_or_slug, 'clusters', params, success);
+            }
+            this.getBlocks = function(entity_type, id_or_slug, params, success) {
+                if (['district', 'block'].indexOf(entity_type) < 0) {
+                    alert(entity_type + ' does not have any blocks.');
+                }
+
+                return this.drfCall(entity_type, id_or_slug, 'blocks', params, success);
+            }
+            this.getInfo = function(entity_type, id_or_slug, params, success) {
+                return this.drfCall(entity_type, id_or_slug, '', params, success);
             }
 
             return this;
@@ -200,15 +245,7 @@ $(function(){
         self.report_url_base = 'http://disereports.klp.org.in';
 
         self.properties.actual_name = ko.computed(function() {
-            var entity_name = '';
-            if(self.properties.entity_type == 'district') {
-                entity_name = 'district';
-            }else if (self.properties.entity_type == 'pincode'){
-                entity_name = 'pincode'
-            }else{
-                entity_name = self.properties.entity_type + '_name';
-            }
-            return self.properties[entity_name];
+            return self.properties.popup_content;
         });
 
         self.properties.name = ko.computed(function() {
@@ -357,7 +394,7 @@ $(function(){
 
     // Initialize the API wrapper
     var DISE = $.DiseAPI({
-        'base_url': window.location.protocol + '//' + window.location.host + '/api/drf'
+        'base_url': window.location.protocol + '//' + window.location.host + '/api'
     });
 
     /**
@@ -418,7 +455,7 @@ $(function(){
         allowClear: true,
         minimumInputLength: 3,
         ajax: {
-            url: "/api/drf/" + window.default_session + "/search/",
+            url: "/api/" + window.default_session + "/search/",
             quietMillis: 300,
             data: function (term, page) {
                 var values = {};
@@ -451,6 +488,7 @@ $(function(){
                     'do': 'School.getInfo',
                     session: academic_year,
                     code: school.id,
+                    id: school.id,
                     z: 13
                 });
             } else {
@@ -461,6 +499,7 @@ $(function(){
                 'do': e.object.type.toProperCase() + '.getSchools',
                 session: academic_year,
                 name: e.object.id,
+                id: e.object.id,
                 include_entity: 'true',
                 z: 12
             });
@@ -469,6 +508,7 @@ $(function(){
                 'do': 'Block.getClusters',
                 session: academic_year,
                 name: e.object.id,
+                id: e.object.id,
                 include_entity: 'true',
                 z: 12
             });
@@ -477,6 +517,7 @@ $(function(){
                 'do': 'District.getBlocks',
                 session: academic_year,
                 name: e.object.id,
+                id: e.object.id,
                 include_entity: 'true',
                 z: 10
             });
@@ -485,6 +526,7 @@ $(function(){
                 'do': 'Pincode.getSchools',
                 session: academic_year,
                 pincode: e.object.id,
+                id: e.object.id,
                 include_entity: 'true',
                 z: 14
             });
