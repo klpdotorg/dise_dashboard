@@ -74,7 +74,7 @@
 
 
                 if (action === 'getInfo') {
-                    kwargs.push(params['id_or_slug']);
+                    kwargs.push(params['id']);
                     kwargs.push('');
                 } else {
                     action_map = {
@@ -479,11 +479,10 @@ $(function(){
         window.currentLayers.clearLayers();
         // Flip the filter switch to disable all usual map interactions.
         window.filtersEnabled = true;
-
         var academic_year = $('input[name=academic_year]:checked').val() || window.default_session;
         if (e.object.type == 'school') {
             if(e.object.feature !== null && e.object.feature !== "{}"){
-                school = JSON.parse(e.object.feature);
+                school = e.object.feature;
                 $.updateUrlParams({
                     'do': 'School.getInfo',
                     session: academic_year,
@@ -664,7 +663,7 @@ $(function(){
         var entity_type = feature.properties.entity_type.toProperCase();
         // Call district.getInfo and populate popup.
         DISE.call(entity_type + '.getInfo', academic_year, {
-            'id_or_slug': feature.id
+            'id': feature.id
         }, function (data) {
             if(data.error !== undefined){
                 alert(data.error);
@@ -882,20 +881,19 @@ $(function(){
                     alert(data.error);
                     return;
                 }
-
-                search_view.results([data[entity_lower]]);
+                search_view.results([data]);
                 search_view.n_results(1);
                 search_view.search_entity(entity);
-                search_view.highlightEntity(data[entity_lower]);
+                search_view.highlightEntity(data);
 
-                fillCrumb(entity_lower, data[entity_lower].properties);
+                fillCrumb(entity_lower, data.properties);
 
-                if (data[entity_lower].geometry.coordinates.length == 2) {
-                    map.setView(L.GeoJSON.coordsToLatLng(data[entity_lower].geometry.coordinates), zoom, {
+                if (data.geometry.coordinates.length == 2) {
+                    map.setView(L.GeoJSON.coordsToLatLng(data.geometry.coordinates), zoom, {
                         animate: false
                     });
 
-                    newLayer = createLayer(data[entity_lower], customIcon(entity_lower));
+                    newLayer = createLayer(data, customIcon(entity_lower));
                     newLayer.addTo(window.currentLayers);
 
                 } else {
