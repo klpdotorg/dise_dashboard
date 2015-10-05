@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
 from schools.api_views import (
     SchoolListView, SchoolInfoView, SchoolInfraView, AggregationListView,
     AggregationInfoView, AggregationSchoolListView, ClustersInBlockView,
@@ -7,6 +7,8 @@ from schools.api_views import (
 
 urlpatterns = patterns(
     '',
+    url(r'^docs/', include('rest_framework_swagger.urls')),
+
     url(r'^$', 'schools.api_views.api_root', name='api_root'),
     url(r'^(?P<session>[\d\-]{5})/search/$', OmniSearchApiView.as_view(), name='api_search'),
     url(r'^(?P<session>[\d\-]{5})/school/$', SchoolListView.as_view(), name='api_school_list'),
