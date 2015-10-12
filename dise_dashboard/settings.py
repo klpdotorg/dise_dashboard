@@ -137,11 +137,10 @@ INSTALLED_APPS = (
 
     # third party
     'corsheaders',
-    # 'debug_toolbar',
     'bootstrapform',
-    'raven.contrib.django.raven_compat',
     'rest_framework',
     'explorer',
+    'rest_framework_swagger',
 
     # in-project
     'account',

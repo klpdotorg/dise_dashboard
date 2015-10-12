@@ -1,14 +1,11 @@
 import os
-import xlrd
+import csv
 from optparse import make_option
 
-
+from django.db import connection
 from django.core.management.base import BaseCommand, CommandError
-from common.models import Cluster, Block, EducationDistrict, Village, State
 from django.conf import settings
-
-from common.models import Cluster, Block, Village, State, EducationDistrict
-from schools.models import School, AcademicYear, YearlyData
+from schools.models import get_models
 
 
 class Command(BaseCommand):
@@ -20,84 +17,56 @@ class Command(BaseCommand):
             help='import for specific academic year'
         ),
     )
-
-    INDEXES = {
-        'district': 0,
-        'District_Name': 0,
-
-        'school_code': 1,
-        'School_Code': 1,
-
-        'school_name': 2,
-        'School_Name': 2,
-
-        'block': 3,
-        'Block_Name': 3,
-
-        'cluster': 4,
-        'Cluster_Name': 4,
-
-        'village': 5,
-        'Village_Name': 5,
-
-        'pincode': 6,
-        'Pincode': 6
-    }
+    rows_to_create = []
 
     def process_row(self, row, year=None):
-        district, created = EducationDistrict.objects.get_or_create(
-            name=row[self.INDEXES['District_Name']]
-        )
-        village, created = Village.objects.get_or_create(
-            name=row[self.INDEXES['Village_Name']]
-        )
-        block, created = Block.objects.get_or_create(
-            name=row[self.INDEXES['Block_Name']],
-        )
-        block.education_district = district
-        block.save()
+        # DISTNAME,SCHOOL_CODE,SCHOOL_NAME,BLOCK_NAME,CLUSTER_NAME,VILLAGE_NAME,PINCODE
+        DiseBasicData = get_models(session='14-15', what='school')
 
-        cluster, created = Cluster.objects.get_or_create(
-            name=row[self.INDEXES['Cluster_Name']],
-            block=block
+        school = DiseBasicData(
+            school_code=row['SCHOOL_CODE'],
+            district=row['DISTNAME'],
+            school_name=row['SCHOOL_NAME'],
+            block_name=row['BLOCK_NAME'],
+            cluster_name=row['CLUSTER_NAME'],
+            village_name=row['VILLAGE_NAME'],
+            pincode=row['PINCODE'],
         )
-        school, created = School.objects.get_or_create(
-            code=unicode(int(row[self.INDEXES['School_Code']])),
-        )
-        school.name = unicode(row[self.INDEXES['School_Name']])
-        school.pincode= int(row[self.INDEXES['Pincode']])
-        school.save()
-
-        yearly_data, created = YearlyData.objects.get_or_create(
-            school=school,
-            academic_year=year
-        )
-        yearly_data.cluster = cluster
-        yearly_data.village = village
-        yearly_data.save()
+        self.rows_to_create.append(school)
 
     def handle(self, *args, **options):
-        year = None
-
         if 'year' in options:
             from_year, to_year = options.get('year').split('-')
-            year = AcademicYear.objects.get(from_year=from_year, to_year=to_year)
+
+            table_name = 'dise_{from_year}{to_year}_basic_data'.format(
+                from_year=from_year[-2:],
+                to_year=to_year[-2:],
+            )
+
+            # create table if it doesn't exist
+            try:
+                cursor = connection.cursor()
+                cursor.execute('DROP TABLE IF EXISTS "%s"' % table_name)
+                print 'Table dropped'
+                cursor.execute("CREATE TABLE %s as SELECT * FROM dise_1314_basic_data WITH NO DATA" % table_name)
+                print 'Table %s created' % table_name
+            except Exception, e:
+                raise e
 
         for basic_data in args:
-            full_path = os.path.join(settings.DATADUMP_ROOT, basic_data)
-            try:
-                fp = xlrd.open_workbook(full_path)
-                for sheet in fp.sheets():
-                    print "Sheet: ", sheet
-                    print "#"*20
-                    for idx in range(1, sheet.nrows):
-                        row = sheet.row_values(idx)
-                        if not row[self.INDEXES['School_Code']]:
-                            continue
-                        self.process_row(row, year)
+            full_path = os.path.join(settings.PROJECT_ROOT, basic_data)
 
-                        if idx % 100 == 0:
-                            print "%s/%s: %s%% done." % (idx, sheet.nrows, (idx/float(sheet.nrows))*100)
+            with open(full_path, 'r') as csvfile:
+                reader = csv.DictReader(csvfile)
+                count = 0
 
-            except Exception as e:
-                print str(e)
+                print 'processing schools'
+                for row in reader:
+                    self.process_row(row)
+                    count += 1
+                    if count % 100 == 0:
+                        print count,
+
+                print 'creating schools'
+                DiseBasicData = get_models(session='%s-%s' % (from_year[-2:], to_year[-2:]), what='school')
+                DiseBasicData.objects.bulk_create(self.rows_to_create)
