@@ -16,8 +16,8 @@ var layerIDs = {'district': '', 'block': '', 'cluster': '',
 map = L.map('map-holder', {zoomControl: true, attributionControl: false}).setView(karnataka, 8);
 
 // Tile URL, Key and attribution.
-var klpMapUrl = 'http://geo.klp.org.in/osm/{z}/{x}/{y}.png',
-	klpAttribution = '<a href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a>, OSMBright';
+var klpMapUrl = 'https://geo.klp.org.in/osm/{z}/{x}/{y}.png',
+	klpAttribution = '<a href="https://www.openstreetmap.org/" target="_blank">OpenStreetMap</a>, OSMBright';
 
 // Create the Tile layer and add it to the map.
 var klpLayer = L.tileLayer(klpMapUrl).addTo(map);
