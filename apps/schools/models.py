@@ -17,6 +17,7 @@ from common.models import (
 from django.contrib.gis.db import models
 from django.db import cached_property
 from jsonfield import JSONField
+from django.conf import settings
 import collections
 
 
@@ -127,9 +128,6 @@ class AggregationBase(models.Model):
     slug = models.CharField(max_length=50, primary_key=True)
     centroid = models.GeometryField(blank=True, null=True)
 
-    # JSONField: load_kwargs from https://github.com/bradjasper/django-jsonfield#advanced-usage
-    medium_of_instructions = JSONField(load_kwargs={'object_pairs_hook': collections.OrderedDict})
-
     sum_schools = models.BigIntegerField(null=True, blank=True)
     sum_govt_schools = models.BigIntegerField(null=True, blank=True)
     sum_rural_schools = models.BigIntegerField(null=True, blank=True)
@@ -195,6 +193,8 @@ class AggregationBase(models.Model):
     sum_has_drinking_water = models.BigIntegerField(null=True, blank=True)
     sum_has_medical_checkup = models.BigIntegerField(null=True, blank=True)
     sum_has_ramps = models.BigIntegerField(null=True, blank=True)
+    sum_has_computer = models.BigIntegerField(null=True, blank=True)
+    sum_has_toilet = models.BigIntegerField(null=True, blank=True)
     sum_no_of_computers = models.BigIntegerField(null=True, blank=True)
     avg_no_of_computers = models.FloatField(null=True, blank=True)
     sum_male_tch = models.BigIntegerField(null=True, blank=True)
@@ -223,32 +223,16 @@ class AggregationBase(models.Model):
     class Meta:
         abstract = True
 
-
-class AssemblyAggregations(AggregationBase):
-    assembly_name = models.CharField(max_length=35)
-
-    entity_type = 'assembly'
-
     @property
-    def popup_content(self):
-        return self.assembly_name
-
-    class Meta:
-        abstract = True
-
-
-class BlockAggregations(AggregationBase):
-    block_name = models.CharField(max_length=50)
-    district = models.CharField(max_length=50, blank=True)
-
-    entity_type = 'block'
-
-    @property
-    def popup_content(self):
-        return self.block_name
-
-    class Meta:
-        abstract = True
+    def session(self):
+        """Finds session of the current object from table name
+        """
+        # extracts the 4 digit session from table name
+        session = filter(str.isdigit, str(self._meta.db_table))
+        listified_session = list(session)
+        listified_session.insert(2, '-')
+        session = ''.join(listified_session)
+        return session
 
 
 class ClusterAggregations(AggregationBase):
@@ -258,30 +242,49 @@ class ClusterAggregations(AggregationBase):
 
     entity_type = 'cluster'
 
-    @property
-    def popup_content(self):
-        return self.cluster_name
-
     class Meta:
         abstract = True
         unique_together = ("cluster_name", "block_name")
 
-
-class ParliamentAggregations(AggregationBase):
-    parliament_name = models.CharField(max_length=35)
-
-    entity_type = 'parliament'
-
     @property
     def popup_content(self):
-        return self.parliament_name
+        return self.cluster_name
+
+    def schools(self, session=settings.DEFAULT_SESSION):
+        SchoolModel = get_models(session, 'school')
+        return SchoolModel.objects.filter(
+            cluster_name__iexact=self.cluster_name,
+            block_name__iexact=self.block_name,
+            district__iexact=self.district
+        )
+
+
+class BlockAggregations(AggregationBase):
+    block_name = models.CharField(max_length=50)
+    district = models.CharField(max_length=50, blank=True)
+
+    entity_type = 'block'
 
     class Meta:
         abstract = True
 
+    @property
+    def popup_content(self):
+        return self.block_name
+
+    def schools(self, session=settings.DEFAULT_SESSION):
+        SchoolModel = get_models(session, 'school')
+        return SchoolModel.objects.filter(
+            block_name__iexact=self.block_name,
+            district__iexact=self.district
+        )
+
 
 class DistrictAggregations(AggregationBase):
     district = models.CharField(max_length=35)
+
+    class Meta:
+        abstract = True
 
     entity_type = 'district'
 
@@ -293,8 +296,49 @@ class DistrictAggregations(AggregationBase):
     def district_name(self):
         return self.district
 
+    def schools(self, session=settings.DEFAULT_SESSION):
+        SchoolModel = get_models(session, 'school')
+        return SchoolModel.objects.filter(
+            district__iexact=self.district
+        )
+
+
+class AssemblyAggregations(AggregationBase):
+    assembly_name = models.CharField(max_length=35)
+
+    entity_type = 'assembly'
+
     class Meta:
         abstract = True
+
+    @property
+    def popup_content(self):
+        return self.assembly_name
+
+    def schools(self, session=settings.DEFAULT_SESSION):
+        SchoolModel = get_models(session, 'school')
+        return SchoolModel.objects.filter(
+            assembly_name__iexact=self.assembly_name
+        )
+
+
+class ParliamentAggregations(AggregationBase):
+    parliament_name = models.CharField(max_length=35)
+
+    entity_type = 'parliament'
+
+    class Meta:
+        abstract = True
+
+    @property
+    def popup_content(self):
+        return self.parliament_name
+
+    def schools(self, session=settings.DEFAULT_SESSION):
+        SchoolModel = get_models(session, 'school')
+        return SchoolModel.objects.filter(
+            parliament_name__iexact=self.parliament_name
+        )
 
 
 class PincodeAggregations(AggregationBase):
@@ -302,12 +346,18 @@ class PincodeAggregations(AggregationBase):
 
     entity_type = 'pincode'
 
+    class Meta:
+        abstract = True
+
     @property
     def popup_content(self):
         return self.pincode
 
-    class Meta:
-        abstract = True
+    def schools(self, session=settings.DEFAULT_SESSION):
+        SchoolModel = get_models(session, 'school')
+        return SchoolModel.objects.filter(
+            pincode__iexact=self.pincode
+        )
 
 
 class Dise1011AssemblyAggregations(AssemblyAggregations):
