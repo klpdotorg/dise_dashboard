@@ -17,10 +17,10 @@ def search_choices(t, value):
 
 def search_choices_by_key(t, key):
     """
-    looks for index in a tuple of tuples
+    looks for value in a tuple of tuples
 
-    >>> search_choices(YESNO, 'Yes')
-    1
+    >>> search_choices_by_key(YESNO, 1)
+    Yes
 
     """
     for k, v in t:
@@ -107,6 +107,7 @@ MEDIUM = (
     (27, "Lepcha"),
     (28, "Limboo"),
     (29, "French"),
+    (98, "Others"),
     (99, "Others")
 )
 
