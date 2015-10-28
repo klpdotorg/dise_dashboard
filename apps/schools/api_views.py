@@ -6,6 +6,7 @@ from rest_framework import generics
 from rest_framework.exceptions import APIException
 from django.shortcuts import get_object_or_404, redirect
 from django.db.models import Q
+from django.conf import settings
 from collections import OrderedDict
 
 from .serializers import (
@@ -13,6 +14,11 @@ from .serializers import (
     DistrictSerializer, AssemblySerializer, ParliamentSerializer,
     PincodeSerializer, SchoolInfraSerializer
 )
+
+from .models import get_models
+from common import filters
+from common import models as common_utils
+
 serializers = {
     'cluster': ClusterSerializer,
     'block': BlockSerializer,
@@ -21,9 +27,6 @@ serializers = {
     'parliament': ParliamentSerializer,
     'pincode': PincodeSerializer,
 }
-from .models import get_models
-from common import filters
-from common import models as common_utils
 
 
 class SessionNotFound(APIException):
@@ -41,7 +44,7 @@ class NotFound(APIException):
 
 
 class OmniSearchApiView(APIView):
-    def get(self, request, session='13-14', format=None):
+    def get(self, request, session=settings.DEFAULT_SESSION, format=None):
         session = self.kwargs.get('session', session)
         query = request.query_params.get('query')
         if not query:
@@ -288,7 +291,6 @@ class AggregationSchoolListView(SchoolApiBaseView, generics.ListAPIView):
         entity = self.kwargs.get('entity')
         serializer = serializers.get(entity)
         session = self.kwargs.get('session')
-        entity = self.kwargs.get('entity')
 
         # get the entity model
         try:
