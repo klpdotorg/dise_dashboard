@@ -3,6 +3,8 @@ from .models import (
     DistrictAggregations, AssemblyAggregations, ParliamentAggregations,
     PincodeAggregations
 )
+from common.models import MEDIUM, SCHOOL_CATEGORY, search_choices_by_key
+from django.db.models import Count, Sum
 from rest_framework import serializers
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
@@ -66,9 +68,31 @@ class SchoolInfraSerializer(GeoFeatureModelSerializer):
 
 class AggregationBaseSerializer(GeoFeatureModelSerializer):
     medium_of_instructions = serializers.SerializerMethodField()
+    school_categories = serializers.SerializerMethodField()
 
     def get_medium_of_instructions(self, obj):
-        return obj.medium_of_instructions
+        moes = obj.schools(obj.session).values('medium_of_instruction').annotate(
+            count=Count('medium_of_instruction'),
+            total_boys=Sum('total_boys'),
+            total_girls=Sum('total_girls')
+        )
+        for moe in moes:
+            moe['id'] = moe['medium_of_instruction']
+            moe['name'] = search_choices_by_key(MEDIUM, moe['id'])
+            del moe['medium_of_instruction']
+        return moes
+
+    def get_school_categories(self, obj):
+        categories = obj.schools(obj.session).values('sch_category').annotate(
+            count=Count('sch_category'),
+            total_boys=Sum('total_boys'),
+            total_girls=Sum('total_girls')
+        )
+        for category in categories:
+            category['id'] = category['sch_category']
+            category['name'] = search_choices_by_key(SCHOOL_CATEGORY, category['id'])
+            del category['sch_category']
+        return categories
 
 
 class ClusterSerializer(AggregationBaseSerializer):
@@ -76,7 +100,9 @@ class ClusterSerializer(AggregationBaseSerializer):
         model = ClusterAggregations
         geo_field = 'centroid'
         pk_field = 'cluster_name'
-        fields = ClusterAggregations._meta.get_all_field_names() + ['entity_type', 'popup_content']
+        fields = ClusterAggregations._meta.get_all_field_names() + [
+            'entity_type', 'popup_content', 'medium_of_instructions', 'school_categories'
+        ]
 
 
 class BlockSerializer(AggregationBaseSerializer):
@@ -84,7 +110,9 @@ class BlockSerializer(AggregationBaseSerializer):
         model = BlockAggregations
         geo_field = 'centroid'
         pk_field = 'block_name'
-        fields = BlockAggregations._meta.get_all_field_names() + ['entity_type', 'popup_content']
+        fields = BlockAggregations._meta.get_all_field_names() + [
+            'entity_type', 'popup_content', 'medium_of_instructions', 'school_categories'
+        ]
 
 
 class DistrictSerializer(AggregationBaseSerializer):
@@ -92,7 +120,9 @@ class DistrictSerializer(AggregationBaseSerializer):
         model = DistrictAggregations
         geo_field = 'centroid'
         pk_field = 'district'
-        fields = DistrictAggregations._meta.get_all_field_names() + ['entity_type', 'popup_content']
+        fields = DistrictAggregations._meta.get_all_field_names() + [
+            'entity_type', 'popup_content', 'medium_of_instructions', 'school_categories'
+        ]
 
 
 class AssemblySerializer(AggregationBaseSerializer):
@@ -100,7 +130,9 @@ class AssemblySerializer(AggregationBaseSerializer):
         model = AssemblyAggregations
         geo_field = 'centroid'
         pk_field = 'assembly_name'
-        fields = AssemblyAggregations._meta.get_all_field_names() + ['entity_type', 'popup_content']
+        fields = AssemblyAggregations._meta.get_all_field_names() + [
+            'entity_type', 'popup_content', 'medium_of_instructions', 'school_categories'
+        ]
 
 
 class ParliamentSerializer(AggregationBaseSerializer):
@@ -108,7 +140,9 @@ class ParliamentSerializer(AggregationBaseSerializer):
         model = ParliamentAggregations
         geo_field = 'centroid'
         pk_field = 'parliament_name'
-        fields = ParliamentAggregations._meta.get_all_field_names() + ['entity_type', 'popup_content']
+        fields = ParliamentAggregations._meta.get_all_field_names() + [
+            'entity_type', 'popup_content', 'medium_of_instructions', 'school_categories'
+        ]
 
 
 class PincodeSerializer(AggregationBaseSerializer):
@@ -116,4 +150,6 @@ class PincodeSerializer(AggregationBaseSerializer):
         model = PincodeAggregations
         geo_field = 'centroid'
         pk_field = 'pincode'
-        fields = PincodeAggregations._meta.get_all_field_names() + ['entity_type', 'popup_content']
+        fields = PincodeAggregations._meta.get_all_field_names() + [
+            'entity_type', 'popup_content', 'medium_of_instructions', 'school_categories'
+        ]
