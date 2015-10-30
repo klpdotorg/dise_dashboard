@@ -72,9 +72,9 @@ class AggregationBaseSerializer(GeoFeatureModelSerializer):
 
     def get_medium_of_instructions(self, obj):
         moes = obj.schools(obj.session).values('medium_of_instruction').annotate(
-            count=Count('medium_of_instruction'),
-            total_boys=Sum('total_boys'),
-            total_girls=Sum('total_girls')
+            sum_schools=Count('medium_of_instruction'),
+            sum_boys=Sum('total_boys'),
+            sum_girls=Sum('total_girls')
         )
         for moe in moes:
             moe['id'] = moe['medium_of_instruction']
@@ -84,9 +84,9 @@ class AggregationBaseSerializer(GeoFeatureModelSerializer):
 
     def get_school_categories(self, obj):
         categories = obj.schools(obj.session).values('sch_category').annotate(
-            count=Count('sch_category'),
-            total_boys=Sum('total_boys'),
-            total_girls=Sum('total_girls')
+            sum_schools=Count('sch_category'),
+            sum_boys=Sum('total_boys'),
+            sum_girls=Sum('total_girls')
         )
         for category in categories:
             category['id'] = category['sch_category']
