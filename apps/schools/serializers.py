@@ -80,6 +80,8 @@ class AggregationBaseSerializer(GeoFeatureModelSerializer):
             moe['id'] = moe['medium_of_instruction']
             moe['name'] = search_choices_by_key(MEDIUM, moe['id'])
             del moe['medium_of_instruction']
+
+        moes = sorted(moes, key=lambda k: k['sum_schools'], reverse=True)
         return moes
 
     def get_school_categories(self, obj):
@@ -92,6 +94,8 @@ class AggregationBaseSerializer(GeoFeatureModelSerializer):
             category['id'] = category['sch_category']
             category['name'] = search_choices_by_key(SCHOOL_CATEGORY, category['id'])
             del category['sch_category']
+
+        categories = sorted(categories, key=lambda k: k['id'])
         return categories
 
 
