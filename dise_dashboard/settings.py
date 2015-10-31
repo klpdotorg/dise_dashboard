@@ -6,7 +6,9 @@ PROJECT_ROOT = os.path.realpath(os.path.dirname(os.path.dirname(__file__)))
 
 POSTGIS_VERSION = (2, 1, 0)
 
-VALID_SESSIONS = ['10-11', '11-12', '12-13', '13-14']
+VALID_SESSIONS = ['10-11', '11-12', '12-13', '13-14', '14-15']
+
+DEFAULT_SESSION = '14-15'
 
 TEMPLATE_DEBUG = DEBUG
 
@@ -18,13 +20,12 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'klpdise',                      # Or path to database file if using sqlite3.
-        # The following settings are not used with sqlite3:
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'klpdise',
         'USER': '',
         'PASSWORD': '',
-        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '',                      # Set to empty string for default.
+        'HOST': '',
+        'PORT': '',
     }
 }
 
@@ -87,7 +88,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'django.contrib.staticfiles.finders.FileSystemFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -97,7 +98,7 @@ SECRET_KEY = 'bfP4FiqrzDkyXRmB8wcD3ZqPbENGVa6kspqJ3uOIXwPY6ad59ymVxChK'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    # 'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (

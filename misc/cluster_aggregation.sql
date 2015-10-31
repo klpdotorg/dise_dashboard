@@ -120,6 +120,9 @@ BEGIN
 
             Sum(CASE WHEN ramps = 1 THEN 1 ELSE 0 END) AS sum_has_ramps,
 
+            Sum(CASE WHEN no_of_computers > 0 THEN 1 ELSE 0 END) AS sum_has_computer,
+            Sum(CASE WHEN (COALESCE(toilet_common, 0) + toilet_boys + toilet_girls) > 0 THEN 1 ELSE 0 END) AS sum_has_toilet,
+
             Sum(no_of_computers) as sum_no_of_computers,
             Avg(no_of_computers) as avg_no_of_computers,
 
@@ -183,39 +186,6 @@ BEGIN
                 ' || table_name || '.block_name=cluster_centroid.block_name AND
                 ' || table_name || '.district=cluster_centroid.district';
 
-    END LOOP;
-
-    FOREACH year IN ARRAY years
-    LOOP
-        -- can do some processing here
-        table_name := 'dise_' || year || '_cluster_aggregations';
-        basic_table_name := 'dise_' || year || '_basic_data';
-
-        EXECUTE 'ALTER TABLE ' || table_name || '
-            ADD COLUMN medium_of_instructions json';
-
-        EXECUTE 'UPDATE ' || table_name || '
-            SET medium_of_instructions=json_v
-            FROM
-                (
-                    SELECT cluster_name, block_name, district_name, array_to_json(array_agg(row_to_json(moe_json))) as json_v
-                    FROM
-                    (
-                        SELECT
-                            distinct medium_of_instruction as moe_id,
-                            cluster_name,
-                            block_name,
-                            district as district_name,
-                            count(*) as sch_count
-                        FROM ' || basic_table_name || '
-                        GROUP BY moe_id, cluster_name, block_name, district_name
-                        ORDER BY sch_count
-                    ) moe_json
-                    GROUP BY cluster_name, block_name, district_name
-                ) moe_json_2
-            WHERE moe_json_2.cluster_name=' || table_name || '.cluster_name AND
-                moe_json_2.block_name=' || table_name || '.block_name AND
-                moe_json_2.district_name=' || table_name || '.district';
     END LOOP;
     RETURN;
 END

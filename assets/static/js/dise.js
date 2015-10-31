@@ -165,39 +165,6 @@ $(function(){
     var filter_prefix = 'f_';
     window.default_session = '14-15';
 
-    var moe_map = {
-        1: "Assamese",
-        2: "Bengali",
-        3: "Gujarati",
-        4: "Hindi",
-        5: "Kannada",
-        6: "Kashmiri",
-        7: "Konkani",
-        8: "Malayalam",
-        9: "Manipuri",
-        10: "Marathi",
-        11: "Nepali",
-        12: "Odia",
-        13: "Punjabi",
-        14: "Sanskrit",
-        15: "Sindhi",
-        16: "Tamil",
-        17: "Telugu",
-        18: "Urdu",
-        19: "English",
-        20: "Bodo",
-        21: "Mising",
-        22: "Dogri",
-        23: "Khasi",
-        24: "Garo",
-        25: "Mizo",
-        26: "Bhutia",
-        27: "Lepcha",
-        28: "Limboo",
-        29: "French",
-        99: "Others",
-    }
-
     var School = function(feature) {
         if (feature === undefined) return this;
         var self = this;
@@ -263,9 +230,8 @@ $(function(){
         self.properties.medium_of_instructions_list = ko.computed(function() {
             var moes = [];
             for (var i = 0; i < self.properties.medium_of_instructions.length; i++) {
-                moes.push(moe_map[self.properties.medium_of_instructions[i].moe_id] + " (" + self.properties.medium_of_instructions[i].sch_count + ")");
+                moes.push(self.properties.medium_of_instructions[i].name + " (" + self.properties.medium_of_instructions[i].sum_schools + ")");
             };
-            // console.log(moes);
             return moes.join(', ');
         });
 
