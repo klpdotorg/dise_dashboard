@@ -1,6 +1,7 @@
 
 #### [Current]
-
+ * [371b29f](../../commit/371b29f) - __(Bibhas)__ test commit
+ * [600eb26](../../commit/600eb26) - __(Bibhas)__ added changelog
 
 #### v2.1
  * [cdc9812](../../commit/cdc9812) - __(Bibhas)__ Merge pull request [#125](../../issues/125) from klpdotorg/dev
@@ -27,7 +28,7 @@ Updated import scripts, imported 14-15 data, using DRF and removed old codes
  * [0f6901e](../../commit/0f6901e) - __(Bibhas)__ fixed getting info for a single school
  * [965117f](../../commit/965117f) - __(Bibhas)__ Merge pull request [#123](../../issues/123) from klpdotorg/cleanup_old_code
 
-Removed all old code and made DRF code work.
+Removed all old code and made DRF code work. 
  * [b02d5d5](../../commit/b02d5d5) - __(Bibhas)__ fixed issues with /schools endpoints
  * [4ffe4e8](../../commit/4ffe4e8) - __(Bibhas)__ Merge pull request [#122](../../issues/122) from klpdotorg/bibhas
 
