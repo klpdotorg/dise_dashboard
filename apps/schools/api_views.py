@@ -45,6 +45,21 @@ class NotFound(APIException):
 
 class OmniSearchApiView(APIView):
     def get(self, request, session=settings.DEFAULT_SESSION, format=None):
+        """Searches all entities together or individually
+        ---
+        parameters:
+            - name: session
+              required: true
+              description: the session to search for, in the format "14-15". Default is latest session.
+            - name: query
+              required: true
+              description: the term to search for
+            - name: type
+              description: "entity type to search for. options are - school,
+                            cluster, block, district, pincode, assembly,
+                            parliament and all. Default is 'all'."
+        """
+
         session = self.kwargs.get('session', session)
         query = request.query_params.get('query')
         if not query:
@@ -200,7 +215,16 @@ class SchoolApiBaseView(object):
 
 class SchoolListView(SchoolApiBaseView, generics.ListAPIView):
     """Returns the list of schools for given year and filters
-    """
+        ---
+        parameters:
+            - name: session
+              required: true
+              description: the session to search for, in the format "14-15". Default is latest session.
+            - name: management
+              description: 'govt' or 'pvt'
+            - name: area
+              description: 'rural' or 'urban'
+        """
     def get_queryset(self):
         queryset = super(SchoolListView, self).get_queryset()
 
@@ -236,6 +260,8 @@ class SchoolInfoView(SchoolApiBaseView, generics.RetrieveAPIView):
 
 
 class SchoolInfraView(SchoolInfoView):
+    """Returns infrastructure details of a given school
+    """
     serializer_class = SchoolInfraSerializer
 
 
@@ -261,10 +287,45 @@ class AggregationBaseView(object):
 
 
 class AggregationListView(AggregationBaseView, generics.ListAPIView):
-    pass
+    def get(self, *args, **kwargs):
+        """Lists aggregated entities depending on entity type. options for 'entity'
+            are school, cluster, block, district, pincode, assembly and parliament.
+            ---
+            parameters:
+                - name: session
+                  required: true
+                  description: the session to search for, in the format "14-15". Default is latest session.
+                - name: entity
+                  required: true
+                  description: school, cluster, block, district, pincode, assembly and parliament.
+        """
+        """
+        This get() is here so that Swagger parses the docstring properly
+        """
+        return self.get(*args, **kwargs)
 
 
 class AggregationInfoView(AggregationBaseView, generics.RetrieveAPIView):
+    def get(self, *args, **kwargs):
+        """Shows details of aggregated entities depending on entity type and slug. options for 'entity'
+            are school, cluster, block, district, pincode, assembly and parliament.
+            ---
+            parameters:
+                - name: session
+                  required: true
+                  description: the session to search for, in the format "14-15". Default is latest session.
+                - name: entity
+                  required: true
+                  description: school, cluster, block, district, pincode, assembly and parliament.
+                - name: slug
+                  required: true
+                  description: slug of the given entity
+        """
+        """
+        This get() is here so that Swagger parses the docstring properly
+        """
+        return self.get(*args, **kwargs)
+
     def get_object(self):
         queryset = self.get_queryset()
         slug = self.kwargs.get('slug')
