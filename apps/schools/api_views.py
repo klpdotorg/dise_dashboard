@@ -302,7 +302,7 @@ class AggregationListView(AggregationBaseView, generics.ListAPIView):
         """
         This get() is here so that Swagger parses the docstring properly
         """
-        return self.get(*args, **kwargs)
+        return super(AggregationListView, self).get(*args, **kwargs)
 
 
 class AggregationInfoView(AggregationBaseView, generics.RetrieveAPIView):
@@ -324,7 +324,7 @@ class AggregationInfoView(AggregationBaseView, generics.RetrieveAPIView):
         """
         This get() is here so that Swagger parses the docstring properly
         """
-        return self.get(*args, **kwargs)
+        return super(AggregationInfoView, self).get(*args, **kwargs)
 
     def get_object(self):
         queryset = self.get_queryset()
