@@ -12,7 +12,8 @@ from collections import OrderedDict
 from .serializers import (
     SchoolSerializer, ClusterSerializer, BlockSerializer,
     DistrictSerializer, AssemblySerializer, ParliamentSerializer,
-    PincodeSerializer, SchoolInfraSerializer
+    PincodeSerializer, SchoolInfraSerializer,
+    ClusterBasicSerializer, BlockBasicSerializer, DistrictBasicSerializer
 )
 
 from .models import get_models
@@ -21,8 +22,11 @@ from common import models as common_utils
 
 serializers = {
     'cluster': ClusterSerializer,
+    'cluster-basic': ClusterBasicSerializer,
     'block': BlockSerializer,
+    'block-basic': BlockBasicSerializer,
     'district': DistrictSerializer,
+    'district-basic': DistrictBasicSerializer,
     'assembly': AssemblySerializer,
     'parliament': ParliamentSerializer,
     'pincode': PincodeSerializer,
@@ -270,8 +274,16 @@ class AggregationBaseView(object):
     bbox_filter_field = 'centroid'
 
     def get_serializer_class(self):
-        entity = self.kwargs.get('entity')
-        serializer = serializers.get(entity)
+        try:
+            serializer = super(AggregationBaseView, self).get_serializer_class()
+        except Exception, e:
+            entity = self.kwargs.get('entity')
+            basic = self.request.query_params.get('basic', 'no')
+
+            if basic == 'yes':
+                serializer = serializers.get(entity + '-basic')
+            else:
+                serializer = serializers.get(entity)
         return serializer
 
     def get_queryset(self):
@@ -378,6 +390,8 @@ class AggregationSchoolListView(SchoolApiBaseView, generics.ListAPIView):
 
 class ClustersInBlockView(AggregationListView, generics.ListAPIView):
     """Lists all the clusters in a block"""
+    serializer_class = ClusterBasicSerializer
+
     def get_queryset(self):
         session = self.kwargs.get('session')
         block_slug = self.kwargs.get('block_slug')
@@ -399,6 +413,8 @@ class ClustersInBlockView(AggregationListView, generics.ListAPIView):
 
 class ClustersInDistrictView(AggregationListView, generics.ListAPIView):
     """Lists all the clusters in a district"""
+    serializer_class = ClusterBasicSerializer
+
     def get_queryset(self):
         session = self.kwargs.get('session')
         district_slug = self.kwargs.get('district_slug')
@@ -420,6 +436,8 @@ class ClustersInDistrictView(AggregationListView, generics.ListAPIView):
 
 class BlocksInDistrictView(AggregationListView, generics.ListAPIView):
     """Lists all the blocks in a district"""
+    serializer_class = BlockBasicSerializer
+
     def get_queryset(self):
         session = self.kwargs.get('session')
         district_slug = self.kwargs.get('district_slug')
