@@ -278,7 +278,7 @@ class AggregationBaseView(object):
             serializer = super(AggregationBaseView, self).get_serializer_class()
         except Exception, e:
             entity = self.kwargs.get('entity')
-            basic = self.request.query_params.get('basic', 'no')
+            basic = self.request.GET.get('basic', 'no')
 
             if basic == 'yes':
                 serializer = serializers.get(entity + '-basic')
@@ -307,9 +307,16 @@ class AggregationListView(AggregationBaseView, generics.ListAPIView):
                 - name: session
                   required: true
                   description: the session to search for, in the format "14-15". Default is latest session.
+                  paramType: path
                 - name: entity
                   required: true
                   description: school, cluster, block, district, pincode, assembly and parliament.
+                  paramType: path
+                - name: basic
+                  required: false
+                  description: whether to return only basic data. default is 'no'. options are 'yes' or 'no'.
+                  paramType: query
+
         """
         """
         This get() is here so that Swagger parses the docstring properly

@@ -130,6 +130,7 @@ class DistrictSerializer(AggregationBaseSerializer):
 
 
 class ClusterBasicSerializer(AggregationBaseSerializer):
+    # Returns just names, no aggregated values
     class Meta:
         model = ClusterAggregations
         geo_field = 'centroid'
@@ -138,6 +139,7 @@ class ClusterBasicSerializer(AggregationBaseSerializer):
 
 
 class BlockBasicSerializer(AggregationBaseSerializer):
+    # Returns just names, no aggregated values
     class Meta:
         model = BlockAggregations
         geo_field = 'centroid'
@@ -146,6 +148,7 @@ class BlockBasicSerializer(AggregationBaseSerializer):
 
 
 class DistrictBasicSerializer(AggregationBaseSerializer):
+    # Returns just names, no aggregated values
     class Meta:
         model = DistrictAggregations
         geo_field = 'centroid'
