@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.db.models import Q
 from django.conf import settings
 from collections import OrderedDict
+import operator
 
 from .serializers import (
     SchoolSerializer, ClusterSerializer, BlockSerializer,
@@ -69,6 +70,13 @@ class OmniSearchApiView(APIView):
         if not query:
             raise NotFound('URL parameter "query" does not exist.')
 
+        query_variations = [
+            query,
+            query.replace('-', ''),
+            query.replace('-', ' '),
+            query.replace('.', '')
+        ]
+
         stype = request.query_params.get('type', 'all')
 
         results = []
@@ -109,7 +117,9 @@ class OmniSearchApiView(APIView):
 
         if stype in ('cluster', 'all'):
             # search clusters
-            clusters = ClusterModel.objects.filter(cluster_name__icontains=query).order_by('cluster_name')[:3]
+            clusters = ClusterModel.objects.filter(
+                reduce(operator.or_, (Q(cluster_name__icontains=query) for query in query_variations))
+            ).order_by('cluster_name')[:3]
             if clusters.count() > 0:
                 temp_d = {
                     'text': 'Clusters',
@@ -124,7 +134,9 @@ class OmniSearchApiView(APIView):
                 results.append(temp_d)
 
         if stype in ('block', 'all'):
-            blocks = BlockModel.objects.filter(block_name__icontains=query).order_by('block_name')[:3]
+            blocks = BlockModel.objects.filter(
+                reduce(operator.or_, (Q(block_name__icontains=query) for query in query_variations))
+            ).order_by('block_name')[:3]
             if blocks.count() > 0:
                 temp_d = {
                     'text': 'Blocks',
