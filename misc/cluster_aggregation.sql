@@ -68,6 +68,8 @@ BEGIN
             Sum(classrooms_in_good_condition) as sum_classrooms_in_good_condition,
             Avg(classrooms_in_good_condition) as avg_classrooms_in_good_condition,
 
+            Sum(CASE WHEN classrooms_in_good_condition > 0 THEN 1 ELSE 0 END) AS sum_has_classrooms_in_good_condition,
+
             Sum(classrooms_require_major_repair) as sum_classrooms_require_major_repair,
             Avg(classrooms_require_major_repair) as avg_classrooms_require_major_repair,
 
@@ -122,6 +124,7 @@ BEGIN
 
             Sum(CASE WHEN no_of_computers > 0 THEN 1 ELSE 0 END) AS sum_has_computer,
             Sum(CASE WHEN (COALESCE(toilet_common, 0) + toilet_boys + toilet_girls) > 0 THEN 1 ELSE 0 END) AS sum_has_toilet,
+            Sum(CASE WHEN COALESCE(toilet_girls, 0) > 0 THEN 1 ELSE 0 END) AS sum_has_girls_toilet,
 
             Sum(no_of_computers) as sum_no_of_computers,
             Avg(no_of_computers) as avg_no_of_computers,
