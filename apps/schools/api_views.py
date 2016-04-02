@@ -479,19 +479,32 @@ class BlocksInDistrictView(AggregationListView, generics.ListAPIView):
 @api_view(('GET',))
 def api_root(request, format=None):
     endpoints = OrderedDict()
-    endpoints['School List'] = reverse(
+    endpoints['List'] = {}
+    endpoints['Info'] = {}
+
+    endpoints['Search Everything'] = reverse(
+        'api_search', request=request, args=['12-13']
+    ) + "?query=pura"
+
+    endpoints['Search for Cluster'] = reverse(
+        'api_search', request=request, args=['12-13']
+    ) + "?query=pura&type=cluster"
+
+    endpoints['List']['School List'] = reverse(
         'api_school_list', request=request, args=['12-13']
     )
-    endpoints['School Info'] = reverse(
+    endpoints['Info']['School Info'] = reverse(
         'api_school_info', request=request, args=['12-13', '29310306103']
     )
 
     for entity in serializers.keys():
-        endpoints['%s List' % entity.title()] = reverse(
+        if entity.endswith('-basic'):
+            continue
+        endpoints['List']['%s List' % entity.title()] = reverse(
             'api_entity_list', request=request, args=['12-13', entity]
         ) + "?bbox=76.10589981079102,15.00581078905935,76.34038925170898,15.074775626862015"
 
-    endpoints['Cluster Info'] = reverse(
+    endpoints['Info']['Cluster Info'] = reverse(
         'api_entity_info', request=request,
         args=['12-13', 'cluster', 'davanageren-avaragere']
     )
@@ -499,7 +512,7 @@ def api_root(request, format=None):
         'api_entity_school_list', request=request,
         args=['12-13', 'cluster', 'davanageren-avaragere']
     )
-    endpoints['Block Info'] = reverse(
+    endpoints['Info']['Block Info'] = reverse(
         'api_entity_info', request=request,
         args=['12-13', 'block', 'gulbarga-afzalpur']
     )
@@ -511,7 +524,7 @@ def api_root(request, format=None):
         'api_clusters_in_block', request=request,
         args=['12-13', 'block', 'gulbarga-afzalpur']
     )
-    endpoints['District Info'] = reverse(
+    endpoints['Info']['District Info'] = reverse(
         'api_entity_info', request=request,
         args=['12-13', 'district', 'bagalkot']
     )
@@ -527,7 +540,7 @@ def api_root(request, format=None):
         'api_blocks_in_district', request=request,
         args=['12-13', 'district', 'bagalkot']
     )
-    endpoints['Assembly Info'] = reverse(
+    endpoints['Info']['Assembly Info'] = reverse(
         'api_entity_info', request=request,
         args=['12-13', 'assembly', 'bhadravati']
     )
@@ -535,7 +548,7 @@ def api_root(request, format=None):
         'api_entity_school_list', request=request,
         args=['12-13', 'assembly', 'bhadravati']
     )
-    endpoints['Parliament Info'] = reverse(
+    endpoints['Info']['Parliament Info'] = reverse(
         'api_entity_info', request=request,
         args=['12-13', 'parliament', 'bagalkot']
     )
@@ -543,7 +556,7 @@ def api_root(request, format=None):
         'api_entity_school_list', request=request,
         args=['12-13', 'parliament', 'bagalkot']
     )
-    endpoints['Pincode Info'] = reverse(
+    endpoints['Info']['Pincode Info'] = reverse(
         'api_entity_info', request=request,
         args=['12-13', 'pincode', '560044']
     )
