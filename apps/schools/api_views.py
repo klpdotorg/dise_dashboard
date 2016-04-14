@@ -409,7 +409,13 @@ class AggregationSchoolListView(SchoolApiBaseView, generics.ListAPIView):
 
 class ClustersInBlockView(AggregationListView, generics.ListAPIView):
     """Lists all the clusters in a block"""
-    serializer_class = ClusterBasicSerializer
+    def get_serializer_class(self):
+        basic = self.request.GET.get('basic', 'yes')
+
+        if basic == 'no':
+            return ClusterSerializer
+
+        return ClusterBasicSerializer
 
     def get_queryset(self):
         session = self.kwargs.get('session')
@@ -432,7 +438,13 @@ class ClustersInBlockView(AggregationListView, generics.ListAPIView):
 
 class ClustersInDistrictView(AggregationListView, generics.ListAPIView):
     """Lists all the clusters in a district"""
-    serializer_class = ClusterBasicSerializer
+    def get_serializer_class(self):
+        basic = self.request.GET.get('basic', 'yes')
+
+        if basic == 'no':
+            return ClusterSerializer
+
+        return ClusterBasicSerializer
 
     def get_queryset(self):
         session = self.kwargs.get('session')
@@ -455,7 +467,14 @@ class ClustersInDistrictView(AggregationListView, generics.ListAPIView):
 
 class BlocksInDistrictView(AggregationListView, generics.ListAPIView):
     """Lists all the blocks in a district"""
-    serializer_class = BlockBasicSerializer
+
+    def get_serializer_class(self):
+        basic = self.request.GET.get('basic', 'yes')
+
+        if basic == 'no':
+            return BlockSerializer
+
+        return BlockBasicSerializer
 
     def get_queryset(self):
         session = self.kwargs.get('session')
