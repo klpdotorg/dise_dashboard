@@ -66,16 +66,17 @@ class OmniSearchApiView(APIView):
         """
 
         session = self.kwargs.get('session', session)
-        query = request.query_params.get('query')
+        query = request.query_params.get('query').lower()
         if not query:
             raise NotFound('URL parameter "query" does not exist.')
 
-        query_variations = [
+        query_variations = set([
             query,
             query.replace('-', ''),
             query.replace('-', ' '),
-            query.replace('.', '')
-        ]
+            query.replace('.', ''),
+            query.replace('oo', 'u')
+        ])
 
         stype = request.query_params.get('type', 'all')
 
