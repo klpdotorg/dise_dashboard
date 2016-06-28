@@ -88,7 +88,8 @@ class AggregationBaseSerializer(GeoFeatureModelSerializer):
         categories = obj.schools(obj.session).values('sch_category').annotate(
             sum_schools=Count('sch_category'),
             sum_boys=Sum('total_boys'),
-            sum_girls=Sum('total_girls')
+            sum_girls=Sum('total_girls'),
+            sum_classrooms=Sum('tot_clrooms')
         )
         for category in categories:
             category['id'] = category['sch_category']
