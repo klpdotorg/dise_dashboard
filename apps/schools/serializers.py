@@ -4,6 +4,7 @@ from .models import (
     PincodeAggregations
 )
 from common.models import MEDIUM, SCHOOL_CATEGORY, search_choices_by_key
+from common import SumCase
 from django.db.models import Count, Sum
 from rest_framework import serializers
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -89,12 +90,24 @@ class AggregationBaseSerializer(GeoFeatureModelSerializer):
             sum_schools=Count('sch_category'),
             sum_boys=Sum('total_boys'),
             sum_girls=Sum('total_girls'),
-            sum_classrooms=Sum('tot_clrooms')
+            classrooms_total=Sum('tot_clrooms'),
+            classrooms_leq_3=SumCase('tot_clrooms', when='tot_clrooms <= 3'),
+            classrooms_eq_4=SumCase('tot_clrooms', when='tot_clrooms = 4'),
+            classrooms_eq_5=SumCase('tot_clrooms', when='tot_clrooms = 5'),
+            classrooms_mid_67=SumCase('tot_clrooms', when='tot_clrooms IN (6, 7)'),
+            classrooms_geq_8=SumCase('tot_clrooms', when='tot_clrooms >= 8'),
         )
         for category in categories:
             category['id'] = category['sch_category']
             category['name'] = search_choices_by_key(SCHOOL_CATEGORY, category['id'])
             del category['sch_category']
+
+            category_copy = category.copy()
+            category['classrooms'] = dict()
+            for key, value in category_copy.iteritems():
+                if key.startswith('classrooms'):
+                    category['classrooms'][key.replace('classrooms_', '')] = value
+                    del category[key]
 
         categories = sorted(categories, key=lambda k: k['id'])
         return categories
