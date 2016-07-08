@@ -4,7 +4,7 @@ from .models import (
     PincodeAggregations
 )
 from common.models import MEDIUM, SCHOOL_CATEGORY, search_choices_by_key
-from common import SumCase
+from common import SumCase, CountWhen
 from django.db.models import Count, Sum
 from rest_framework import serializers
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -87,15 +87,15 @@ class AggregationBaseSerializer(GeoFeatureModelSerializer):
 
     def get_school_categories(self, obj):
         categories = obj.schools(obj.session).values('sch_category').annotate(
-            sum_schools=Count('sch_category'),
+            sum_schools_total=Count('sch_category'),
+            sum_schools_classrooms_leq_3=CountWhen('sch_category', when='tot_clrooms <= 3'),
+            sum_schools_classrooms_eq_4=CountWhen('sch_category', when='tot_clrooms = 4'),
+            sum_schools_classrooms_eq_5=CountWhen('sch_category', when='tot_clrooms = 5'),
+            sum_schools_classrooms_mid_67=CountWhen('sch_category', when='tot_clrooms IN (6, 7)'),
+            sum_schools_classrooms_geq_8=CountWhen('sch_category', when='tot_clrooms >= 8'),
             sum_boys=Sum('total_boys'),
             sum_girls=Sum('total_girls'),
-            classrooms_total=Sum('tot_clrooms'),
-            classrooms_leq_3=SumCase('tot_clrooms', when='tot_clrooms <= 3'),
-            classrooms_eq_4=SumCase('tot_clrooms', when='tot_clrooms = 4'),
-            classrooms_eq_5=SumCase('tot_clrooms', when='tot_clrooms = 5'),
-            classrooms_mid_67=SumCase('tot_clrooms', when='tot_clrooms IN (6, 7)'),
-            classrooms_geq_8=SumCase('tot_clrooms', when='tot_clrooms >= 8'),
+            sum_classrooms=Sum('tot_clrooms'),
         )
         for category in categories:
             category['id'] = category['sch_category']
@@ -103,10 +103,10 @@ class AggregationBaseSerializer(GeoFeatureModelSerializer):
             del category['sch_category']
 
             category_copy = category.copy()
-            category['classrooms'] = dict()
+            category['sum_schools'] = dict()
             for key, value in category_copy.iteritems():
-                if key.startswith('classrooms'):
-                    category['classrooms'][key.replace('classrooms_', '')] = value
+                if key.startswith('sum_schools'):
+                    category['sum_schools'][key.replace('sum_schools_', '')] = value
                     del category[key]
 
         categories = sorted(categories, key=lambda k: k['id'])
