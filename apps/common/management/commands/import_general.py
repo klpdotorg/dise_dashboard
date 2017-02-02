@@ -57,8 +57,8 @@ class Command(BaseCommand):
             school['school_type'] = row.get('SCHTYPE')
         if row.get('SCHSHI_YN'):
             school['shift_school_yn'] = row.get('SCHSHI_YN')
-        if row.get('WORKDAYS'):
-            school['no_of_working_days'] = row.get('WORKDAYS')
+        if row.get('WORKDAYS_PR'):
+            school['no_of_working_days'] = row.get('WORKDAYS_PR')
         if row.get('NOINSPECT'):
             school['no_of_acad_inspection'] = row.get('NOINSPECT')
         if row.get('RESITYPE'):

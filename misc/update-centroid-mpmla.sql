@@ -4,7 +4,7 @@ SET centroid = st_transform(centroid, 4326);
 
 UPDATE :table
 SET centroid=st_setsrid(ssa.centroid, 4326)
-FROM dblink('dbname=ssa port=5432 host=localhost user=klp', 'SELECT code, name, centroid FROM schools') AS ssa(code bigint, name character varying(150), centroid geometry)
+FROM dblink('host=localhost dbname=ssa user=klp'::text, 'SELECT code, name, centroid FROM schools') AS ssa(code bigint, name character varying(150), centroid geometry)
 WHERE :table.school_code = ssa.code;
 
 

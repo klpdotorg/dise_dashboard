@@ -6,6 +6,7 @@ from django.db import connection
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from schools.models import get_models
+from datetime import datetime
 
 
 class Command(BaseCommand):
@@ -35,6 +36,9 @@ class Command(BaseCommand):
         self.rows_to_create.append(school)
 
     def handle(self, *args, **options):
+        print "="*80
+        print datetime.now()
+        print "="*80
         if 'year' in options:
             from_year, to_year = options.get('year').split('-')
 

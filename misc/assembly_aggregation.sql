@@ -1,7 +1,7 @@
 CREATE OR REPLACE FUNCTION aggregate_assembly() RETURNS void AS
 $BODY$
 DECLARE
-    years integer[] := array[1011, 1112, 1213, 1314, 1415];
+    years integer[] := array[1011, 1112, 1213, 1314, 1415, 1516];
     year integer;
     table_name varchar(50);
     basic_table_name varchar(50);

@@ -201,7 +201,7 @@ LOGGING = {
 }
 
 REST_FRAMEWORK = {
-    'PAGE_SIZE': 100,
+    'PAGE_SIZE': 500,
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
