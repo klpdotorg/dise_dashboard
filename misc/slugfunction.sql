@@ -19,7 +19,7 @@ END;
 $$
 LANGUAGE PLPGSQL;
 
-UPDATE dise_1213_basic_data
+UPDATE dise_1516_basic_data
 SET cluster_name = 'D.J.HALLI'
 WHERE school_code=29280600330;
 
