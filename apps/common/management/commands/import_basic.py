@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
     def process_row(self, row, year=None):
         # DISTNAME,SCHOOL_CODE,SCHOOL_NAME,BLOCK_NAME,CLUSTER_NAME,VILLAGE_NAME,PINCODE
-        DiseBasicData = get_models(session='14-15', what='school')
+        DiseBasicData = get_models(session='15-16', what='school')
 
         school = DiseBasicData(
             school_code=row['SCHOOL_CODE'],
