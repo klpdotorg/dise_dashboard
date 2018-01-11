@@ -38,6 +38,16 @@ class Command(BaseCommand):
 
         school = {}
 
+        if row.get('APPROACHBYROAD'):
+            school['approachable_by_road'] = row.get('APPROACHBYROAD')
+        if row.get('CCE_YN'):
+            school['continuous_comprehensive_evaluation'] = row.get('CCE_YN')
+        if row.get('PCR_MAINTAINED'):
+            school['pupil_cumulative_record_maitained'] = row.get('PCR_MAINTAINED')
+        if row.get('PCR_SHARED'):
+            school['pupil_cumulative_record_shared'] = row.get('PCR_SHARED')
+        if row.get('SMC_YN'):
+            school['school_management_committee'] = row.get('SMC_YN')
         if row.get('KITDEVGRANT_YN'):
             school['kitchen_devices_grant'] = row.get('KITDEVGRANT_YN')
 

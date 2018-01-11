@@ -1,7 +1,7 @@
 CREATE OR REPLACE FUNCTION aggregate_parliament() RETURNS void AS
 $BODY$
 DECLARE
-    years integer[] := array[1011, 1112, 1213, 1314, 1415, 1516];
+    years integer[] := array[1011, 1112, 1213, 1314, 1415, 1516, 1617];
     year integer;
     table_name varchar(50);
     basic_table_name varchar(50);
@@ -55,6 +55,12 @@ BEGIN
 
             Sum(tlm_grant_expnd) AS sum_tlm_grant_expnd,
             Avg(tlm_grant_expnd) AS avg_tlm_grant_expnd,
+
+            Sum(school_maintain_grant_recd) AS sum_school_maintain_grant_recd,
+            Avg(school_maintain_grant_recd) AS avg_school_maintain_grant_recd,
+
+            Sum(school_maintain_grant_expnd) AS sum_school_maintain_grant_expnd,
+            Avg(school_maintain_grant_expnd) AS avg_school_maintain_grant_expnd,
 
             Sum(funds_from_students_recd) AS sum_funds_from_students_recd,
             Avg(funds_from_students_recd) AS avg_funds_from_students_recd,

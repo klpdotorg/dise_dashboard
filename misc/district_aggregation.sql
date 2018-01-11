@@ -1,7 +1,7 @@
 CREATE OR REPLACE FUNCTION aggregate_district() RETURNS void AS
 $BODY$
 DECLARE
-    years integer[] := array[1011, 1112, 1213, 1314, 1415, 1516];
+    years integer[] := array[1011, 1112, 1213, 1314, 1415, 1516, 1617];
     year integer;
     table_name varchar(50);
     basic_table_name varchar(50);
@@ -61,6 +61,12 @@ BEGIN
 
             Sum(funds_from_students_expnd) AS sum_funds_from_students_expnd,
             Avg(funds_from_students_expnd) AS avg_funds_from_students_expnd,
+
+            Sum(school_maintain_grant_recd) AS sum_school_maintain_grant_recd,
+            Avg(school_maintain_grant_recd) AS avg_school_maintain_grant_recd,
+
+            Sum(school_maintain_grant_expnd) AS sum_school_maintain_grant_expnd,
+            Avg(school_maintain_grant_expnd) AS avg_school_maintain_grant_expnd,
 
             Sum(tot_clrooms) AS sum_tot_clrooms,
             Avg(tot_clrooms) AS avg_tot_clrooms,

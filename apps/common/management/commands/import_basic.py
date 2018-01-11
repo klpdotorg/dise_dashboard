@@ -9,7 +9,7 @@ from schools.models import get_models
 from datetime import datetime
 
 
-class Command(BaseCommand):
+class Command(BaseCommand)
     args = '<filename filename ...>'
     help = 'Imports Basic data files'
     option_list = BaseCommand.option_list + (
@@ -22,16 +22,29 @@ class Command(BaseCommand):
 
     def process_row(self, row, year=None):
         # DISTNAME,SCHOOL_CODE,SCHOOL_NAME,BLOCK_NAME,CLUSTER_NAME,VILLAGE_NAME,PINCODE
-        DiseBasicData = get_models(session='14-15', what='school')
+        DiseBasicData = get_models(session='16-17', what='school')
 
         school = DiseBasicData(
+            academic_year=row['AC_YEAR'],
             school_code=row['SCHOOL_CODE'],
-            district=row['DISTNAME'],
             school_name=row['SCHOOL_NAME'],
-            block_name=row['BLOCK_NAME'],
-            cluster_name=row['CLUSTER_NAME'],
+            habitat_name=row['HABNAME'],
             village_name=row['VILLAGE_NAME'],
-            pincode=row['PINCODE'],
+            panchayat_code=row['PANCHAYAT_CODE'],
+            panchayat_name=row['PANCHAYAT'],
+            muncipality_name=row['MUNNAME'],
+            city_name=row['CITYNAME'],
+            cluster_name=row['CLUSTER_NAME'],
+            block_name=row['BLOCK_NAME'],
+            district=row['DISTNAME'],
+            state_name=row['STATNAME'],
+            pincode=row['PINCODE'] ,          
+            latitude_degrees=row['LatitudeDeg'],
+            latitude_minutes=row['LatitudeMin'],
+            latitude_seconds=row['LatitudeSec'],
+            longitude_degrees=row['LongitudeDeg'],
+            longitude_minutes=row['LongitudeMin'],
+            longitude_seconds=row['LongitudeSec']
         )
         self.rows_to_create.append(school)
 
@@ -52,7 +65,9 @@ class Command(BaseCommand):
                 cursor = connection.cursor()
                 cursor.execute('DROP TABLE IF EXISTS "%s"' % table_name)
                 print 'Table dropped'
-                cursor.execute("CREATE TABLE %s as SELECT * FROM dise_1314_basic_data WITH NO DATA" % table_name)
+                print cursor.description
+                cursor.execute("CREATE TABLE %s as SELECT * FROM dise_1314_basic_data                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           WITH NO DATA" % table_name)
+
                 print 'Table %s created' % table_name
             except Exception, e:
                 raise e

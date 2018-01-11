@@ -111,6 +111,49 @@ class BasicData(models.Model):
     total_boys = models.IntegerField(blank=True, null=True)
     total_girls = models.IntegerField(blank=True, null=True)
 
+    #-----------------------------------------------------------------
+    academic_year = models.CharField(max_length=35, blank=True)
+    state_name = models.CharField(max_length=35, blank=True)
+    city_name = models.CharField(max_length=50, blank=True)                                                                                                                                                                                                                                                                                                 
+    habitat_name = models.CharField(max_length=50, blank=True)
+    muncipality_name = models.CharField(max_length=50, blank=True)
+    panchayat_name = models.CharField(max_length=50, blank=True)
+    panchayat_code = models.IntegerField(blank=True, null=True)
+    latitude_degrees = models.IntegerField(blank=True, null=True)
+    latitude_minutes = models.IntegerField(blank=True, null=True)
+    latitude_seconds = models.IntegerField(blank=True, null=True)
+    longitude_degrees = models.IntegerField(blank=True, null=True)
+    longitude_minutes = models.IntegerField(blank=True, null=True)
+    longitude_seconds = models.IntegerField(blank=True, null=True)
+
+    class9_total_enr_boys = models.IntegerField(blank=True, null=True)
+    class10_total_enr_boys = models.IntegerField(blank=True, null=True)
+    class11_total_enr_boys = models.IntegerField(blank=True, null=True)
+    class12_total_enr_boys = models.IntegerField(blank=True, null=True)
+    class9_total_enr_girls = models.IntegerField(blank=True, null=True)
+    class10_total_enr_girls = models.IntegerField(blank=True, null=True)
+    class11_total_enr_girls = models.IntegerField(blank=True, null=True)
+    class12_total_enr_girls = models.IntegerField(blank=True, null=True)
+    school_maintain_grant_recd = models.FloatField(null=True, blank=True)
+    school_maintain_grant_expnd = models.FloatField(null=True, blank=True)
+    approachable_by_road = models.IntegerField(choices=YESNO, null=True, blank=True)
+    continuous_comprehensive_evaluation = models.IntegerField(choices=YESNO, null=True, blank=True)
+    pupil_cumulative_record_maitained = models.IntegerField(choices=YESNO, null=True, blank=True)
+    pupil_cumulative_record_shared = models.IntegerField(choices=YESNO, null=True, blank=True)
+    school_management_committee = models.IntegerField(choices=YESNO, null=True, blank=True)
+    boys_appeared_primary_exam = models.IntegerField(blank=True, null=True)
+    girls_appeared_primary_exam = models.IntegerField(blank=True, null=True)
+    boys_appeared_upper_primary_exam = models.IntegerField(blank=True, null=True)
+    girls_appeared_upper_primary_exam = models.IntegerField(blank=True, null=True)
+    boys_passed_primary_exam = models.IntegerField(blank=True, null=True)
+    girls_passed_primary_exam = models.IntegerField(blank=True, null=True)
+    boys_passed_upper_primary_exam = models.IntegerField(blank=True, null=True)
+    girls_passed_upper_primary_exam = models.IntegerField(blank=True, null=True)
+    boys_more_sixty_percent_primary_exam = models.IntegerField(blank=True, null=True)
+    girls_more_sixty_percent_primary_exam = models.IntegerField(blank=True, null=True)
+    boys_more_sixty_percent_upper_primary_exam = models.IntegerField(blank=True, null=True)
+    girls_more_sixty_percent_upper_primary_exam = models.IntegerField(blank=True, null=True)
+
     objects = models.GeoManager()
 
     class Meta:
@@ -219,6 +262,12 @@ class AggregationBase(models.Model):
     avg_boys = models.FloatField(blank=True, null=True)
     sum_girls = models.BigIntegerField(blank=True, null=True)
     avg_girls = models.FloatField(blank=True, null=True)
+
+    #------------------------------------------------------------------
+    sum_school_maintain_grant_recd = models.FloatField(null=True, blank=True)
+    avg_school_maintain_grant_recd = models.FloatField(null=True, blank=True)
+    sum_school_maintain_grant_expnd = models.FloatField(null=True, blank=True)
+    avg_school_maintain_grant_expnd = models.FloatField(null=True, blank=True)
 
     objects = models.GeoManager()
 
@@ -392,6 +441,11 @@ class Dise1516AssemblyAggregations(AssemblyAggregations):
         db_table = 'dise_1516_assembly_aggregations'
 
 
+class Dise1617AssemblyAggregations(AssemblyAggregations):
+    class Meta:
+        db_table = 'dise_1617_assembly_aggregations'
+
+
 class Dise1011BlockAggregations(BlockAggregations):
     class Meta:
         db_table = 'dise_1011_block_aggregations'
@@ -420,6 +474,11 @@ class Dise1415BlockAggregations(BlockAggregations):
 class Dise1516BlockAggregations(BlockAggregations):
     class Meta:
         db_table = 'dise_1516_block_aggregations'
+
+
+class Dise1617BlockAggregations(BlockAggregations):
+    class Meta:
+        db_table = 'dise_1617_block_aggregations'
 
 
 class Dise1011ClusterAggregations(ClusterAggregations):
@@ -452,6 +511,11 @@ class Dise1516ClusterAggregations(ClusterAggregations):
         db_table = 'dise_1516_cluster_aggregations'
 
 
+class Dise1617ClusterAggregations(ClusterAggregations):
+    class Meta:
+        db_table = 'dise_1617_cluster_aggregations'
+
+
 class Dise1011ParliamentAggregations(ParliamentAggregations):
     class Meta:
         db_table = 'dise_1011_parliament_aggregations'
@@ -480,6 +544,11 @@ class Dise1415ParliamentAggregations(ParliamentAggregations):
 class Dise1516ParliamentAggregations(ParliamentAggregations):
     class Meta:
         db_table = 'dise_1516_parliament_aggregations'
+
+
+class Dise1617ParliamentAggregations(ParliamentAggregations):
+    class Meta:
+        db_table = 'dise_1617_parliament_aggregations'
 
 
 class Dise1011DistrictAggregations(DistrictAggregations):
@@ -512,6 +581,11 @@ class Dise1516DistrictAggregations(DistrictAggregations):
         db_table = 'dise_1516_district_aggregations'
 
 
+class Dise1617DistrictAggregations(DistrictAggregations):
+    class Meta:
+        db_table = 'dise_1617_district_aggregations'
+
+
 class Dise1011PincodeAggregations(PincodeAggregations):
     class Meta:
         db_table = 'dise_1011_pincode_aggregations'
@@ -542,6 +616,11 @@ class Dise1516PincodeAggregations(PincodeAggregations):
         db_table = 'dise_1516_pincode_aggregations'
 
 
+class Dise1617PincodeAggregations(PincodeAggregations):
+    class Meta:
+        db_table = 'dise_1617_pincode_aggregations'
+
+
 class Dise1011BasicData(BasicData):
     class Meta:
         db_table = 'dise_1011_basic_data'
@@ -570,6 +649,11 @@ class Dise1415BasicData(BasicData):
 class Dise1516BasicData(BasicData):
     class Meta:
         db_table = 'dise_1516_basic_data'
+
+
+class Dise1617BasicData(BasicData):
+    class Meta:
+        db_table = 'dise_1617_basic_data'
 
 
 def get_models(session='10-11', what='all'):

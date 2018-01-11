@@ -64,6 +64,18 @@ class Command(BaseCommand):
         if row.get('C8_TOTB'):
             school['class8_total_enr_boys'] = row.get('C8_TOTB')
             school['total_boys'] += int(school['class8_total_enr_boys'])
+        if row.get('C9_B'):
+            school['class9_total_enr_boys'] = row.get('C9_B')
+            school['total_boys'] += int(school['class9_total_enr_boys'])
+        if row.get('C10_B'):
+            school['class10_total_enr_boys'] = row.get('C10_B')
+            school['total_boys'] += int(school['class10_total_enr_boys'])
+        if row.get('C11_B'):
+            school['class11_total_enr_boys'] = row.get('C11_B')
+            school['total_boys'] += int(school['class11_total_enr_boys'])
+        if row.get('C12_B'):
+            school['class12_total_enr_boys'] = row.get('C12_B')
+            school['total_boys'] += int(school['class12_total_enr_boys'])
         if row.get('C1_TOTG'):
             school['class1_total_enr_girls'] = row.get('C1_TOTG')
             school['total_girls'] += int(school['class1_total_enr_girls'])
@@ -88,6 +100,44 @@ class Command(BaseCommand):
         if row.get('C8_TOTG'):
             school['class8_total_enr_girls'] = row.get('C8_TOTG')
             school['total_girls'] += int(school['class8_total_enr_girls'])
+        if row.get('C9_G'):
+            school['class9_total_enr_girls'] = row.get('C9_G')
+            school['total_girls'] += int(school['class9_total_enr_girls'])
+        if row.get('C10_G'):
+            school['class10_total_enr_girls'] = row.get('C10_G')
+            school['total_girls'] += int(school['class10_total_enr_girls'])
+        if row.get('C11_G'):
+            school['class11_total_enr_girls'] = row.get('C11_G')
+            school['total_girls'] += int(school['class11_total_enr_girls'])
+        if row.get('C12_G'):
+            school['class12_total_enr_girls'] = row.get('C12_G')
+            school['total_girls'] += int(school['class12_total_enr_girls'])
+
+        if row.get('APPRB5'):
+            school['boys_appeared_primary_exam'] = row.get('APPRB5')
+        if row.get('APPRG5'):
+            school['girls_appeared_primary_exam'] = row.get('APPRG5')
+        if row.get('APPRB8'):
+            school['boys_appeared_upper_primary_exam'] = row.get('APPRB8')
+        if row.get('APPRG8'):
+            school['girls_appeared_upper_primary_exam'] = row.get('APPRG8')
+        if row.get('PASSB5'):
+            school['boys_passed_primary_exam'] = row.get('PASSB5')
+        if row.get('PASSG5'):
+            school['girls_passed_primary_exam'] = row.get('PASSG5')
+        if row.get('PASSB8'):
+            school['boys_passed_upper_primary_exam'] = row.get('PASSB8')
+        if row.get('PASSG8'):
+            school['girls_passed_upper_primary_exam'] = row.get('PASSG8')
+        if row.get('P60B5'):
+            school['boys_more_sixty_percent_primary_exam'] = row.get('P60B5')
+        if row.get('P60G5'):
+            school['girls_more_sixty_percent_primary_exam'] = row.get('P60G5')
+        if row.get('P60B8'):
+            school['boys_more_sixty_percent_upper_primary_exam'] = row.get('P60B8')
+        if row.get('P60G8'):
+            school['girls_more_sixty_percent_upper_primary_exam'] = row.get('P60G8')
+            
 
         DiseBasicData.objects.filter(school_code=row.get('SCHCD')).update(**school)
 

@@ -13,7 +13,7 @@ class EndpointTest(APITestCase):
     def setUp(self):
         # Using the standard RequestFactory API to create a form POST request
         self.client = APIClient()
-        self.session = '15-16'
+        self.session = '16-17'
         self.valid_dise_code = 29230801501
 
     def test_root(self):

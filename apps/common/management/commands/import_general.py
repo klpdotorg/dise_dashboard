@@ -35,7 +35,7 @@ class Command(BaseCommand):
         if row.get('DISTHQ'):
             school['distance_brc'] = row.get('DISTHQ')
         if row.get('DISTCRC'):
-            school['distance_crc'] = row.get('DISTCRC')
+           school['distance_crc'] = row.get('DISTCRC')
 
         if row.get('ESTDYEAR'):
             school['yeur_estd'] = row.get('ESTDYEAR')
@@ -82,6 +82,10 @@ class Command(BaseCommand):
             school['funds_from_students_recd'] = row.get('FUNDS_R')
         if row.get('FUNDS_E'):
             school['funds_from_students_expnd'] = row.get('FUNDS_E')
+        if row.get('SCHMNTCGRANT_R'):
+            school['school_maintain_grant_recd'] = row.get('SCHMNTCGRANT_R')
+        if row.get('SCHMNTCGRANT_E'):
+            school['school_maintain_grant_expnd'] = row.get('SCHMNTCGRANT_E')
 
         DiseBasicData.objects.filter(school_code=row.get('SCHCD')).update(**school)
 

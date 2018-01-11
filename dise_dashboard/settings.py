@@ -6,9 +6,9 @@ PROJECT_ROOT = os.path.realpath(os.path.dirname(os.path.dirname(__file__)))
 
 POSTGIS_VERSION = (2, 1, 0)
 
-VALID_SESSIONS = ['10-11', '11-12', '12-13', '13-14', '14-15']
+VALID_SESSIONS = ['10-11', '11-12', '12-13', '13-14', '14-15', '15-16', '16-17']
 
-DEFAULT_SESSION = '14-15'
+DEFAULT_SESSION = '16-17'
 
 TEMPLATE_DEBUG = DEBUG
 
@@ -21,9 +21,9 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'klpdise',
+        'NAME': 'klpdise_olap',
         'USER': '',
-        'PASSWORD': '',
+        'PASSWORD': 'qwerty',
         'HOST': '',
         'PORT': '',
     }
