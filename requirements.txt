@@ -14,7 +14,7 @@ ipdb==0.8
 ipython==0.13.2
 jsonfield==0.9.20
 newrelic==2.18.1.15
-psycopg2==2.5.1
+psycopg2==2.7.1
 simplejson==3.3.0
 sqlparse==0.1.11
 wsgiref==0.1.2
