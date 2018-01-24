@@ -28,6 +28,7 @@ sys.path.append(PROJECT_ROOT)
 # mod_wsgi daemon mode with each site in its own daemon process, or use
 # os.environ["DJANGO_SETTINGS_MODULE"] = "dise_dashboard.settings"
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dise_dashboard.settings")
+sys.path.append(os.path.join(os.getcwd(), 'apps'))
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
