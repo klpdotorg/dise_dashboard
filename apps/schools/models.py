@@ -168,7 +168,7 @@ class BasicData(models.Model):
 
 
 class AggregationBase(models.Model):
-    slug = models.CharField(max_length=50, primary_key=True)
+    slug = models.CharField(max_length=200, primary_key=True)
     centroid = models.GeometryField(blank=True, null=True)
 
     sum_schools = models.BigIntegerField(null=True, blank=True)
@@ -290,6 +290,7 @@ class ClusterAggregations(AggregationBase):
     cluster_name = models.CharField(max_length=50)
     block_name = models.CharField(max_length=50, blank=True)
     district = models.CharField(max_length=50, blank=True)
+    # state_name = models.CharField(max_length=35, blank=True)
 
     entity_type = 'cluster'
 
@@ -307,12 +308,14 @@ class ClusterAggregations(AggregationBase):
             cluster_name__iexact=self.cluster_name,
             block_name__iexact=self.block_name,
             district__iexact=self.district
+            # state_name__iexact=self.state_name
         )
 
 
 class BlockAggregations(AggregationBase):
     block_name = models.CharField(max_length=50)
     district = models.CharField(max_length=50, blank=True)
+    # state_name = models.CharField(max_length=35, blank=True)
 
     entity_type = 'block'
 
@@ -328,11 +331,13 @@ class BlockAggregations(AggregationBase):
         return SchoolModel.objects.filter(
             block_name__iexact=self.block_name,
             district__iexact=self.district
+            # state_name__iexact=self.state_name
         )
 
 
 class DistrictAggregations(AggregationBase):
-    district = models.CharField(max_length=35)
+    district = models.CharField(max_length=50)
+    # state_name = models.CharField(max_length=35, blank=True)
 
     class Meta:
         abstract = True
@@ -351,6 +356,7 @@ class DistrictAggregations(AggregationBase):
         SchoolModel = get_models(session, 'school')
         return SchoolModel.objects.filter(
             district__iexact=self.district
+            # state_name__iexact=self.state_name
         )
 
 
