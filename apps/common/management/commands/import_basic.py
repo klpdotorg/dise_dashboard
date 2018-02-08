@@ -9,7 +9,7 @@ from schools.models import get_models
 from datetime import datetime
 
 
-class Command(BaseCommand)
+class Command(BaseCommand):
     args = '<filename filename ...>'
     help = 'Imports Basic data files'
     option_list = BaseCommand.option_list + (
@@ -24,29 +24,50 @@ class Command(BaseCommand)
         # DISTNAME,SCHOOL_CODE,SCHOOL_NAME,BLOCK_NAME,CLUSTER_NAME,VILLAGE_NAME,PINCODE
         DiseBasicData = get_models(session='16-17', what='school')
 
-        school = DiseBasicData(
-            academic_year=row['AC_YEAR'],
-            school_code=row['SCHOOL_CODE'],
-            school_name=row['SCHOOL_NAME'],
-            habitat_name=row['HABNAME'],
-            village_name=row['VILLAGE_NAME'],
-            panchayat_code=row['PANCHAYAT_CODE'],
-            panchayat_name=row['PANCHAYAT'],
-            muncipality_name=row['MUNNAME'],
-            city_name=row['CITYNAME'],
-            cluster_name=row['CLUSTER_NAME'],
-            block_name=row['BLOCK_NAME'],
-            district=row['DISTNAME'],
-            state_name=row['STATNAME'],
-            pincode=row['PINCODE'] ,          
-            latitude_degrees=row['LatitudeDeg'],
-            latitude_minutes=row['LatitudeMin'],
-            latitude_seconds=row['LatitudeSec'],
-            longitude_degrees=row['LongitudeDeg'],
-            longitude_minutes=row['LongitudeMin'],
-            longitude_seconds=row['LongitudeSec']
-        )
-        self.rows_to_create.append(school)
+        school = {}
+
+        if row.get('AC_YEAR'):
+            school['academic_year'] = row.get('AC_YEAR')
+        if row.get('SCHOOL_CODE'):
+        	school['school_code'] = row.get('SCHOOL_CODE')
+       	if row.get('SCHOOL_NAME'):
+            school['school_name'] = row.get('SCHOOL_NAME')
+        if row.get('HABNAME'):
+        	school['habitat_name'] = row.get('HABNAME')
+        if row.get('VILLAGE_NAME'):
+            school['village_name'] = row.get('VILLAGE_NAME')
+        if row.get('PANCHAYAT_CODE'):
+        	school['panchayat_code'] = row.get('PANCHAYAT_CODE')
+       	if row.get('PANCHAYAT'):
+            school['panchayat_name'] = row.get('PANCHAYAT')
+       	if row.get('MUNNAME'):
+            school['muncipality_name'] = row.get('MUNNAME')
+        if row.get('CITYNAME'):
+        	school['city_name'] = row.get('CITYNAME')
+       	if row.get('CLUSTER_NAME'):
+            school['cluster_name'] = row.get('CLUSTER_NAME')
+        if row.get('BLOCK_NAME'):
+        	school['block_name'] = row.get('BLOCK_NAME')
+        if row.get('DISTNAME'):
+            school['district'] = row.get('DISTNAME')
+        if row.get('STATNAME'):
+        	school['state_name'] = row.get('STATNAME')
+       	if row.get('PINCODE'):
+            school['pincode'] = row.get('PINCODE')
+        if row.get('LatitudeDeg'):
+        	school['latitude_degrees'] = row.get('LatitudeDeg')
+        if row.get('LatitudeMin'):
+        	school['latitude_minutes'] = row.get('LatitudeMin')
+        if row.get('LatitudeSec'):
+        	school['latitude_seconds'] = row.get('LatitudeSec')
+        if row.get('LongitudeDeg'):
+        	school['longitude_degrees'] = row.get('LongitudeDeg')
+        if row.get('LongitudeMin'):
+        	school['longitude_minutes'] = row.get('LongitudeMin')
+        if row.get('LongitudeSec'):
+        	school['longitude_seconds'] = row.get('LongitudeSec')
+
+        self.rows_to_create.append(DiseBasicData(**school))
 
     def handle(self, *args, **options):
         print "="*80
@@ -66,7 +87,7 @@ class Command(BaseCommand)
                 cursor.execute('DROP TABLE IF EXISTS "%s"' % table_name)
                 print 'Table dropped'
                 print cursor.description
-                cursor.execute("CREATE TABLE %s as SELECT * FROM dise_1314_basic_data                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           WITH NO DATA" % table_name)
+                cursor.execute("CREATE TABLE %s as SELECT * FROM dise_1314_basic_data WITH NO DATA" % table_name)
 
                 print 'Table %s created' % table_name
             except Exception, e:

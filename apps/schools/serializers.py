@@ -34,7 +34,10 @@ class SchoolSerializer(GeoFeatureModelSerializer):
             'medium_of_instruction', 'sch_management', 'sch_category',
             'library_yn', 'books_in_library', 'no_of_computers',
             'electricity', 'drinking_water', 'toilet_common', 'toilet_boys',
-            'toilet_girls', 'tot_clrooms', 'popup_content', 'entity_type'
+            'toilet_girls', 'tot_clrooms', 'school_dev_grant_recd', 
+            'school_dev_grant_expnd', 'funds_from_students_recd',
+            'funds_from_students_expnd', 'school_maintain_grant_recd',
+            'school_maintain_grant_expnd', 'popup_content', 'entity_type'
         ]
 
 
