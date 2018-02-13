@@ -13,7 +13,7 @@ import operator
 from .serializers import (
     SchoolSerializer, ClusterSerializer, BlockSerializer,
     DistrictSerializer, AssemblySerializer, ParliamentSerializer,
-    PincodeSerializer, SchoolInfraSerializer,
+    PincodeSerializer, SchoolInfraSerializer, SchoolFinSerializer,
     ClusterBasicSerializer, BlockBasicSerializer, DistrictBasicSerializer
 )
 
@@ -280,6 +280,11 @@ class SchoolInfraView(SchoolInfoView):
     """Returns infrastructure details of a given school
     """
     serializer_class = SchoolInfraSerializer
+
+class SchoolFinView(SchoolInfoView):
+    """Returns finance details of a given school
+    """
+    serializer_class = SchoolFinSerializer
 
 
 class AggregationBaseView(object):

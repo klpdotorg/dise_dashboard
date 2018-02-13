@@ -290,7 +290,7 @@ class ClusterAggregations(AggregationBase):
     cluster_name = models.CharField(max_length=50)
     block_name = models.CharField(max_length=50, blank=True)
     district = models.CharField(max_length=50, blank=True)
-    # state_name = models.CharField(max_length=35, blank=True)
+    state_name = models.CharField(max_length=35, blank=True)
 
     entity_type = 'cluster'
 
@@ -307,15 +307,15 @@ class ClusterAggregations(AggregationBase):
         return SchoolModel.objects.filter(
             cluster_name__iexact=self.cluster_name,
             block_name__iexact=self.block_name,
-            district__iexact=self.district
-            # state_name__iexact=self.state_name
+            district__iexact=self.district,
+            state_name__iexact=self.state_name
         )
 
 
 class BlockAggregations(AggregationBase):
     block_name = models.CharField(max_length=50)
     district = models.CharField(max_length=50, blank=True)
-    # state_name = models.CharField(max_length=35, blank=True)
+    state_name = models.CharField(max_length=35, blank=True)
 
     entity_type = 'block'
 
@@ -330,14 +330,14 @@ class BlockAggregations(AggregationBase):
         SchoolModel = get_models(session, 'school')
         return SchoolModel.objects.filter(
             block_name__iexact=self.block_name,
-            district__iexact=self.district
-            # state_name__iexact=self.state_name
+            district__iexact=self.district,
+            state_name__iexact=self.state_name
         )
 
 
 class DistrictAggregations(AggregationBase):
     district = models.CharField(max_length=50)
-    # state_name = models.CharField(max_length=35, blank=True)
+    state_name = models.CharField(max_length=35, blank=True)
 
     class Meta:
         abstract = True
@@ -355,8 +355,8 @@ class DistrictAggregations(AggregationBase):
     def schools(self, session=settings.DEFAULT_SESSION):
         SchoolModel = get_models(session, 'school')
         return SchoolModel.objects.filter(
-            district__iexact=self.district
-            # state_name__iexact=self.state_name
+            district__iexact=self.district,
+            state_name__iexact=self.state_name
         )
 
 

@@ -70,6 +70,22 @@ class SchoolInfraSerializer(GeoFeatureModelSerializer):
         ]
 
 
+class SchoolFinSerializer(GeoFeatureModelSerializer):
+
+    class Meta:
+        model = BasicData
+        geo_field = 'centroid'
+        pk_field = 'school_code'
+
+        fields = [
+            'school_code', 'school_name', 'cluster_name', 'centroid',
+            'block_name', 'district', 'pincode', 'yeur_estd',
+            'school_dev_grant_expnd', 'funds_from_students_recd',
+            'funds_from_students_expnd', 'school_maintain_grant_recd',
+            'school_maintain_grant_expnd', 'popup_content'
+        ]
+
+
 class AggregationBaseSerializer(GeoFeatureModelSerializer):
     medium_of_instructions = serializers.SerializerMethodField()
     school_categories = serializers.SerializerMethodField()

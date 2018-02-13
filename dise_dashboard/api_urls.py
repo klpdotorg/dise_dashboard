@@ -1,8 +1,9 @@
 from django.conf.urls import patterns, url, include
 from schools.api_views import (
-    SchoolListView, SchoolInfoView, SchoolInfraView, AggregationListView,
-    AggregationInfoView, AggregationSchoolListView, ClustersInBlockView,
-    ClustersInDistrictView, BlocksInDistrictView, OmniSearchApiView)
+    SchoolListView, SchoolInfoView, SchoolInfraView, SchoolFinView,
+    AggregationListView, AggregationInfoView, AggregationSchoolListView, 
+    ClustersInBlockView, ClustersInDistrictView, BlocksInDistrictView, 
+    OmniSearchApiView)
 
 
 urlpatterns = patterns(
@@ -14,6 +15,7 @@ urlpatterns = patterns(
     url(r'^(?P<session>[\d\-]{5})/school/$', SchoolListView.as_view(), name='api_school_list'),
     url(r'^(?P<session>[\d\-]{5})/school/(?P<dise_code>[\w]+)/$', SchoolInfoView.as_view(), name='api_school_info'),
     url(r'^(?P<session>[\d\-]{5})/school/(?P<dise_code>[\w]+)/infrastructure/$', SchoolInfraView.as_view(), name='api_school_infra'),
+    url(r'^(?P<session>[\d\-]{5})/school/(?P<dise_code>[\w]+)/finance/$', SchoolFinView.as_view(), name='api_school_fin'),
 
     url(r'^(?P<session>[\d\-]{5})/(?P<entity>(cluster|block|district|assembly|parliament|pincode))/$', AggregationListView.as_view(), name='api_entity_list'),
     url(r'^(?P<session>[\d\-]{5})/(?P<entity>(cluster|block|district|assembly|parliament|pincode))/(?P<slug>[^\/]+)/$', AggregationInfoView.as_view(), name='api_entity_info'),

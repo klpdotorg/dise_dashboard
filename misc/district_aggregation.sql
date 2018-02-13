@@ -14,8 +14,8 @@ BEGIN
         EXECUTE 'DROP TABLE IF EXISTS ' || table_name;
 
         EXECUTE 'CREATE TABLE ' || table_name || ' AS
-        SELECT district,
-            getslug(district) as slug,
+        SELECT district, state_name,
+            getslug(concat(state_name, '' '',district)) as slug,
 
             Count(school_code) AS sum_schools,
             Sum(CASE WHEN rural_urban = 1 THEN 1 ELSE 0 END) AS sum_rural_schools,
@@ -164,8 +164,8 @@ BEGIN
             Avg(total_girls) as avg_girls
 
         FROM ' || basic_table_name || '
-        GROUP BY district
-        ORDER BY district';
+        GROUP BY district, state_name
+        ORDER BY district, state_name';
 
         EXECUTE 'ALTER TABLE ' || table_name || '
             ADD PRIMARY KEY (slug)';
