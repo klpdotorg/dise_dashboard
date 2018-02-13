@@ -80,6 +80,7 @@ class SchoolFinSerializer(GeoFeatureModelSerializer):
         fields = [
             'school_code', 'school_name', 'cluster_name', 'centroid',
             'block_name', 'district', 'pincode', 'yeur_estd',
+            'school_dev_grant_recd', 
             'school_dev_grant_expnd', 'funds_from_students_recd',
             'funds_from_students_expnd', 'school_maintain_grant_recd',
             'school_maintain_grant_expnd', 'popup_content'
