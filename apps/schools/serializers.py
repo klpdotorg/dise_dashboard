@@ -57,6 +57,7 @@ class SchoolInfraSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = BasicData
         geo_field = 'centroid'
+        pk_field = 'school_code'
 
         fields = [
             'school_code', 'school_name', 'centroid',
