@@ -15,7 +15,7 @@ BEGIN
 
         EXECUTE 'CREATE TABLE ' || table_name || ' AS
         SELECT block_name, district, state_name,
-            getslug(concat(state_name, '' '', district, '' '', block_name)) as slug,
+            getslug(concat(district, '' '', block_name)) as slug,
 
             Count(school_code) AS sum_schools,
             Sum(CASE WHEN rural_urban = 1 THEN 1 ELSE 0 END) AS sum_rural_schools,
