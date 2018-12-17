@@ -51,7 +51,7 @@ class Command(BaseCommand):
         if row.get('DISTNAME'):
             school['district'] = row.get('DISTNAME')
         if row.get('STATNAME'):
-        	school['state_name'] = row.get('STATNAME')
+        	school['state_name'] = row.get('STATE_NAME')
        	if row.get('PINCODE'):
             school['pincode'] = row.get('PINCODE')
         if row.get('LatitudeDeg'):
