@@ -21,9 +21,9 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'klpdise_olap',
-        'USER': '',
-        'PASSWORD': 'qwerty',
+        'NAME': 'ilpdise_olap',
+        'USER': 'klp',
+        'PASSWORD': '',
         'HOST': '',
         'PORT': '',
     }

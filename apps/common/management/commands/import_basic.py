@@ -51,7 +51,7 @@ class Command(BaseCommand):
         if row.get('DISTNAME'):
             school['district'] = row.get('DISTNAME')
         if row.get('STATNAME'):
-        	school['state_name'] = row.get('STATNAME')
+        	school['state_name'] = row.get('STATE_NAME')
        	if row.get('PINCODE'):
             school['pincode'] = row.get('PINCODE')
         if row.get('LatitudeDeg'):
@@ -82,16 +82,16 @@ class Command(BaseCommand):
             )
 
             # create table if it doesn't exist
-            try:
-                cursor = connection.cursor()
-                cursor.execute('DROP TABLE IF EXISTS "%s"' % table_name)
-                print 'Table dropped'
-                print cursor.description
-                cursor.execute("CREATE TABLE %s as SELECT * FROM dise_1314_basic_data WITH NO DATA" % table_name)
+#            try:
+#                cursor = connection.cursor()
+#                cursor.execute('DROP TABLE IF EXISTS "%s"' % table_name)
+#                print 'Table dropped'
+#                print cursor.description
+#                cursor.execute("CREATE TABLE %s as SELECT * FROM dise_1314_basic_data WITH NO DATA" % table_name)
 
-                print 'Table %s created' % table_name
-            except Exception, e:
-                raise e
+#                print 'Table %s created' % table_name
+#            except Exception, e:
+#                raise e
 
         for basic_data in args:
             full_path = os.path.join(settings.PROJECT_ROOT, basic_data)
