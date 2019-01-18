@@ -14,8 +14,8 @@ BEGIN
         EXECUTE 'DROP TABLE IF EXISTS ' || table_name;
 
         EXECUTE 'CREATE TABLE ' || table_name || ' AS
-        SELECT cluster_name, block_name, district, state_name,
-            getslug(concat(block_name, '' '', cluster_name)) as slug,
+        SELECT distinct cluster_name, block_name, district, state_name,
+            getslug(concat(district,'' '',block_name, '' '', cluster_name)) as slug,
 
             Count(school_code) AS sum_schools,
             Sum(CASE WHEN rural_urban = 1 THEN 1 ELSE 0 END) AS sum_rural_schools,

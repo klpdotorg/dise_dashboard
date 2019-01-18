@@ -45,12 +45,12 @@ class Command(BaseCommand):
         if row.get('CITYNAME'):
         	school['city_name'] = row.get('CITYNAME')
        	if row.get('CLUSTER_NAME'):
-            school['cluster_name'] = row.get('CLUSTER_NAME')
+            school['cluster_name'] = row.get('CLUSTER_NAME').upper()
         if row.get('BLOCK_NAME'):
-        	school['block_name'] = row.get('BLOCK_NAME')
+        	school['block_name'] = row.get('BLOCK_NAME').upper()
         if row.get('DISTNAME'):
-            school['district'] = row.get('DISTNAME')
-        if row.get('STATNAME'):
+            school['district'] = row.get('DISTNAME').upper()
+        if row.get('STATE_NAME'):
         	school['state_name'] = row.get('STATE_NAME')
        	if row.get('PINCODE'):
             school['pincode'] = row.get('PINCODE')
@@ -84,12 +84,12 @@ class Command(BaseCommand):
             # create table if it doesn't exist
             try:
                 cursor = connection.cursor()
-                cursor.execute('DROP TABLE IF EXISTS "%s"' % table_name)
-                print 'Table dropped'
-                print cursor.description
-                cursor.execute("CREATE TABLE %s as SELECT * FROM dise_1314_basic_data WITH NO DATA" % table_name)
+                #cursor.execute('DROP TABLE IF EXISTS "%s"' % table_name)
+                #print 'Table dropped'
+                #print cursor.description
+                cursor.execute("CREATE TABLE IF NOT EXISTS %s as SELECT * FROM dise_1314_basic_data WITH NO DATA" % table_name)
 
-                print 'Table %s created' % table_name
+                #print 'Table %s created' % table_name
             except Exception, e:
                 raise e
 
@@ -97,7 +97,7 @@ class Command(BaseCommand):
             full_path = os.path.join(settings.PROJECT_ROOT, basic_data)
 
             with open(full_path, 'r') as csvfile:
-                reader = csv.DictReader(csvfile)
+                reader = csv.DictReader(csvfile, delimiter='|')
                 count = 0
 
                 print 'processing schools'

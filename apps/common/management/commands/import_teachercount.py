@@ -54,7 +54,7 @@ class Command(BaseCommand):
             full_path = os.path.join(settings.PROJECT_ROOT, rte_data)
 
             with open(full_path, 'r') as csvfile:
-                reader = csv.DictReader(csvfile)
+                reader = csv.DictReader(csvfile, delimiter='|')
                 count = 0
 
                 print 'processing schools'
