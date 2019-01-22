@@ -13,7 +13,7 @@ DEFAULT_SESSION = '16-17'
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ('Bibhas', 'bibhas@klp.org.in'),
+    ('Dev', 'dev@klp.org.in'),
 )
 
 MANAGERS = ADMINS
@@ -21,9 +21,9 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'klpdise_olap',
-        'USER': '',
-        'PASSWORD': 'qwerty',
+        'NAME': 'ilpdise_olap',
+        'USER': 'klp',
+        'PASSWORD': '',
         'HOST': '',
         'PORT': '',
     }
