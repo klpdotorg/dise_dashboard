@@ -99,14 +99,22 @@ class Command(BaseCommand):
             with open(full_path, 'r') as csvfile:
                 reader = csv.DictReader(csvfile, delimiter='|')
                 count = 0
+                totalcount = 0
 
                 print 'processing schools'
                 for row in reader:
                     self.process_row(row)
                     count += 1
-                    if count % 100 == 0:
+                    totalcount += 1
+                    if count % 1000 == 0:
                         print count,
+                        print "creating 1000 schools at a time"
+                        DiseBasicData = get_models(session='%s-%s' % (from_year[-2:], to_year[-2:]), what='school')
+                        DiseBasicData.objects.bulk_create(self.rows_to_create)
+                        self.rows_to_create = []
+                        count = 0
 
-                print 'creating schools'
+                print 'creating remaining schools :'+str(count)
                 DiseBasicData = get_models(session='%s-%s' % (from_year[-2:], to_year[-2:]), what='school')
                 DiseBasicData.objects.bulk_create(self.rows_to_create)
+                print str(totalcount)+" schools created"
