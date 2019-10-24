@@ -39,7 +39,7 @@ class Command(BaseCommand):
             'total_boys': 0,
             'total_girls': 0
         }
-        if type(row.get('SCHCD')) is not int:
+        if not row.get('SCHCD').isdigit():
                 return
 
         if row.get('C1_TOTB'):

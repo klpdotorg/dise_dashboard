@@ -27,7 +27,7 @@ class Command(BaseCommand):
 
         school = {}
 
-        if type(row.get('SCHCD')) is not int:
+        if not row.get('SCHCD').isdigit():
                 return
 
         if row.get('BLDSTATUS'):

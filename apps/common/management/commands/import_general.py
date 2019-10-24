@@ -26,9 +26,11 @@ class Command(BaseCommand):
         # CONTI_R,CONTI_E,TLM_R,TLM_E,FUNDS_R,FUNDS_E
 
         school = {}
+        print(row)
 
-        if type(row.get('SCHCD')) is not int:
-                return
+        if not row.get('SCHCD').isdigit():
+            print("HERE")
+            return
 
         if row.get('RURURB'):
             school['rural_urban'] = row.get('RURURB')

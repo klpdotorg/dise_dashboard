@@ -28,7 +28,7 @@ class Command(BaseCommand):
 
         if row.get('AC_YEAR'):
             school['academic_year'] = row.get('AC_YEAR')
-        if row.get('SCHOOL_CODE') and type(row.get('SCHOOL_CODE')) is int:
+        if row.get('SCHOOL_CODE') and row.get('SCHOOL_CODE').isdigit():
         	school['school_code'] = row.get('SCHOOL_CODE')
         else:
             return
@@ -74,6 +74,7 @@ class Command(BaseCommand):
         self.rows_to_create.append(DiseBasicData(**school))
 
     def handle(self, *args, **options):
+        print("HEREE")
         print "="*80
         print datetime.now()
         print "="*80

@@ -68,10 +68,13 @@ class Command(BaseCommand):
             return outputfile
 
     def create_csv_files(self, directory, state, academic_year):
+        print("creating csv files")
         for filename in listdir(directory):
+            print(filename)
             for dise_file_type in self.dise_files:
+                print(dise_file_type)
                 if dise_file_type in filename:
-                    print(dise_file_type)
+                    print("1"+str(dise_file_type))
                     file_name = self.convert_xlsx_to_csv(directory+"/"+filename,
                                     state, self.dise_files[dise_file_type]["suffix"],
                                     academic_year)
@@ -82,6 +85,7 @@ class Command(BaseCommand):
     def call_management_commands(self, academic_year):
         print("Calling managment commands")
         for dise_file_type in sorted(self.dise_files):
+            print(dise_file_type)
             if self.dise_files[dise_file_type]["found"]:
                 print("Running for: "+dise_file_type)
                 management.call_command(
