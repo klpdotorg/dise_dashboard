@@ -39,6 +39,8 @@ class Command(BaseCommand):
             'total_boys': 0,
             'total_girls': 0
         }
+        if type(row.get('SCHCD')) is not int:
+                return
 
         if row.get('C1_TOTB'):
             school['class1_total_enr_boys'] = row.get('C1_TOTB')

@@ -46,6 +46,7 @@ class Command(BaseCommand):
                     row = sh.row_values(r)
                     row = [re.sub(r"\.", ' ', value) for value in row]
                     row = [re.sub(r"\,", ' ', value) for value in row]
+                    row = [re.sub(r"\|+", ' ', value) for value in row]
                     row = [re.sub(r"\s+", ' ', value) for value in row]
                     row = [re.sub(r"\s+-\s+",  '-', value) for value in row]
                     row = [value.strip('  ') for value in row]
@@ -55,7 +56,6 @@ class Command(BaseCommand):
     def add_state(self, file_name, state):
         with open(file_name, 'r') as csvinput:
             reader = csv.reader(csvinput, delimiter="|")
-            print(file_name)
             outputfile = file_name.replace(".csv", "_out.csv")
             print(outputfile)
             with open(outputfile, 'wb') as csvoutput:
@@ -82,7 +82,6 @@ class Command(BaseCommand):
     def call_management_commands(self, academic_year):
         print("Calling managment commands")
         for dise_file_type in sorted(self.dise_files):
-            print("Running for: "+dise_file_type)
             if self.dise_files[dise_file_type]["found"]:
                 print("Running for: "+dise_file_type)
                 management.call_command(

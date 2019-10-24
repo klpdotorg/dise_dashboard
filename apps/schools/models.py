@@ -661,6 +661,33 @@ class Dise1617BasicData(BasicData):
     class Meta:
         db_table = 'dise_1617_basic_data'
 
+class Dise1718BasicData(BasicData):
+    class Meta:
+        db_table = 'dise_1718_basic_data'
+
+class Dise1718AssemblyAggregations(AssemblyAggregations):
+    class Meta:
+        db_table = 'dise_1718_assembly_aggregations'
+
+class Dise1718BlockAggregations(BlockAggregations):
+    class Meta:
+        db_table = 'dise_1718_block_aggregations'
+
+class Dise1718ClusterAggregations(ClusterAggregations):
+    class Meta:
+        db_table = 'dise_1718_cluster_aggregations'
+
+class Dise1718ParliamentAggregations(ParliamentAggregations):
+    class Meta:
+        db_table = 'dise_1718_parliament_aggregations'
+
+class Dise1718DistrictAggregations(DistrictAggregations):
+    class Meta:
+        db_table = 'dise_1718_district_aggregations'
+
+class Dise1718PincodeAggregations(PincodeAggregations):
+    class Meta:
+        db_table = 'dise_1718_pincode_aggregations'
 
 def get_models(session='10-11', what='all'):
     session = session.replace('-', '')

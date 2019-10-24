@@ -27,6 +27,9 @@ class Command(BaseCommand):
 
         school = {}
 
+        if type(row.get('SCHCD')) is not int:
+                return
+
         if row.get('BLDSTATUS'):
             school['building_status'] = row.get('BLDSTATUS')
         if row.get('CLROOMS'):

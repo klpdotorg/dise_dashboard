@@ -28,10 +28,14 @@ class Command(BaseCommand):
 
         if row.get('AC_YEAR'):
             school['academic_year'] = row.get('AC_YEAR')
-        if row.get('SCHOOL_CODE'):
+        if row.get('SCHOOL_CODE') and type(row.get('SCHOOL_CODE')) is int:
         	school['school_code'] = row.get('SCHOOL_CODE')
-       	if row.get('SCHOOL_NAME'):
+        else:
+            return
+       	if row.get('SCHOOL_NAME') and row.get('SCHOOL_NAME').strip() != '':
             school['school_name'] = row.get('SCHOOL_NAME')
+        else:
+            return
         if row.get('HABNAME'):
         	school['habitat_name'] = row.get('HABNAME')
         if row.get('VILLAGE_NAME'):

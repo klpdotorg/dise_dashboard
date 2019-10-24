@@ -38,6 +38,9 @@ class Command(BaseCommand):
 
         school = {}
 
+        if type(row.get('SCHCD')) is not int:
+                return
+
         if row.get('APPROACHBYROAD'):
             school['approachable_by_road'] = row.get('APPROACHBYROAD')
         if row.get('CCE_YN'):
