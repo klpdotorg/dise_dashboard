@@ -6,9 +6,9 @@ PROJECT_ROOT = os.path.realpath(os.path.dirname(os.path.dirname(__file__)))
 
 POSTGIS_VERSION = (2, 1, 0)
 
-VALID_SESSIONS = ['10-11', '11-12', '12-13', '13-14', '14-15', '15-16', '16-17']
+VALID_SESSIONS = ['10-11', '11-12', '12-13', '13-14', '14-15', '15-16', '16-17','17-18']
 
-DEFAULT_SESSION = '16-17'
+DEFAULT_SESSION = '17-18'
 
 TEMPLATE_DEBUG = DEBUG
 
