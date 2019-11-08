@@ -5,6 +5,11 @@ Dashboard for Dise data to allow interactive dise data gathering
 
 API Documentation - https://dise.klp.org.in/api/docs/
 
+Deploying DISE dashboard
+========================
+
+DISE dashboard app still uses Python 2.7. Make sure to create a virtual environment with Python 2.x. Install requirements and then run the server using a standard systemctl gunicorn service.
+
 Backing up and restoring database
 ---
 This is what I do as of now. For backing up -
