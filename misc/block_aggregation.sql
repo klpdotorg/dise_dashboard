@@ -1,7 +1,7 @@
 CREATE OR REPLACE FUNCTION aggregate_block() RETURNS void AS
 $BODY$
 DECLARE
-    years integer[] := array[1011, 1112, 1213, 1314, 1415, 1516, 1617];
+    years integer[] := array[1011, 1112, 1213, 1314, 1415, 1516, 1617, 1718];
     year integer;
     table_name varchar(50);
     basic_table_name varchar(50);
