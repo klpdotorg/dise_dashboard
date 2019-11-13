@@ -107,6 +107,12 @@ class Command(BaseCommand):
                 cursor.execute(f.read())
                 f.close()
 
+    def copycentroids(self):
+        f = open('scripts/copycentroids.sql')
+        with connection.cursor() as cursor:
+                cursor.execute(f.read())
+                f.close()
+
     def handle(self, *args, **options):
         if len(args) != 3:
             print(len(args))
@@ -124,4 +130,6 @@ class Command(BaseCommand):
         self.call_management_commands(academic_year)
         print("Processing aggregates")
         self.run_aggregates()
+        print("Finished aggregates")
+        self.copycentroids()
         print("Finished")
