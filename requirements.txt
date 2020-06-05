@@ -1,4 +1,4 @@
-Django==1.7.8
+Django==1.11.29
 PyYAML==3.11
 argparse==1.2.1
 django-bootstrap-form==2.0.6
