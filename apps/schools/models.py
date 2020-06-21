@@ -15,7 +15,8 @@ from common.models import (
 )
 
 from django.contrib.gis.db import models
-from django.db import cached_property
+from django.db.models import Manager as GeoManager
+from django.utils.functional import cached_property
 from jsonfield import JSONField
 from django.conf import settings
 import collections
@@ -154,7 +155,7 @@ class BasicData(models.Model):
     boys_more_sixty_percent_upper_primary_exam = models.IntegerField(blank=True, null=True)
     girls_more_sixty_percent_upper_primary_exam = models.IntegerField(blank=True, null=True)
 
-    objects = models.GeoManager()
+    objects = GeoManager()
 
     class Meta:
         abstract = True
@@ -269,7 +270,7 @@ class AggregationBase(models.Model):
     sum_school_maintain_grant_expnd = models.FloatField(null=True, blank=True)
     avg_school_maintain_grant_expnd = models.FloatField(null=True, blank=True)
 
-    objects = models.GeoManager()
+    objects = GeoManager()
 
     class Meta:
         abstract = True

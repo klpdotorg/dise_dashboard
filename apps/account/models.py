@@ -38,6 +38,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class EmailVerification(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
     token = models.CharField(max_length=100)
     created_on = models.DateTimeField(blank=True, null=True, auto_now_add=True, editable=False)

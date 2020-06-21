@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class SQLSumCase(models.sql.aggregates.Aggregate):
+class SQLSumCase(models.aggregates.Aggregate):
     is_ordinal = True
     sql_function = 'SUM'
     sql_template = "%(function)s(CASE WHEN %(when)s THEN %(field)s ELSE 0 END)"
@@ -24,7 +24,7 @@ class SumCase(models.Aggregate):
         query.aggregates[alias] = aggregate
 
 
-class SQLCountCase(models.sql.aggregates.Aggregate):
+class SQLCountCase(models.aggregates.Aggregate):
     is_ordinal = True
     sql_function = 'SUM'
     sql_template = "%(function)s(CASE WHEN %(when)s THEN 1 ELSE 0 END)"

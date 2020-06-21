@@ -294,7 +294,7 @@ class AggregationBaseView(object):
     def get_serializer_class(self):
         try:
             serializer = super(AggregationBaseView, self).get_serializer_class()
-        except Exception, e:
+        except Exception as e:
             entity = self.kwargs.get('entity')
             basic = self.request.GET.get('basic', 'no')
 
