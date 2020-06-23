@@ -170,8 +170,8 @@ class BasicData(models.Model):
 
 class AggregationBase(models.Model):
     slug = models.CharField(max_length=200, primary_key=True)
-    centroid = models.GeometryField(blank=True, null=True)
-
+    #centroid = models.GeometryField(blank=True, null=True)
+    centroid = models.PointField(srid=4326, unique=True, blank=True, null=True)
     sum_schools = models.BigIntegerField(null=True, blank=True)
     sum_govt_schools = models.BigIntegerField(null=True, blank=True)
     sum_rural_schools = models.BigIntegerField(null=True, blank=True)
