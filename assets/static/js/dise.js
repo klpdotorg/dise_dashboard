@@ -940,9 +940,9 @@ $(function(){
                     features: []
                 }
 
-                for (var i = 0; i < data.results.features.length; i++) {
-                    if (data.results.features[i].geometry.coordinates.length == 2) {
-                        sanitized_results.features.push(data.results.features[i]);
+                for (var i = 0; i < data.features.length; i++) {
+                    if (data.features[i].geometry.coordinates.length == 2) {
+                        sanitized_results.features.push(data.features[i]);
                     }
                 };
 
