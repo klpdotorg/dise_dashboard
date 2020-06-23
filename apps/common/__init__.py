@@ -43,5 +43,9 @@ class CountWhen(models.Aggregate):
     name = 'COUNT'
 
     def add_to_query(self, query, alias, col, source, is_summary):
-        aggregate = SQLCountCase(col, source=source, is_summary=is_summary, **self.extra)
-        query.aggregates[alias] = aggregate
+        print('add_to_query')
+        try:
+            aggregate = SQLCountCase(col, source=source, is_summary=is_summary, **self.extra)
+            query.aggregates[alias] = aggregate
+        except Exception as e:
+            print(e)

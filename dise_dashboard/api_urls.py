@@ -3,12 +3,12 @@ from schools.api_views import (
     SchoolListView, SchoolInfoView, SchoolInfraView, SchoolFinView,
     AggregationListView, AggregationInfoView, AggregationSchoolListView, 
     ClustersInBlockView, ClustersInDistrictView, BlocksInDistrictView, 
-    OmniSearchApiView)
+    OmniSearchApiView, api_root)
 
 
 urlpatterns = [
    #url(r'^docs/', include('rest_framework_swagger.urls')),
-    #url(r'^$', include('schools.api_views.api_root'), name='api_root'),
+    url(r'^$', api_root, name='api_root'),
     url(r'^(?P<session>[\d\-]{5})/search/$', OmniSearchApiView.as_view(), name='api_search'),
     url(r'^(?P<session>[\d\-]{5})/school/$', SchoolListView.as_view(), name='api_school_list'),
     url(r'^(?P<session>[\d\-]{5})/school/(?P<dise_code>[\w]+)/$', SchoolInfoView.as_view(), name='api_school_info'),

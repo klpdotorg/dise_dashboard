@@ -17,7 +17,7 @@ from .serializers import (
     ClusterBasicSerializer, BlockBasicSerializer, DistrictBasicSerializer
 )
 
-from .models import get_models
+from .models import get_models, Dise1718DistrictAggregations
 from common import filters
 from common import models as common_utils
 
@@ -34,6 +34,14 @@ serializers = {
 }
 
 
+class DISE1718DistrictBasicSerializer(DistrictBasicSerializer):
+    class Meta:
+        model = Dise1718DistrictAggregations
+        geo_field = 'centroid'
+        pk_field = 'district'
+        fields = ['district', 'slug', 'centroid']
+    
+    
 class SessionNotFound(APIException):
     status_code = 404
     default_detail = 'Session not found. Please enter a valid session.'
@@ -290,24 +298,41 @@ class SchoolFinView(SchoolInfoView):
 class AggregationBaseView(object):
     filter_backends = (filters.KLPInBBOXFilter, filters.TextSearchFilter, )
     bbox_filter_field = 'centroid'
+    
+    def getserializer(self, model_arg, parent):
+        class GenericSerializer(parent):
+            class Meta(parent.Meta):
+                model = model_arg
+        return GenericSerializer
 
     def get_serializer_class(self):
+        # try:
+        print("Inside AggregationBaseView get_serializer_class")
+        #     #serializer = self.get_serializer_class()
+        #     serializer = super(AggregationBaseView, self).get_serializer_class()
+        # except Exception as e:
+        entity = self.kwargs.get('entity')
+        basic = self.request.GET.get('basic', 'no')
+        session = self.kwargs.get('session')
+        entity = self.kwargs.get('entity')
         try:
-            serializer = super(AggregationBaseView, self).get_serializer_class()
-        except Exception as e:
-            entity = self.kwargs.get('entity')
-            basic = self.request.GET.get('basic', 'no')
-
-            if basic == 'yes':
-                serializer = serializers.get(entity + '-basic')
-            else:
-                serializer = serializers.get(entity)
-        return serializer
+            Entity = get_models(session, entity)
+        except AttributeError:
+            raise SessionNotFound()
+        if basic == 'yes':
+            serializer = serializers.get(entity + '-basic')
+        else:
+            serializer = serializers.get(entity)
+        model = type(Entity.objects.all()[0])
+        print("Model type is: ", model)
+        res = self.getserializer(model, serializer)
+        #serializer = DISE1718DistrictBasicSerializer
+        print("Name of serializer is: ", res)
+        return res
 
     def get_queryset(self):
         session = self.kwargs.get('session')
         entity = self.kwargs.get('entity')
-
         try:
             Entity = get_models(session, entity)
         except AttributeError:
@@ -317,7 +342,7 @@ class AggregationBaseView(object):
 
 
 class AggregationListView(AggregationBaseView, generics.ListAPIView):
-    def get(self, *args, **kwargs):
+    def list(self, *args, **kwargs):
         """Lists aggregated entities depending on entity type. options for 'entity'
             are school, cluster, block, district, pincode, assembly and parliament.
             ---
@@ -339,7 +364,8 @@ class AggregationListView(AggregationBaseView, generics.ListAPIView):
         """
         This get() is here so that Swagger parses the docstring properly
         """
-        return super(AggregationListView, self).get(*args, **kwargs)
+        print("Inside AggregationListView get")
+        return super(AggregationListView, self).list(*args, **kwargs)
 
 
 class AggregationInfoView(AggregationBaseView, generics.RetrieveAPIView):

@@ -5,7 +5,7 @@ from .models import (
 )
 from common.models import MEDIUM, SCHOOL_CATEGORY, search_choices_by_key
 from common import SumCase, CountWhen
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, Case, When
 from rest_framework import serializers
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
@@ -107,17 +107,20 @@ class AggregationBaseSerializer(GeoFeatureModelSerializer):
         return moes
 
     def get_school_categories(self, obj):
+        print("Object session: ", obj.session)
+        print("Object schools:", obj.schools)
         categories = obj.schools(obj.session).values('sch_category').annotate(
             sum_schools_total=Count('sch_category'),
-            sum_schools_classrooms_leq_3=CountWhen('sch_category', when='tot_clrooms <= 3'),
-            sum_schools_classrooms_eq_4=CountWhen('sch_category', when='tot_clrooms = 4'),
-            sum_schools_classrooms_eq_5=CountWhen('sch_category', when='tot_clrooms = 5'),
-            sum_schools_classrooms_mid_67=CountWhen('sch_category', when='tot_clrooms IN (6, 7)'),
-            sum_schools_classrooms_geq_8=CountWhen('sch_category', when='tot_clrooms >= 8'),
+            sum_schools_classrooms_leq_3=Count(Case(When(tot_clrooms__lte=3, then=1))),
+            sum_schools_classrooms_eq_4=Count(Case(When(tot_clrooms=4, then=1))),
+            sum_schools_classrooms_eq_5=Count(Case(When(tot_clrooms=5, then=1))),
+            sum_schools_classrooms_mid_67=Count(Case(When(tot_clrooms__in=[6,7], then=1))),
+            sum_schools_classrooms_geq_8=Count(Case(When(tot_clrooms__gte=8, then=1))),
             sum_boys=Sum('total_boys'),
             sum_girls=Sum('total_girls'),
             sum_classrooms=Sum('tot_clrooms'),
         )
+        print(categories)
         for category in categories:
             category['id'] = category['sch_category']
             category['name'] = search_choices_by_key(SCHOOL_CATEGORY, category['id'])
@@ -125,7 +128,7 @@ class AggregationBaseSerializer(GeoFeatureModelSerializer):
 
             category_copy = category.copy()
             category['sum_schools'] = dict()
-            for key, value in category_copy.iteritems():
+            for key, value in category_copy.items():
                 if key.startswith('sum_schools'):
                     category['sum_schools'][key.replace('sum_schools_', '')] = value
                     del category[key]
@@ -219,3 +222,35 @@ class PincodeSerializer(AggregationBaseSerializer):
         fields = [field.name for field in PincodeAggregations._meta.get_fields()] + [
             'entity_type', 'popup_content', 'medium_of_instructions', 'school_categories'
         ]
+
+def get_models(session='10-11', what='all'):
+    session = session.replace('-', '')
+    schools = __import__('schools')
+    models = collections.OrderedDict()
+
+    models['school'] = getattr(
+        schools.models, 'Dise{}BasicData'.format(session)
+    )
+    models['cluster'] = getattr(
+        schools.models, 'Dise{}ClusterAggregations'.format(session)
+    )
+    models['block'] = getattr(
+        schools.models, 'Dise{}BlockAggregations'.format(session)
+    )
+    models['district'] = getattr(
+        schools.models, 'Dise{}DistrictAggregations'.format(session)
+    )
+    models['pincode'] = getattr(
+        schools.models, 'Dise{}PincodeAggregations'.format(session)
+    )
+    models['assembly'] = getattr(
+        schools.models, 'Dise{}AssemblyAggregations'.format(session)
+    )
+    models['parliament'] = getattr(
+        schools.models, 'Dise{}ParliamentAggregations'.format(session)
+    )
+
+    if what == 'all':
+        return models.values()
+    else:
+        return models.get(what, None)
