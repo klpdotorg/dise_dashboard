@@ -161,7 +161,7 @@ class DistrictSerializer(AggregationBaseSerializer):
     class Meta:
         model = DistrictAggregations
         geo_field = 'centroid'
-        id_field = 'district'
+        pk_field = 'district'
         fields = [field.name for field in DistrictAggregations._meta.get_fields()] + [
             'entity_type', 'popup_content', 'medium_of_instructions', 'school_categories'
         ]
