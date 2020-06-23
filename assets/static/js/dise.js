@@ -882,9 +882,9 @@ $(function(){
                     features: []
                 }
 
-                for (var i = 0; i < data.results.features.length; i++) {
-                    if (data.results.features[i].geometry.coordinates.length == 2) {
-                        sanitized_results.features.push(data.results.features[i]);
+                for (var i = 0; i < data.features.length; i++) {
+                    if (data.features[i].geometry.coordinates.length == 2) {
+                        sanitized_results.features.push(data.features[i]);
                     }
                 };
 
@@ -896,8 +896,8 @@ $(function(){
                 newLayer.addTo(window.currentLayers);
 
                 // updates the result pane
-                search_view.results(data.results.features);
-                search_view.n_results(data.results.features.length);
+                search_view.results(data.features);
+                search_view.n_results(data.features.length);
                 search_view.search_entity(child_entity);
                 search_view.showPopupResultList(true);
 
@@ -960,8 +960,8 @@ $(function(){
 
                 // updates the count pane
                 // console.log(data.results);
-                search_view.results(data.results.features);
-                search_view.n_results(data.results.features.length);
+                search_view.results(data.features);
+                search_view.n_results(data.features.length);
                 search_view.search_entity(entity);
                 search_view.showPopupResultList(true);
 
