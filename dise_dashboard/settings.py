@@ -156,6 +156,7 @@ INSTALLED_APPS = (
     'corsheaders',
     'bootstrapform',
     'rest_framework',
+    'rest_framework_gis',
     'explorer',
     'rest_framework_swagger',
 
