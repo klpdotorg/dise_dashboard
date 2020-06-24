@@ -227,14 +227,25 @@ class SchoolApiBaseView(object):
     bbox_filter_field = SchoolSerializer.Meta.geo_field
     filter_backends = (filters.KLPInBBOXFilter, filters.TextSearchFilter, )
 
+    '''
+    Jun 2020: Subha - added this fix because with the Django3
+    Python3 port, model serializers are unable to process abstract
+    models. So just overriding the Meta field of the parent
+    serializer with the exact instance type (Dise1718xxxx) works
+    and also keeps serializers generic enough. Hacky but works for now
+    '''
+    def getserializer(self, parent_serializer, model_arg):
+        class SchoolSerializerWrapper(parent_serializer):
+            class Meta(parent_serializer.Meta):
+                model = model_arg
+        return SchoolSerializerWrapper
+    
     def get_queryset(self):
         session = self.kwargs.get('session')
-
         try:
             SchoolData = get_models(session, 'school')
         except AttributeError:
             raise SessionNotFound()
-
         return SchoolData.objects.all()
 
 
@@ -250,6 +261,8 @@ class SchoolListView(SchoolApiBaseView, generics.ListAPIView):
             - name: area
               description: 'rural' or 'urban'
         """
+    queryset = None
+    
     def get_queryset(self):
         queryset = super(SchoolListView, self).get_queryset()
 
@@ -269,30 +282,71 @@ class SchoolListView(SchoolApiBaseView, generics.ListAPIView):
                     common_utils.AREA, self.request.query_params.get('area').title()
                 )
             )
-
+        self.queryset = queryset
         return queryset
+    
+    def get_serializer_class(self):
+        if self.queryset is not None:
+            obj_type = type(self.queryset[0])
+            serializer = self.getserializer(self.serializer_class, obj_type)
+        return serializer
 
 
 class SchoolInfoView(SchoolApiBaseView, generics.RetrieveAPIView):
     """Returns details of the given school
     """
+    obj = None
+    
     def get_object(self):
         queryset = self.get_queryset()
         filters = {}
         filters['school_code__iexact'] = self.kwargs.get('dise_code')
         obj = get_object_or_404(queryset, **filters)
+        self.obj = obj
         return obj
+    
+    def get_serializer_class(self):
+        serializer = self.getserializer(self.serializer_class, type(self.obj))
+        return serializer
+    
 
 
 class SchoolInfraView(SchoolInfoView):
     """Returns infrastructure details of a given school
     """
     serializer_class = SchoolInfraSerializer
+    
+    '''
+    Jun 2020: Subha - added this fix because with the Django3
+    Python3 port, model serializers are unable to process abstract
+    models. So just overriding the Meta field of the parent
+    serializer with the exact instance type (Dise1718xxxx) works
+    and also keeps serializers generic enough. Hacky but works for now
+    '''
+    def get_serializer_class(self):
+        obj = self.get_object()
+        model = type(obj)
+        serializer = self.getserializer(self.serializer_class, model)
+        return serializer
+       
 
 class SchoolFinView(SchoolInfoView):
     """Returns finance details of a given school
     """
     serializer_class = SchoolFinSerializer
+    
+    '''
+    Jun 2020: Subha - added this fix because with the Django3
+    Python3 port, model serializers are unable to process abstract
+    models. So just overriding the Meta field of the parent
+    serializer with the exact instance type (Dise1718xxxx) works
+    and also keeps serializers generic enough. Hacky but works for now
+    '''
+    def get_serializer_class(self):
+        obj = self.get_object()
+        model = type(obj)
+        serializer = self.getserializer(self.serializer_class, model)
+        return serializer
 
 
 class AggregationBaseView(object):
